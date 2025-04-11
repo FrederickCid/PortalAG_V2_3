@@ -1,0 +1,96 @@
+﻿@page "/VisualizadorInventario"
+<SurveyPrompt Title="Visualizador Inventario" />
+<br />
+
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-8">
+    <MudPaper Elevation="8" Class="pa-4">
+        <!-- Encabezado con título y filtro -->
+        <div class="d-flex justify-space-between align-center mb-4">
+            <MudText Typo="Typo.h5" Class="text-primary">
+                <MudIcon Icon="@Icons.Material.Filled.Storage" Class="mr-2" />
+                Estado de Inventario
+            </MudText>
+            <MudSelect T="int" Label="Filtro" Variant="Variant.Outlined" Margin="Margin.Dense"
+                      Class="ml-4" Style="width: 180px;" @bind-Value="_filterValue">
+                <MudSelectItem Value="0">Todos los estados</MudSelectItem>
+                <MudSelectItem Value="1">En progreso</MudSelectItem>
+                <MudSelectItem Value="2">Completados</MudSelectItem>
+                <MudSelectItem Value="3">Con errores</MudSelectItem>
+            </MudSelect>
+        </div>
+
+        <!-- Leyenda de colores -->
+        <MudPaper Elevation="1" Class="mb-4 pa-3" Style="background-color: #f8f9fa;">
+            <MudText Typo="Typo.subtitle2" Class="mb-2">Leyenda de Estados:</MudText>
+            <div class="d-flex flex-wrap">
+                @foreach (var legendItem in _legendItems)
+                {
+                    <div class="d-flex align-center mr-4 mb-2">
+                        <div style="width: 20px; height: 20px; background-color: @legendItem.Color; 
+                                  border: 1px solid #dee2e6;" class="mr-2"></div>
+                        <MudText Typo="Typo.body2">@legendItem.Label</MudText>
+                    </div>
+                }
+            </div>
+        </MudPaper>
+
+        <!-- Tabla Heatmap -->
+        <div style="overflow-x: auto;">
+            <MudSimpleTable Bordered="true" Hover="false" Dense="true" Style="min-width: 600px;">
+                <thead>
+                    <tr>
+                        <th style="background-color: #f8f9fa; min-width: 120px;">
+                            <MudText Typo="Typo.subtitle2"> Tramos\Calle</MudText>
+                        </th>
+                        @foreach (var tramo in FilteredTramos)
+                        {
+                            <th style="background-color: #f8f9fa; text-align: center; min-width: 80px;">
+                                <MudText Typo="Typo.subtitle2">Tramo @tramo</MudText>
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var calle in FilteredCalles)
+                    {
+                        <tr>
+                            <td style="background-color: #f8f9fa; font-weight: 500;">
+                                <MudText Typo="Typo.body2">Calle @calle</MudText>
+                            </td>
+                            @foreach (var tramo in FilteredTramos)
+                            {
+                                var estado = GetEstado(calle, tramo);
+                                if (ShouldDisplayCell(calle, tramo))
+                                {
+                                    <td style="@GetHeatmapColor(estado); text-align: center; padding: 16px; 
+                                              border: 1px solid #e0e0e0;">
+                                        <MudTooltip Text="@GetComentario(calle, tramo)" Delay="0">
+                                            <MudBadge Color="@GetBadgeColor(estado)" 
+                                                    Class="cursor-pointer" 
+                                                    Style="width: 24px; height: 24px;">
+                                                <MudIcon Icon="@GetIcon(estado)" Size="Size.Small"/>
+                                            </MudBadge>
+                                        </MudTooltip>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td style="background-color: #fafafa; border: 1px solid #e0e0e0;"></td>
+                                }
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </MudSimpleTable>
+        </div>
+
+        <!-- Pie de página -->
+@*         <div class="d-flex justify-space-between align-center mt-4">          
+            <MudText Typo="Typo.caption" Class="text-grey">
+                Actualizado: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </MudText>
+        </div> *@
+    </MudPaper>
+</MudContainer>
+

@@ -1,0 +1,120 @@
+﻿@using ApexCharts
+@using PortalAG_V2.Shared.Model.SolicitudesInformes.ConsultaLineasPickingPacking
+
+@{
+
+    if (Lista.Count > 0)
+    {
+
+        <MudItem xs="12" md="3" xxl="2">
+            <MudCard Style="background-color:rgb(0,0,0,.05); height:100%">
+                <CardContent>
+                    <ApexChart TItem="lineasPickingModel"
+                               Title="Lineas Ranking Picking BV_BVN"
+                               @ref="@chartPickeadas"
+                               Options=optionsChartlineas>
+                        <ApexPointSeries TItem="lineasPickingModel"
+                                         Items="@(Lista.FindAll(e => e.IDBodega == "BV_BVN"))"
+                                         SeriesType="SeriesType.Bar"
+                                         Name="Lineas BV_BVN"
+                                         XValue="@(e => e.sacador == null ? "Desconocido" : e.sacador.Split(" ").FirstOrDefault() )"
+                                         YValue="@(e => e.lineas)"
+                                         ShowDataLabels />
+                    </ApexChart>
+                </CardContent>
+            </MudCard>
+        </MudItem>
+    }
+    if (Lista2.Count > 0)
+    {
+        <MudItem xs="12" md="3" xxl="2">
+            <MudCard Style="background-color:rgb(0,0,0,.05); height:100%">
+                <CardContent>
+                    <ApexChart TItem="lineasPickingModel"
+                               Title="Lineas Ranking Picking BV_BIT"
+                               @ref="@chartPickeadas2"
+                               Options=optionsChartlineas>
+                        <ApexPointSeries TItem="lineasPickingModel"
+                                         Items="@(Lista2.FindAll(e => e.IDBodega == "BV_BIT"))"
+                                         SeriesType="SeriesType.Bar"
+                                         Name="Lineas BV_BIT"
+                                         XValue="@(e => e.sacador == null ? "Desconocido" :  e.sacador.Split(" ").FirstOrDefault()  )"
+                                         YValue="@(e => e.lineas )"
+                                         ShowDataLabels />
+                    </ApexChart>
+                </CardContent>
+            </MudCard>
+        </MudItem>
+    }
+    if (Lista3.Count > 0)
+    {
+
+
+        <MudItem xs="12" md="3" xxl="2">
+            <MudCard Style="background-color:rgb(0,0,0,.05); height:100%">
+                <CardContent>
+                    <ApexChart TItem="lineasPickingModel"
+                               Title="Lineas Ranking Picking BV_BPM"
+                               @ref="@chartPickeadas3"
+                               Options=optionsChartlineas>
+                        <ApexPointSeries TItem="lineasPickingModel"
+                                         Items="@(Lista3.FindAll(e => e.IDBodega == "BV_BPM"))"
+                                         SeriesType="SeriesType.Bar"
+                                         Name="Lineas BV_BPM"
+                                         XValue="@(e => e.sacador == null ? "Desconocido" :  e.sacador.Split(" ").FirstOrDefault() )"
+                                         YValue="@(e => e.lineas)"
+                                         ShowDataLabels />
+
+
+                    </ApexChart>
+                </CardContent>
+            </MudCard>
+        </MudItem>
+    }
+
+
+    if (ListLineasPacking.Count != 0)
+    {
+
+        <MudItem xs="12" md="3" xxl="2">
+            <MudCard Style="background-color:rgb(0,0,0,.05); height:100%">
+                <CardContent>
+                    <ApexChart TItem="lineasPackingModel"
+                               Title="Lineas Packing"
+                               @ref="@chartPacking"
+                               Options="options">
+                        <ApexPointSeries TItem="lineasPackingModel"
+                                         Items="ListLineasPacking"
+                                         SeriesType="SeriesType.Pie"
+                                         Name="Lineas Pickeadas"
+                                         XValue="@(e => e.sacador == null ? "Desconocido" :  e.sacador.Split(" ").FirstOrDefault() )"
+                                         YValue="@(e => e.bultos)"
+                                         ShowDataLabels />
+                    </ApexChart>
+                </CardContent>
+            </MudCard>
+        </MudItem>
+    }
+
+    if (ListLineasReposicion.Count != 0)
+    {
+        <MudItem xs="12" md="3" xxl="2">
+            <MudCard Style="background-color:rgb(0,0,0,.05); height:100%">
+                <CardContent>
+                    <ApexChart TItem="lineasReposicionModel"
+                               Title="Lineas Resposiciones"
+                               @ref="@chartReposicion"
+                               Options="optionsChartReposicion">
+                        <ApexPointSeries TItem="lineasReposicionModel"
+                                         Items="ListLineasReposicion"
+                                         SeriesType="SeriesType.Pie"
+                                         Name="Lineas Pickeadas"
+                                         XValue="@(e => e.sacador == null ? "Desconocido" : e.sacador )"
+                                         YValue="@(e => e.lineas)"
+                                         ShowDataLabels />
+                    </ApexChart>
+                </CardContent>
+            </MudCard>
+        </MudItem>
+    }
+}

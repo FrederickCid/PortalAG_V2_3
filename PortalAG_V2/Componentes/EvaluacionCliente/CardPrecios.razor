@@ -1,0 +1,78 @@
+﻿@{
+    if (opcion == 1)
+    {
+        <MudItem Class="flip-card" xs="12" md="4" Style="width:350px">
+            <MudCard Class="flip-card-inner hover-overlay hover-zoom hover-shadow ripple" Elevation="4" Style="width:100%; height:100% ;background:#0086D2; border: solid 1px #0d0699; border-radius:15px">
+                <MudCardHeader Style="height:50px">
+                    <CardHeaderContent>
+                        <MudContainer Style="display:flex; flex-direction:row; justify-content:space-between;  align-items:center;">
+                            <MudImage Style="width:80px; height:80px; float:inline-start; " Src="@Imagen" Alt="Img Logo"></MudImage>
+                            <MudText Style=" top:5px;font-size:15px; color:white ; float:inline-end;" Typo="Typo.h6"><b>@titulo</b></MudText>
+                        </MudContainer>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+
+                    <div class="d-flex pa-4 p-3 flex-column-reverse align-center gap-2">
+                        @* <MudRating ReadOnly="true" SelectedValue="@Ranting" Size="Size.Small" Style="right" />*@
+
+                        @{
+                            if (transformShortValue(Precio) == null)
+                            {
+                                <MudText Align="Align.Center" Typo="Typo.h5" Style="color:white"><b>$</b> 0</MudText>
+                            }
+                            else
+                            {
+                                <MudText Align="Align.Center" Typo="Typo.h5" Style="color:white"><b>$</b> @transformShortValue(Precio)</MudText>
+                            }
+                        }
+                    </div>
+                    <div style="">
+                        <MudText Style="text-align:center; color:white; font-weight:bold; margin-top:28px">
+                            Ultimos @dias días
+                        </MudText>
+                    </div>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    }
+    if (opcion == 4)
+    {
+        <MudItem Class="flip-card" xs="12" md="4" Style="width:350px">
+            <MudCard Class="flip-card-inner hover-overlay hover-zoom hover-shadow ripple" Elevation="4" Style="width:100%; height:100% ;background:#0086D2; border: solid 1px #0d0699; #0d0699; border-radius:15px">
+                <MudCardHeader Style="height:50px">
+                    <CardHeaderContent>
+                        <MudContainer Style="display:flex; flex-direction:row; justify-content:space-between;  align-items:center;">
+                            <MudImage Style="width:80px; height:80px; float:inline-start; " Src="@Imagen" Alt="Img Logo"></MudImage>
+                            <MudText Style=" top:5px;font-size:15px; color:white ; float:inline-end;" Typo="Typo.h6"><b>@titulo</b></MudText>
+                        </MudContainer>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+
+                    <div class="d-flex pa-4 p-3 flex-column-reverse align-center gap-2">
+                        <MudRating ReadOnly="true" SelectedValue="@Ranting" Size="Size.Small" Style="right" />
+
+                        @{
+                            if (transformShortValue(Precio) == null)
+                            {
+                                <MudText Align="Align.Center" Typo="Typo.h5" Style="color:white"><b>$</b> 0</MudText>
+                            }
+                            else
+                            {
+                                <MudText Align="Align.Center" Typo="Typo.h5" Style="color:white"><b>$</b> @transformShortValue(Precio)</MudText>
+                            }
+                        }
+                    </div>
+                    <div style="widows:100%">
+                        <MudText Style="text-align:center; color:white; font-weight:bold">
+                            ultimos @dias días
+                        </MudText>
+                    </div>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+    }
+}
+

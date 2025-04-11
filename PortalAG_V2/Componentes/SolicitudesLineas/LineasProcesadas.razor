@@ -1,0 +1,144 @@
+﻿@using PortalAG_V2.Shared.Model.SolicitudesInformes
+@using PortalAG_V2.Shared.Model.SolicitudesInformes.ConsultaLineasPickingPacking
+@inject IDialogService DialogService
+
+
+<MudPaper Class="p-3 m-1" Style="margin=0 auto; max-width:">
+    <MudItem Class="pa-4 m-1">
+        <MudGrid Style="display: flex;align-items:center; ">
+            <MudItem xs="12" md="4">
+                <MudDatePicker @bind-Text="@fInicio" AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))" @ref="@_DatePickerInicio"
+                               DateFormat="dd-MM-yyyy" DisableToolbar="true" Label="Fecha Desde" @bind-Date="dateToday" MinDate="new DateTime(2025, 3, 1)" />
+            </MudItem>
+            <MudItem xs="12" md="4">
+                <MudDatePicker @bind-Text="@fFin" @ref="@_DatePickerfin" AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))"
+                               DateFormat="dd-MM-yyyy" DisableToolbar="true" Label="Fecha Hasta" @bind-Date="dateNull" MinDate="new DateTime(2025, 3, 1)" />
+            </MudItem>
+            <MudItem xs="12" md="4" Style="display: flex ; gap: 20px">
+                <MudButton Disabled="@(dateToday.ToString() == "" || dateNull.ToString() == "")" OnClick="ProcessSomething" Variant="Variant.Outlined" Color="Color.Primary">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Color="Color.Info" Indeterminate="true" />
+                        <MudText Class="ms-2">Buscando...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Buscar</MudText>
+                    }
+                </MudButton>
+                <MudButton Variant="Variant.Outlined" OnClick="ProbarPDF" Color="Color.Secondary" Disabled="@(ListLineasPicking.Count() == 0)">PDF EXPORT</MudButton>
+                <MudTooltip Arrow Text="Ayuda!">
+                    <MudIconButton Icon="@Icons.Material.Filled.QuestionMark" Size="Size.Small" Color="Color.Info" OnClick="ModalAiura" />
+                </MudTooltip>
+                @* <MudButton Variant="Variant.Outlined" OnClick="ProbarPDF" Color="Color.Secondary">PDF EXPORT PRUEBA</MudButton> *@
+            </MudItem>
+            <MudItem xs="12" md="12">
+                @if (showCallAlert)
+                {
+                    <MudAlert Severity="Severity.Info" ShowCloseIcon="true" Dense="true" CloseIconClicked="@CerrarAlerta" Variant="Variant.Outlined"><b>IMPORTANTE: Llenar ambas fechas</b></MudAlert>
+                }
+            </MudItem>
+
+        </MudGrid>
+    </MudItem>
+    <MudGrid>
+        <MudItem xs="12" md="3">
+            <MudText Style="width:100%; text-align:center" Den Typo="Typo.subtitle1"><b>Lineas Picking</b></MudText>
+            <MudSimpleTable Style="overflow-x: auto;" Dense>
+                <thead>
+                    <tr>
+                        <th><b>Sacador</b></th>
+                        <th><b>Bodegas</b></th>
+                        <th><b>Lineas</b></th>
+                        @*<th><b>Bultos</b></th>*@                    
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in ListLineasPicking)
+                    {
+                        <tr>
+                            <td>@row.Sacador</td>
+                            <td>@row.IDBodega</td>
+                            <td>@row.LINEAS</td>
+                            @* <td>@row.BULTOS</td> *@
+                        </tr>
+                    }
+                </tbody>
+            </MudSimpleTable>
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudText Style="width:100%; text-align:center" Typo="Typo.subtitle1"><b>Lineas Packing</b></MudText>
+            <MudSimpleTable Style="overflow-x: auto;" Dense>
+                <thead>
+                    <tr>
+                        <th><b>Sacador</b></th>
+                        @*<th><b>Bodegas</b></th>*@ 
+                        <th><b>Lineas</b></th>
+                        @* <td>@row.BULTOS</td> *@
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in ListLineasPacking)
+                    {
+                        <tr>
+                            <td>@row.Sacador</td>
+                            @*<td>@row.IDBodega</td>*@  
+                                <td>@row.LINEAS</td>
+                            @* <td>@row.BULTOS</td> *@
+                        </tr>
+                    }
+                </tbody>
+            </MudSimpleTable>
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudText Style="width:100%; text-align:center" Typo="Typo.subtitle1"><b>Lineas Reposicion</b></MudText>
+            <MudSimpleTable Style="overflow-x: auto;" Dense>
+                <thead>
+                    <tr>
+                        <th><b>Sacador</b></th>
+                        @*<th><b>Bodegas</b></th>*@
+                        <th><b>Lineas</b></th>
+                        @* <td>@row.BULTOS</td> *@
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in ListLineasReposicion)
+                    {
+                        <tr>
+                            <td>@row.Sacador</td>
+                            @*<td>@row.IDBodega</td>*@ 
+                                <td>@row.LINEAS</td>
+                            @* <td>@row.BULTOS</td> *@
+                        </tr>
+                    }
+                </tbody>
+            </MudSimpleTable>
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudText Style="width:100%; text-align:center" Typo="Typo.subtitle1"><b>Lineas Devolucion</b></MudText>
+            <MudSimpleTable Style="overflow-x: auto;" Dense>
+                <thead>
+                    <tr>
+                        <th><b>Sacador</b></th>
+                        @*<th><b>Bodegas</b></th>*@ 
+                        <th><b>Lineas</b></th>
+                        @* <td>@row.BULTOS</td> *@
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in ListLineasDevoluciom)
+                    {
+                        <tr>
+                            <td>@row.Sacador</td>
+                            @*<td>@row.IDBodega</td>*@
+                            <td>@row.LINEAS</td>
+                            @* <td>@row.BULTOS</td> *@
+                        </tr>
+                    }
+                </tbody>
+            </MudSimpleTable>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading"></PortalAG_V2.Componentes.Loading>

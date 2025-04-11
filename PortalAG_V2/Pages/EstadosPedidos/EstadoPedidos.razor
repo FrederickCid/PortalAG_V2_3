@@ -1,0 +1,82 @@
+﻿@page "/estadoPedidos"
+@inject IDialogService DialogService
+@using PortalAG_V2.Shared.Model.EstadoPedidos;
+@using PortalAG_V2.Componentes.EstadoPedido;
+@using System.Globalization;
+
+<SurveyPrompt Title="Estado Pedido" />
+<MudPaper Style="margin:0 auto;">
+    <MudItem Class="pa-4 m-1" Style="align-content: center">
+        <MudGrid Style="display: flex; align-items:center; ">
+            <MudItem xs="12" md="6">
+                <MudTextField Margin="Margin.Dense" @bind-Value="@NroBusqueda"
+                                 Label="Nro. de Pedido" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"
+                                 Mask="@(new PatternMask("000000000000"))" />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@onclickBusqueda">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Buscando...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Buscar</MudText>
+                    }
+                </MudButton>
+
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+    <MudItem Class="pa-4 m-1">
+        <MudTabs Elevation="2" Rounded="true" Centered="true" @bind-ActivePanelIndex="activeIndex">
+            @{
+
+                foreach (EstadoCantidadNoMOD item in listaRadzenTabsItem)
+                {
+                    var Monto = item.Monto.ToString("c0", CultureInfo.CurrentCulture);
+
+                    <MudTabPanel OnClick="@OnChange" Style=@($"display:flex; flex-direction:column; margin:0; padding:0; width:90px; background:{item.Color}; border-left:1px solid black; border-right:1px solid black; border-top:1px solid black")>
+                        <ChildContent>
+                            <GridEstadoPedidos @ref="@gridPedidos" opcion="@valorOpcion" funcionCargarTabs="CargarTabEstadoCantidad" />
+                        </ChildContent>
+                        <TabContent>
+                            <MudItem  Style="display: flex; flex-direction:column">
+                                <table >
+                                    <tbody>
+                                        <tr>
+                                            <th colspan="2"><MudText Style="font-weight:bold; text-align:center; align-items:center; font-size:12px; ">@item.Estado</MudText></th>
+                                        </tr>
+                                        <tr>
+                                            <th><MudText Style="font-weight:bold; font-size:10px; text-align:left ">PEDIDOS:</MudText></th>
+                                            <td><MudText Style="font-size:10px; text-align:center">@item.Cantidad</MudText></td>
+                                        </tr>
+                                        <tr>
+                                            <th><MudText Style="font-weight:bold; font-size:10px; text-align:left">LINEAS:</MudText></th>
+                                            <td><MudText Style="font-size:10px; text-align:center">@item.Lineas</MudText></td>
+                                        </tr>
+                                        <tr>
+                                            <th><MudText Style="font-weight:bold; font-size:10px; text-align:left">MONTO:</MudText></th>
+                                            <td><MudText Style="font-size:10px; text-align:center">$@(Monto.Replace("€", ""))</MudText></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </MudItem>
+                        </TabContent>
+                    </MudTabPanel>
+                }
+
+            }
+
+        </MudTabs>
+    </MudItem>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="@_Loading"></PortalAG_V2.Componentes.Loading>
+
+
+
+
+
+
+

@@ -1,0 +1,104 @@
+﻿@page "/"
+@using PortalAG_V2.Componentes.ChartIndex
+@using PortalAG_V2.Shared.Model.SolicitudesInformes.ConsultaLineasPickingPacking;
+@* @using ApexCharts *@
+
+<PageTitle>Intranet Central De Andes</PageTitle>
+
+@*<MudItem Style="height:100%; display:flex; flex-direction:row;gap:15px; margin-bottom:20px; justify-content:space-between">
+    <MudText Typo="Typo.h6" Style="text-align:start">Intranet CDA v2</MudText>
+    @{
+        if (!Loaing)
+        {
+            <MudIconButton OnClick="@(() => OpenDrawer(MudBlazor.Anchor.End))" Icon="@Icons.Material.Filled.Settings" aria-label="Setting"></MudIconButton>
+        }
+    }
+</MudItem>*@
+@{
+    // if (ListLineasPicking != null && ListLineasPacking != null && ListLineasReposicion != null && ListLineasPickeadasNoPickeadas != null)
+    // {
+    //     <MudGrid Spacing="2">
+    //         @{
+    //             if (setVisiblePicking1)
+    //             {
+
+    //                 <ChartPieComponent Lista="ListLineasPicking" @ref="ComponentPicking" />
+    //             }
+    //             if (setVisiblePicking2)
+    //             {
+    //                 <ChartPieComponent Lista2="ListLineasPicking2" @ref="ComponentPicking2" />
+    //             }
+    //             if (setVisiblePicking3)
+    //             {
+    //                 <ChartPieComponent Lista3="ListLineasPicking3" @ref="ComponentPicking3" />
+    //             }
+    //             if (setVisiblePacking)
+    //             {
+    //                 <ChartPieComponent ListLineasPacking="ListLineasPacking" @ref="ComponentPacking" />
+    //             }
+    //             if (setVisibleReposiciones)
+    //             {
+    //                 <ChartPieComponent ListLineasReposicion="ListLineasReposicion" @ref="ComponentReposicio" />
+    //             }
+    //             if (setVisiblePickeadasNoPickeadas)
+    //             {
+    //                 <ChartLineasPickeadasNoPickeadas Lista="ListLineasPickeadasNoPickeadas" @ref="ChartLineasPickeadasNoPickeadasComponent" />
+    //             }
+    //             if (setVisibleLineasPendientes)
+    //             {
+    //                 <ChartLineasPendientes nombre="BV_BVN" ListaLineasPendientes="ListaLineasPendientesDTO " @ref="ChartListLineasPendientes" />
+
+    //             }
+    //             if (setVisibleLineasPendientes2)
+    //             {
+    //                 <ChartLineasPendientes nombre="BV_BIT" ListaLineasPendientes="ListaLineasPendientesDTO2 " @ref="ChartListLineasPendientes2" />
+
+    //             }
+    //             if (setVisibleLineasPendientes3)
+    //             {
+    //                 <ChartLineasPendientes nombre="BV_BPM" ListaLineasPendientes="ListaLineasPendientesDTO3 " @ref="ChartListLineasPendientes3" />
+    //             }
+    //             if (setVisibleLineasPendientes4)
+    //             {
+    //                 <ChartLineasPendientes nombre="Packing" ListaLineasPendientes="ListaLineasPendientesDTO4 " @ref="ChartListLineasPendientes4" />
+    //             }
+    //         }
+
+    //     </MudGrid>
+    // }
+
+    if (Loaing)
+
+    {
+        // <MudGrid Spacing="1" Justify="Justify.Center">
+        //     <MudItem md="2">
+        //         @*<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><radialGradient id="a12" cx=".66" fx=".66" cy=".3125" fy=".3125" gradientTransform="scale(1.5)"><stop offset="0" stop-color="#317BFF"></stop><stop offset=".3" stop-color="#317BFF" stop-opacity=".9"></stop><stop offset=".6" stop-color="#317BFF" stop-opacity=".6"></stop><stop offset=".8" stop-color="#317BFF" stop-opacity=".3"></stop><stop offset="1" stop-color="#317BFF" stop-opacity="0"></stop></radialGradient><circle transform-origin="center" fill="none" stroke="url(#a12)" stroke-width="15" stroke-linecap="round" stroke-dasharray="200 1000" stroke-dashoffset="0" cx="100" cy="100" r="70"><animateTransform type="rotate" attributeName="transform" calcMode="spline" dur="2" values="360;0" keyTimes="0;1" keySplines="0 0 1 1" repeatCount="indefinite"></animateTransform></circle><circle transform-origin="center" fill="none" opacity=".2" stroke="#317BFF" stroke-width="15" stroke-linecap="round" cx="100" cy="100" r="70"></circle></svg>
+        //         *@
+        //         <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+        //     </MudItem>
+        // </MudGrid>
+    }
+}
+@*<MudDrawer @bind-Open="@open" Anchor="@anchor" Elevation="1" Variant="@DrawerVariant.Temporary" ClipMode="DrawerClipMode.Always">
+    <MudDrawerHeader Dense="true">
+        <MudText Typo="Typo.button" Align="MudBlazor.Align.Center">Ajuste Indicadores</MudText>
+    </MudDrawerHeader>
+    <MudNavMenu>
+        <MudItem Style="display: flex; flex-direction:row; flex-wrap:wrap">
+            <MudCheckBox T="bool" @bind-Checked="VisiblePicking1" Label="Picking BV_BVN" Color="MudBlazor.Color.Primary"></MudCheckBox>
+            <MudCheckBox T="bool" @bind-Checked="VisiblePicking2" Label="Picking BV_BIT" Color="MudBlazor.Color.Primary"></MudCheckBox>
+            <MudCheckBox T="bool" @bind-Checked="VisiblePicking3" Label="Picking BV_BPM" Color="MudBlazor.Color.Primary"></MudCheckBox>
+            <MudCheckBox T="bool" @bind-Checked="VisiblePacking" Label="Packing" Color="MudBlazor.Color.Primary"></MudCheckBox>
+            <MudCheckBox T="bool" @bind-Checked="VisibleReposiciones" Label="Reposiciones" Color="MudBlazor.Color.Primary"></MudCheckBox>
+            <MudCheckBox T="bool" @bind-Checked="VisiblePickeadasNoPickeadas" Label="Pickeadas y no" Color="MudBlazor.Color.Primary"></MudCheckBox>
+            <MudCheckBox T="bool" @bind-Checked="VisibleLineasPendientes" Label="Pendientes BV_BVN" Color="MudBlazor.Color.Primary"></MudCheckBox>
+            <MudCheckBox T="bool" @bind-Checked="VisibleLineasPendientes2" Label="Pendientes BV_BIT" Color="MudBlazor.Color.Primary"></MudCheckBox>
+            <MudCheckBox T="bool" @bind-Checked="VisibleLineasPendientes3" Label="Pendientes BV_BPM" Color="MudBlazor.Color.Primary"></MudCheckBox>
+            <MudCheckBox T="bool" @bind-Checked="VisibleLineasPendientes4" Label="Pendientes packing" Color="MudBlazor.Color.Primary"></MudCheckBox>
+            <MudButton FullWidth Variant="Variant.Outlined" OnClick="@(() => SetVisibleApply())">Aplicar</MudButton>
+        </MudItem>
+    </MudNavMenu>
+</MudDrawer>*@
+
+@* CheckedChanged="@(() => checkedChanged(VisiblePicking1))" Checked="VisiblePicking1" *@
+

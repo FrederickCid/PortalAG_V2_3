@@ -1,0 +1,63 @@
+﻿@page "/SolicitudInformeDiferencias"
+@using PortalAG_V2.Shared.Model.SolicitudesInformes;
+
+<SurveyPrompt Title="Informe de Diferencias" />
+
+<MudPaper Style="margin=0 auto; max-width:">
+    <MudItem Class="pa-4 m-1">
+        <MudGrid Style="display: flex;align-items:center; ">
+            <MudItem xs="12" md="4">
+                <MudDatePicker @bind-Text="@fInicio" AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))" @ref="@_DatePickerInicio"
+                               DateFormat="dd-MM-yyyy" DisableToolbar="true" Label="Fecha Desde" @bind-Date="dateToday" />
+            </MudItem>
+            <MudItem xs="12" md="4">
+                <MudDatePicker @bind-Text="@fFin" @ref="@_DatePickerfin" AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))"
+                               DateFormat="dd-MM-yyyy" DisableToolbar="true" Label="Fecha Hasta" @bind-Date="dateNull" />
+            </MudItem>
+            <MudItem xs="12" md="4" Style="display: flex">
+                <MudButton Disabled="@(dateToday.ToString() == "" || dateNull.ToString() == "")" OnClick="ProcessSomething" Variant="Variant.Outlined" Color="Color.Primary">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Buscando...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Buscar</MudText>
+                    }
+                </MudButton>
+
+            </MudItem>
+            <MudItem xs="12" md="12">
+                @if (showCallAlert)
+                {
+                    <MudAlert Severity="Severity.Info" ShowCloseIcon="true" Dense="true" CloseIconClicked="@CerrarAlerta" Variant="Variant.Outlined"><b>IMPORTANTE: Llenar ambas fechas</b></MudAlert>
+                }
+            </MudItem>
+
+        </MudGrid>
+        <MudItem>
+            <SfGrid ID="Grid" @ref="Grid" DataSource="@Diferencias" AllowPaging="true" style="width:100%; " Toolbar="@ButtonsGrid" OnToolbarClick="ToolbarClick"
+                    AllowExcelExport="true" AllowSelection="true" AllowFiltering="true" AllowSorting="true" Width="auto" AllowResizing="true">
+                <GridEvents OnToolbarClick="ToolbarClick" TValue="InformeDiferenciaModel"></GridEvents>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(InformeDiferenciaModel.NroPedido) HeaderText="NroPedido" Width="120" TextAlign="TextAlign.Right"></GridColumn>
+                    <GridColumn Field=@nameof(InformeDiferenciaModel.IDOperacion) HeaderText="IDOperacion" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(InformeDiferenciaModel.Linea) HeaderText="Linea" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(InformeDiferenciaModel.IDArticulo) HeaderText="Linea" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(InformeDiferenciaModel.Cantidad) HeaderText="Cantidad" Width="120"> </GridColumn>
+                    <GridColumn Field=@nameof(InformeDiferenciaModel.PrecioVenta) HeaderText="PrecioVenta" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(InformeDiferenciaModel.Fecha) HeaderText="Fecha" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(InformeDiferenciaModel.IDCliente) HeaderText="IDCliente" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(InformeDiferenciaModel.RazonSocial) HeaderText="RazonSocial" Width="150"></GridColumn>
+                    <GridColumn Field=@nameof(InformeDiferenciaModel.IDUsuario) HeaderText="IDUsuario" Width="150"></GridColumn>
+                    <GridColumn Field=@nameof(InformeDiferenciaModel.IDEtapa) HeaderText="IDEtapa" Width="150"></GridColumn>
+                    <GridColumn Field=@nameof(InformeDiferenciaModel.IDEstado) HeaderText="IDEstado" Width="150"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </MudItem>
+    </MudItem>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading"/>
+

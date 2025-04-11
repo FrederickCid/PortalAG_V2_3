@@ -1,0 +1,249 @@
+﻿@page "/notasCredito"
+@using PortalAG_V2.Shared.Model.NotaDeCredito;
+@inject IDialogService DialogServices
+@*@using FullBikeChile.Shared.Response.NotaDeCredito*@
+<SurveyPrompt Title="Notas De Credito" />
+<MudGrid>
+    @*Datos Documento Base*@
+    <MudItem xs="12" lg="6" Style="max-heigth:265px;">
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudGrid>
+                        <MudItem xs="12" md="6" Style="display:flex; flex-direction:row; align-content:space-between; margin-bottom:-14px; align-items:center;">
+                            <MudText Typo="Typo.h6">Documento referencia</MudText>
+                        </MudItem>
+                        <MudItem xs="12" md="6" Style="display:flex; flex-direction:row; align-content:end; margin-bottom:-14px; align-items:end;    justify-content: end;">
+                            <MudCheckBox @bind-Checked="FacturaServicio" T="int">
+                                Fatura Por Servicio
+                            </MudCheckBox>
+                        </MudItem>
+                    </MudGrid>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudGrid>
+                    @{
+                        if (FacturaServicio == 0){
+                            <MudItem xs="12" lg="4">
+                                <MudTextField T="string" Margin="Margin.Dense" Label="Cod. Barras" Variant="Variant.Outlined" @bind-Value="_codBarras"
+                                              OnKeyUp="(x => x.Key != Enter ? null : BuscarDocumento())" />
+                            </MudItem>
+                        }
+                        if(FacturaServicio == 1){
+                            <MudItem xs="12" lg="4">
+                                <MudTextField T="string" Margin="Margin.Dense" Label="Nro. Documuento" Variant="Variant.Outlined" @bind-Value="NroDocumento"
+                                              OnKeyUp="(x => x.Key != Enter ? null : BuscarFactServicio())" />
+                            </MudItem>
+                        }
+                    }
+                   
+                    <MudItem xs="12" lg="4">
+                        <MudTextField T="string" Margin="Margin.Dense" Label="Doc. referencia" ReadOnly="true" Variant="Variant.Outlined" @bind-Value="_docReferencia" />
+                    </MudItem>
+                    <MudItem xs="12" lg="4">
+                        <MudTextField T="string" Margin="Margin.Dense" Label="Fecha" ReadOnly="true" Variant="Variant.Outlined" @bind-Value="_fechaDocRef" />
+                    </MudItem>
+                </MudGrid>
+
+                <MudGrid>
+                    <MudItem xs="12" lg="4">
+                        <MudTextField T="string" Margin="Margin.Dense" Label="Monto Doc. Ref." Format="n0" ReadOnly="true" Variant="Variant.Outlined" @bind-Value="_montoDocRef" />
+                    </MudItem>
+                    <MudItem xs="12" lg="4">
+                        <MudTextField T="string" Margin="Margin.Dense" Label="Rut" ReadOnly="true" Variant="Variant.Outlined" @bind-Value="_rutRef" />
+                    </MudItem>
+                    <MudItem xs="12" lg="4">
+                        <MudTextField T="string" Margin="Margin.Dense" Label="Razon social" ReadOnly="true" Variant="Variant.Outlined" @bind-Value="_razonSocialRef" />
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    @*Datos Documento Nota Credito*@
+    <MudItem xs="12" lg="6">
+        <MudCard Style="height:100%">
+            <MudCardHeader>
+                <CardHeaderContent>
+                                            <MudItem xs="12" md="6" Style="display:flex; flex-direction:row; align-content:space-between; margin-bottom:-14px; align-items:center;">
+
+                    <MudText Typo="Typo.h6">Datos nota crédito</MudText>
+                    </MudItem>
+
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudGrid>
+                    <MudItem xs="12" lg="6">
+                        <MudSelect Margin="Margin.Dense" @ref="_refTipoNC" T="string" Value="_tipoDocumentoSelect" Variant="Variant.Outlined" ValueChanged="((x)=>ChangeTipoDocumento(x))"
+                                   ToStringFunc="@converterTipoDocumento" Label="Tipo de NC">
+                            @foreach (string item in listTiposNC)
+                            {
+                                <MudSelectItem Value="@item">@item</MudSelectItem>
+                            }
+                        </MudSelect>
+
+
+                    </MudItem>
+                    <MudItem xs="12" lg="6">
+                        <MudSelect Margin="Margin.Dense" @ref="_refTipoDevolucion" T="string" Value="_tipoDevolucionSelect" Variant="Variant.Outlined" ValueChanged="((x)=>ChangeTipoDevolucion(x))"
+                                   ToStringFunc="@converterTipoDocumento" Label="Tipo de devolucion" Disabled="_boolTipoDevolucion">
+                            @foreach (string item in listTiposDevolucion)
+                            {
+                                <MudSelectItem Value="@item">@item</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+
+                </MudGrid>
+
+                <MudGrid>
+                    <MudItem xs="12" lg="4">
+                        <MudTextField T="string" Margin="Margin.Dense" Label="Fecha proceso" ReadOnly="true" Variant="Variant.Outlined" @bind-Value="_fechaProceso" />
+                    </MudItem>
+                    <MudItem xs="12" lg="4">
+                        <MudTextField T="string" Margin="Margin.Dense" ReadOnly="true" Label="Nro. Solicitud" Variant="Variant.Outlined" @bind-Value="_nroNotaCredito" />
+                    </MudItem>
+                    <MudItem xs="12" lg="4">
+                        <MudTextField T="string" Margin="Margin.Dense" Label="Comentarios" ReadOnly="_boolComentario" Variant="Variant.Outlined" @bind-Value="_comentario" />
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    @*Datos Detalle*@
+    <MudItem xs="12" lg="12">
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Detalle nota credito</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudGrid>
+                    @{
+                        if (!_boolTipoNC)
+                        {
+
+                            <MudItem xs="12" lg="8">
+                                <MudGrid>
+                                    @{
+                                        if (_disableManual)
+                                        {
+                                            <MudItem xs="12" md="2">
+                                                <MudTextField T="string" @bind-Value="_idArticulo" Label="IDArticulo" Variant="Variant.Outlined"
+                                                              OnKeyUp="(x => x.Key != Enter ? null : BuscarIDArticulo(x))" OnBlur="BuscarIDArticuloFocus" />
+                                            </MudItem>
+
+                                            <MudItem xs="12" md="3">
+                                                <MudTextField T="string" @bind-Value="_nombreArticulo" Label="Articulo" ReadOnly="true" Variant="Variant.Outlined" />
+                                            </MudItem>
+
+                                            <MudItem xs="12" md="2">
+                                                <MudNumericField HideSpinButtons="true" T="double" Label="Cantidad" @bind-Value="_totalPorArticulo"
+                                                                 Variant="Variant.Outlined" OnKeyUp="(x => x.Key != Enter ? null : VerificarTotalArticulo(x))" OnBlur="VerificarTotalArticuloFocus" />
+                                            </MudItem>
+                                            <MudItem xs="12" md="4" Class="d-flex flex-grow-1 gap-4 pt-6 justify-center">
+                                                <MudTooltip Text="Agregar">
+                                                    <MudIconButton Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Secondary" Disabled="_errorValidacion" aria-label="Agregar" OnClick="AgregarArticulo"></MudIconButton>
+                                                </MudTooltip>
+                                                <MudTooltip Text="Eliminar">
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="Eliminar" OnClick="EliminarArticulo"></MudIconButton>
+                                                </MudTooltip>
+                                                <MudTooltip Text="Nuevo detalle">
+                                                    <MudIconButton Icon="@Icons.Material.Filled.FiberNew" Color="Color.Secondary" aria-label="Nuevo detalle" OnClick="NuevoDetalle"></MudIconButton>
+                                                </MudTooltip>
+                                                <MudTooltip Text="Cargar todo">
+                                                    <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="Color.Secondary" aria-label="Cargar todo" OnClick="CargarTodo"></MudIconButton>
+                                                </MudTooltip>
+
+                                            </MudItem>
+                                        }
+                                    }
+
+                                    <MudItem xs="12">
+                                        <MudTable Items="@_listDetalleNC" Hover="true" Breakpoint="Breakpoint.Sm" @ref="_tableDetalle" T="ProductoNCDTODevolver" FixedHeader="true" FixedFooter="true" Height="350px">
+                                            <HeaderContent>
+                                                <MudTh>Linea</MudTh>
+                                                <MudTh>IDArticulo</MudTh>
+                                                <MudTh>Nombre</MudTh>
+                                                <MudTh>Cantidad</MudTh>
+                                                <MudTh>PrecioVenta</MudTh>
+                                                <MudTh>CantidadADevolver</MudTh>
+                                            </HeaderContent>
+                                            <RowTemplate>
+                                                <MudTd DataLabel="Linea">@context.Linea</MudTd>
+                                                <MudTd DataLabel="IDArticulo">@context.IDArticulo</MudTd>
+                                                <MudTd DataLabel="Nombre">@context.Nombre</MudTd>
+                                                <MudTd DataLabel="Cantidad">@context.Cantidad</MudTd>
+                                                <MudTd DataLabel="PrecioVenta">@context.PrecioVenta.ToString("n0")</MudTd>
+                                                <MudTd DataLabel="CantidadADevolver">@context.CantidadADevolver</MudTd>
+                                            </RowTemplate>
+                                        </MudTable>
+                                    </MudItem>
+
+                                </MudGrid>
+
+                            </MudItem>
+                            <MudItem xs="12" lg="4">
+                                <MudGrid>
+                                    <MudItem xs="12">
+                                        <MudNumericField HideSpinButtons="true" T="double" Label="Neto" @bind-Value="_netoVC" Format="n0" ReadOnly="true" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudNumericField HideSpinButtons="true" T="double" Label="Descuento" @bind-Value="_descuentoVC" Format="n0" ReadOnly="true" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudNumericField HideSpinButtons="true" T="double" Label="Iva" @bind-Value="_ivaVC" Format="n0" ReadOnly="true" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudTextField T="double" Label="Total" @bind-Value="_totalVC" Format="n0" ReadOnly="true" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                    <MudItem xs="6" xl="6" sm="12" md="12" lg="6">
+                                        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Send" IconColor="Color.Secondary" OnClick="ProcesarNC" Size="Size.Large">Procesar</MudButton>
+                                    </MudItem>
+                                    <MudItem xs="6" xl="6" sm="12" md="12" lg="6">
+                                        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Send" IconColor="Color.Secondary" OnClick="LimpiarValoresNC" Size="Size.Large">Nueva solicitud</MudButton>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudItem>
+                        }
+                        else
+                        {
+                            <MudItem xs="12" lg="8">
+                                <MudTextField T="string" Label="Concepto Valor Nota de Credito" @bind-Value="_motivoDev" Variant="Variant.Outlined" />
+                            </MudItem>
+                            <MudItem xs="12" lg="4">
+                                <MudGrid>
+                                    <MudItem xs="12">
+                                        <MudNumericField HideSpinButtons="true" T="double" Label="Neto" @bind-Value="_netoVC" Format="n0" ReadOnly="false" Variant="Variant.Outlined"
+                                                         OnKeyUp="(x => x.Key != Enter ? null : CalcularMontosValorConcepto(x))" OnBlur="CalcularMontosValorConcepto" />
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudNumericField HideSpinButtons="true" T="double" Label="Descuento" @bind-Value="_descuentoVC" Format="n0" ReadOnly="true" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudNumericField HideSpinButtons="true" T="double" Label="Iva" @bind-Value="_ivaVC" Format="n0" ReadOnly="true" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudTextField T="double" Label="Total" @bind-Value="_totalVC" Format="n0" ReadOnly="true" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                    <MudItem xs="6" xl="6" sm="12" md="12" lg="6">
+                                        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Send" IconColor="Color.Secondary" OnClick="ProcesarNC" Size="Size.Large">Procesar</MudButton>
+                                    </MudItem>
+                                    <MudItem xs="6" xl="6" sm="12" md="12" lg="6">
+                                        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Send" IconColor="Color.Secondary" OnClick="LimpiarValoresNC" Size="Size.Large">Nueva solicitud</MudButton>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudItem>
+                        }
+                    }
+                </MudGrid>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+
+</MudGrid>

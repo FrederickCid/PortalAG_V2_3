@@ -1,0 +1,25 @@
+﻿@using agDataAccess.Models
+
+<MudDialog>
+    <DialogContent>
+    <MudItem>
+        <SfGrid ID="Grid" @ref="Grid" DataSource="@Detalle" AllowPaging="true" style="width:100%; " Toolbar="@ButtonsGrid" OnToolbarClick="ToolbarClick"
+                AllowExcelExport="true" AllowSelection="true" AllowFiltering="true" AllowSorting="true" Width="auto" AllowResizing="true">
+            <GridEvents TValue="DetalleBultosModel" OnToolbarClick="ToolbarClick"></GridEvents>
+            <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+            <GridColumns>
+                <GridColumn Field=@nameof(DetalleBultosModel.LineaDetalle) HeaderText="Linea" Width="80" TextAlign="TextAlign.Right"></GridColumn>
+                <GridColumn Field=@nameof(DetalleBultosModel.IDArticulo) HeaderText="IDArticulo" Width="150"></GridColumn>
+                <GridColumn Field=@nameof(DetalleBultosModel.IDBodega) HeaderText="Bodega" Width="80"></GridColumn>
+                <GridColumn Field=@nameof(DetalleBultosModel.UnidadxBulto) HeaderText="Unidad x Bulto" Width="120"> </GridColumn>
+                <GridColumn Field=@nameof(DetalleBultosModel.CantidadEnBulto) HeaderText="Cantidad En Bulto" Width="120"></GridColumn>
+                <GridColumn Field=@nameof(DetalleBultosModel.FechaActualizacion) HeaderText="Fecha se agrego al bulto" Width="120"></GridColumn>
+                @* <GridColumn Field=@nameof(DetalleBultosModel.IDEstado) HeaderText="PrecioxUnidad" Width="120"></GridColumn> *@
+            </GridColumns>
+        </SfGrid>
+    </MudItem>
+   </DialogContent>
+   <DialogActions>
+        <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="Cancel" Style="align-items:flex-end">Cerrar</MudButton>
+   </DialogActions>
+</MudDialog>

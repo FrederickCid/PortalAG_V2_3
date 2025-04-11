@@ -1,0 +1,16 @@
+﻿
+<MudPaper Style="margin=0 auto; max-width:">
+    <MudItem Class="pa-4 m-1">
+        <MudDataGrid MultiSelection="true" Items="@Lineas" Bordered="true" Dense="true"
+                     RowStyle="  font-style:italic;
+                                text-aling:center;">
+            <Columns>                
+                <PropertyColumn Property="x => x.LineasBV_BVN" Title="Lineas BV BVN" />
+                <PropertyColumn Property="x => x.LineasBV_BIT" Title="Lineas BV BIT" />
+                <PropertyColumn Property="x => x.LineasBV_BPM" Title="Lineas BV BPM" />
+            </Columns>
+        </MudDataGrid>
+    </MudItem>
+</MudPaper>
+
+<PortalAG_V2.Componentes.Loading Visibility="@Loading"></PortalAG_V2.Componentes.Loading>

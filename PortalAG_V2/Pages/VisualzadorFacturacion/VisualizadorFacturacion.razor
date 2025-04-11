@@ -1,0 +1,79 @@
+﻿@page "/visualizadorFacturacion"
+
+
+
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Popups
+@using PortalAG_V2.Componentes
+@using PortalAG_V2.Shared.Model.VisualzadorFacturacion.VisualzadorFacturacionDTO
+
+@{
+    string? titulo = $"Actualizará automáticamente en: {Count} segundos.";
+}
+
+<SurveyPrompt Title="@titulo" />
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-lg-10 col-md-8 col-sm-6 col-xs-4">
+            <div class="col-md-1">
+                <SfButton CssClass="e-btn e-outline e-primary" IconCss="e-icons e-refresh" @onclick=@Actualizar>Actualizar</SfButton>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+
+<SfGrid ID="MyGrid" @ref="Grid" DataSource="FacturasList" AllowPaging="true" AllowSelection="true" AllowExcelExport="true" AllowGrouping="true"
+        AllowFiltering="true" AllowSorting="true" Width="100%" Height="100%" GridLines="GridLine.Both">
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu" />
+    <GridEvents CommandClicked="OnCommandClicked" TValue="PorFacturarDTO"> </GridEvents>
+    <GridPageSettings PageSize="20" />
+    <GridColumns>
+        <GridColumn Field="@nameof(PorFacturarDTO.Linea)" HeaderText="#" IsPrimaryKey="true" Width="50" Format="###.##" />
+        <GridColumn Field="@nameof(PorFacturarDTO.NroDocumento)" HeaderText="Pedido" Width="100" Format="###.##" />
+        <GridColumn Field="@nameof(PorFacturarDTO.FechaAutorizacion)" HeaderText="Fecha" Format="d" Width="100" />
+        <GridColumn Field="@nameof(PorFacturarDTO.RazonSocial)" HeaderText="Cliente" Width="200" />
+        <GridColumn Field="@nameof(PorFacturarDTO.Vendedor)" HeaderText="Vendedor" Width="100" />
+        <GridColumn Field="@nameof(PorFacturarDTO.TotalVenta)" HeaderText="Total" Width="100" Format="n0" />
+        <GridColumn Field="@nameof(PorFacturarDTO.TotalFacturas)" HeaderText="Facturas" Width="100" Format="n0" />
+        <GridColumn HeaderText="Ver Detalle" TextAlign="TextAlign.Center" Width="150">
+            <GridCommandColumns>
+                <GridCommandColumn ButtonOption="@(new CommandButtonOptions(){ Content = "Detalle", CssClass = "e-flat" })" Title="View"></GridCommandColumn>
+            </GridCommandColumns>
+        </GridColumn>
+        <GridColumn HeaderText="Estado" TextAlign="TextAlign.Center" Width="150">
+            <Template>
+                @{
+                    var status = (context as PorFacturarDTO);
+
+                    if (status?.ErrorUltimoProceso == "")
+                    {
+                        <div id="myProgress" class="pbarPro">
+                            <div id="myBar" style="width:120px" class="barPro">
+                                <div id="label" class="barlabelPendienteProcesar">Por procesar</div> 
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div id="myProgress" class="pbarNo">
+                            <div id="myBar" style="width:120px" class="barNo">
+                                <div id="label" class="barlabelNo">No facturado</div>
+                            </div>
+                        </div>
+                    }                   
+                }
+            </Template>
+        </GridColumn>
+        <GridColumn Field="@nameof(PorFacturarDTO.ErrorUltimoProceso)" HeaderText="Error" Width="250"></GridColumn>
+    </GridColumns>
+
+</SfGrid>
+
+
+<PopUp @ref="popup" />
+<Loading @ref="@loading" />

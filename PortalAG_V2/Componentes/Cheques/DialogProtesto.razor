@@ -1,0 +1,22 @@
+﻿<MudDialog>
+    <TitleContent>
+        Prosteta De Cheque
+    </TitleContent>
+    <DialogContent>
+        <MudItem Style="display:flex;flex-direction:column">
+            <MudText>
+                ¿Seleccione la nueva fecha?
+            </MudText>
+            <MudDatePicker Label="Nueva fecha" @bind-Date="_date" @bind-Text="@Fecha" />
+            <MudText>
+                ¿Porque Protesta el Cheque?
+            </MudText>
+            <MudTextField @bind-Value="Respuesta" T="string" Label="Comentario" Variant="Variant.Outlined" Lines="3" />
+        </MudItem>
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Confirmacion">Ok</MudButton>
+    </DialogActions>
+</MudDialog>

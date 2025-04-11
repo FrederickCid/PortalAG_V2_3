@@ -1,0 +1,265 @@
+﻿@using Newtonsoft.Json;
+@using PortalAG_V2.Shared.Model.AvisoDePago;
+@using PortalAG_V2.Shared.Services;
+@inject SfDialogService DialogService
+
+<MudDialog Class="w-100 h-55">
+    <DialogContent>
+        <MudText Typo="Typo.h6">ID Cliente: @args.IDCliente</MudText>
+        <br />
+        <MudGrid Class="d-inline-flex">
+            <MudItem xs="8">
+                <MudTextField Style="height: 41px" T="string" @bind-Value="args.RazonSocial" ReadOnly="true" Label="Razon Social" Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="4">
+                <MudTextField Style="height: 41px" T="int" @bind-Value="args.NroPedido" ReadOnly="true" Label="Numero Pedido" Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="6">
+                <MudNumericField Style="height: 41px" T="string" @bind-Value="args.Fono" Label="Telefono" Variant="Variant.Outlined" HideSpinButtons="true"/>
+            </MudItem>
+                <MudItem xs="6">
+                    <MudNumericField Style="height: 41px" T="string" @bind-Value="args.Celular" Label="Celular" Variant="Variant.Outlined" HideSpinButtons="true" />
+                </MudItem>
+            <br />
+
+            <MudItem xs="12">
+                <MudSelect T="Direcciones" Style="height: 45px;" Value="mostrarDirecciones" Label="Seleccione Direccion" Margin="Margin.Dense" Dense="true" Variant="Variant.Outlined" ToStringFunc="@convertDirecciones" ValueChanged="((x) => DireccionSelect(x))">
+                    @foreach (Direcciones item in _listDirecciones)
+                    {
+                        <MudSelectItem Value="@item">@item.Direccion</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudTextField Style="height: 41px" T="string" @bind-Value="_direccionT" ReadOnly="true" Label="Direccion" Variant="Variant.Outlined" />
+            </MudItem>
+
+            <MudItem xs="6">
+                <MudTextField Style="height: 41px" T="string" @bind-Value="_comuna" ReadOnly="true" Label="Comuna" Variant="Variant.Outlined" />
+            </MudItem>
+
+            <MudItem xs="6">
+                <MudTextField Style="height: 41px" T="string" @bind-Value="_ciudad" ReadOnly="true" Label="Ciudad" Variant="Variant.Outlined" />
+            </MudItem>
+
+            <MudItem xs="6">
+                <MudTextField Style="height: 41px" T="string" @bind-Value="_region" ReadOnly="true" Label="Region" Variant="Variant.Outlined" />
+            </MudItem>
+
+            @* <MudItem>
+                <MudSelect T="Direcciones" Style="height: 41px" Value="mostrarDirecciones" Label="Seleccione" Margin="Margin.Dense" Dense="true" Variant="Variant.Outlined" ToStringFunc="@convertComuna">
+                    @foreach (Direcciones item in _listDirecciones)
+                    {
+                        <MudSelectItem Value="@item">@item.Comuna</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem> *@
+
+            <MudItem xs="6">
+                <MudSelect T="Transportes" Style="height: 41px" Value="mostrarTransportes" Placeholder="@args.Transporte" Label="Seleccione Transporte" Margin="Margin.Dense" Dense="true" Variant="Variant.Outlined" ToStringFunc="@convertTransportes" ValueChanged="((x) => TranportesSelect(x))">
+                    @foreach (Transportes item in _listTransportes)
+                    {
+                        <MudSelectItem Value="@item">@item.Transporte</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudTextField T="string" Placeholder="Observacion" @bind-Value="_observacion" Margin="Margin.Dense" Dense="true" Variant="Variant.Outlined" />
+            </MudItem>
+            
+        </MudGrid>
+    </DialogContent>
+    
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" OnClick="Cancel" style="margin-top: 40px;">Cerrar</MudButton>
+        <MudItem>
+            @if (_processing == true)
+            {
+                <MudProgressCircular Color="Color.Primary" Style="margin-left:30px;" Indeterminate="true" />
+            }
+            else
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="Submit" style="margin-top: 40px;">Confirmar</MudButton>
+            }
+        </MudItem>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public ConfirmacionDespachoModel args { get; set; }
+
+    private ClientFactory conexion;
+
+    private bool _processing = false;
+    string _comuna = "";
+    string _ciudad = "";
+    string _region = "";
+    string _observacion = "";
+    string _direccionT = "";
+
+    Transportes mostrarTransportes = new Transportes();
+    public List<Transportes> _listTransportes = new List<Transportes>();
+
+    Direcciones mostrarDirecciones = new Direcciones();
+    public List<Direcciones> _listDirecciones = new List<Direcciones>();
+
+    private const string urlTransportes = "api/v2/ConfirmacionDespacho/Transportes";
+    private const string urlConfirmacion = "api/v2/ConfirmacionDespacho/ConfirmarDespacho";
+    private const string urlListadoDirecciones = "api/v2/ConfirmacionDespacho/ListadoDirecciones";
+
+    public class DatosDespacho
+    {
+        public string DireccionD { get; set; }
+        public string FonoD { get; set; }
+        public string TransporteD { get; set; }
+        public int NroPedidoD { get; set; }
+        public string ComunaD { get; set; }
+        public string CiudadD { get; set; }
+        public string RegionD { get; set; }
+        public string Comentario { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        conexion = new MainServices().Formularios;
+        var auxTransportes = await conexion.HttpClientInstance.GetAsync($"{urlTransportes}");
+        if (auxTransportes.IsSuccessStatusCode)
+        {
+            try
+            {
+                _listTransportes = JsonConvert.DeserializeObject<List<Transportes>>(await auxTransportes.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                _snackBar.Add("Error al deserealizar lista transportes", Severity.Error);
+            }
+        }
+        else
+        {
+            _snackBar.Add("Error al consultar API Tranpsortes", Severity.Error);
+        }
+
+        var auxDirecciones = await conexion.HttpClientInstance.GetAsync($"{urlListadoDirecciones}/{args.IDCliente}");
+        if (auxDirecciones.IsSuccessStatusCode)
+        {
+            try
+            {
+                _listDirecciones = JsonConvert.DeserializeObject<List<Direcciones>>(await auxDirecciones.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                _snackBar.Add("Error al deserealizar lista direcciones", Severity.Error);
+            }
+        }
+        else
+        {
+            _snackBar.Add("Error al consultar API Direcciones", Severity.Error);
+        }
+    }
+
+    public async Task TranportesSelect(Transportes args2)
+    {
+        mostrarTransportes = args2;
+    }
+
+    public async Task DireccionSelect(Direcciones args3)
+    {
+        mostrarDirecciones = args3;
+        _comuna = args3.Comuna;
+        _ciudad = args3.Ciudad;
+        _region = args3.Region;
+        _direccionT = args3.Direccion +" "+ args3.NroDireccion;
+    }
+
+    private async Task Submit()
+    {
+        bool prompt = await DialogService.ConfirmAsync("Esta seguro de confirmar esta direccion?");
+        if (prompt)
+        {
+            conexion = new MainServices().Formularios;
+            _processing = true;
+            var _direccion = mostrarDirecciones.Direccion + " " + mostrarDirecciones.NroDireccion;
+            var _fono = args.Fono;
+            string _transporte = String.IsNullOrEmpty(mostrarTransportes.Transporte) ? mostrarTransportes.Transporte : args.Transporte;
+            var _nroPedido = args.NroPedido;
+
+            if (!System.String.IsNullOrEmpty(mostrarDirecciones.Direccion))
+            {
+                if (!System.String.IsNullOrEmpty(mostrarTransportes.Transporte))
+                {
+                    DatosDespacho data = new DatosDespacho
+                        {
+                            DireccionD = _direccion,
+                            ComunaD = _comuna,
+                            CiudadD = _ciudad,
+                            RegionD = _region,
+                            FonoD = _fono,
+                            TransporteD = _transporte,
+                            NroPedidoD = _nroPedido,
+                            Comentario = _observacion
+                        };
+
+                    var auxConfirmarDespacho = await conexion.HttpClientInstance.PostAsJsonAsync<DatosDespacho>(urlConfirmacion, data);
+                    if (auxConfirmarDespacho.IsSuccessStatusCode)
+                    {
+                        _processing = false;
+                        MudDialog.Close(DialogResult.Ok(true));
+                    }
+                    else
+                    {
+                        _processing = false;
+                        _snackBar.Add("Error al confirmar despacho", Severity.Error);
+                    }
+                }
+                else
+                {
+                    _transporte = args.Transporte;
+                    DatosDespacho data = new DatosDespacho
+                        {
+                            DireccionD = _direccion,
+                            ComunaD = _comuna,
+                            CiudadD = _ciudad,
+                            RegionD = _region,
+                            FonoD = _fono,
+                            TransporteD = _transporte,
+                            NroPedidoD = _nroPedido,
+                            Comentario = _observacion
+                        };
+
+                    var auxConfirmarDespacho = await conexion.HttpClientInstance.PostAsJsonAsync<DatosDespacho>(urlConfirmacion, data);
+                    if (auxConfirmarDespacho.IsSuccessStatusCode)
+                    {
+                        _processing = false;
+                        MudDialog.Close(DialogResult.Ok(true));
+                    }
+                    else
+                    {
+                        _processing = false;
+                        _snackBar.Add("Error al confirmar despacho", Severity.Error);
+                    }
+                }
+            }
+            else
+            {
+                _processing = false;
+                _snackBar.Add("Por Favor seleccionar direccion!", Severity.Error);
+            }
+        }
+        else
+        {
+
+        }
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    Func<Transportes, string> convertTransportes = p => p.Transporte;
+    Func<Direcciones, string> convertDirecciones = p => p.Direccion;
+    Func<Direcciones, string> convertComuna = p => p.Comuna;
+    Func<Direcciones, string> convertCiudad = p => p.Ciudad;
+}

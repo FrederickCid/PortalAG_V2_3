@@ -1,0 +1,259 @@
+﻿@using agDataAccess.Models;
+@inject IDialogService DialogService;
+
+<MudDialog>
+    <TitleContent>
+        <MudItem Style="display:flex; flex-direction: row ; gap: 5px; align-content: center; align-items: center; margin-bottom:-10px">
+            @if (Lista.SiPedidoWeb == 0 && Lista.SiPedidoMKT == 0)
+            {
+
+                <MudText Style="font-weight:bold; font-size:20px">Pedido Numero: #@Lista.NroDocumento </MudText>
+            }
+            @if (Lista.SiPedidoWeb == 1)
+            {
+                <MudText Style="font-weight:bold; font-size:20px">Pedido Numero: #@Lista.NroDocumento </MudText>
+
+                <MudChip Color="Color.Info"><MudText Style="font-weight:bold; font-size:18px; color:white">WEB</MudText></MudChip>
+            }
+            @if (Lista.SiPedidoMKT == 1 && Lista.IDCliente == "77261280-Kc")
+            {
+                <MudText Style="font-weight:bold; font-size:20px">Pedido Numero: #@Lista.NroDocumento </MudText>
+
+                <MudChip Color="Color.Success"><MudText Style="font-weight:bold; font-size:18px; color:white">Carga Falabella</MudText></MudChip>
+            }
+        </MudItem>
+    </TitleContent>
+    <DialogContent>
+        <div style="display: flex; flex-direction: column">
+            <MudGrid Spacing="2">
+                <MudItem md="12">
+                    <table style="width:100%;">
+                        <tbody>
+                            <tr>
+                                <th>
+                                    <MudText><b>Nombre Del Vendedor:</b></MudText>
+                                </th>
+                                <td>
+                                    <MudText> @Nombre </MudText>
+                                </td>
+                                <th>
+                                    <MudText><b>ID Operacion:</b></MudText>
+                                </th>
+                                <td>
+                                    <MudText>@Lista.IDOperacion</MudText>
+                                </td>
+                                <th>
+                                    <MudText><b>Nro. HR:</b></MudText>
+                                </th>
+                                <td>
+                                    <MudText>@Lista.NroHR</MudText>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <MudText><b>Razon Social:</b></MudText>
+                                </th>
+                                <td>
+                                    <MudText> @RSocial</MudText>
+                                </td>
+                                <th>
+                                    <MudText><b>Lineas:</b></MudText>
+                                </th>
+                                <td>
+                                    <MudText>@Lista.LineasCalculoBase</MudText>
+                                </td>
+                                <th>
+                                    <MudText><b>Nro. Pedido FB:</b></MudText>
+                                </th>
+                                <td>
+                                    <MudText>@Lista.NroPedidoFB</MudText>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <MudText><b>Rut RS:</b></MudText>
+                                </th>
+                                <td>
+                                    <MudText> @RutRS</MudText>
+                                </td>
+                                <th>
+                                    <MudText><b>Cant. de Documentos:</b></MudText>
+                                </th>
+                                <td>
+                                    @{
+                                        if (Lista.Facturas is null)
+                                        {
+                                            <MudText>0</MudText>
+                                        }
+                                        else
+                                        {
+                                            <MudText>@Lista.Facturas?.Count().ToString() <MudTooltip Text="VER"> <MudIconButton OnClick="VerFacturas" Icon="@Icons.Material.Filled.RemoveRedEye" Color="Color.Info" Size="Size.Small" /></MudTooltip></MudText>
+
+                                        }
+                                    }
+
+                                </td>                              
+                                <th>
+                                    <MudText><b>IDOperacion FB:</b></MudText>
+                                </th>
+                                <td>
+                                    <MudText>@Lista.IDOperacionFB</MudText>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <MudText><b>Fecha de Solicitud:</b></MudText>
+                                </th>
+                                <td>
+                                    <MudText> @FechaSolicitud</MudText>
+                                </td>
+                                <th>
+                                    <MudText><b>Faturado:</b></MudText>
+                                </th>
+                                <td>
+                                    <MudText>
+                                        @{
+                                            if (Lista.IDEstadoOriginal == 5 && Lista.IDEtapaOriginal == 5)
+                                            {
+                                                <td>✅</td>
+                                            }
+                                            else
+                                            {
+                                                <td>❌</td>
+                                            }
+                                        }
+                                    </MudText>
+                                </td>
+                                <th>
+                                    <MudText><b>Nro. Orden:</b></MudText>
+                                </th>
+                                <th>
+                                    <MudText>@Lista.NroOrden</MudText>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <MudText><b>Estado:</b></MudText>
+                                </th>
+                                <th>
+                                    <TextComponent IDEstadoPedido="Lista.IDEstado" IDEtapaPedido="Lista.IDEtapa" IDEstadoOriginalPedido="Lista.IDEstadoOriginal" IDEtapaOriginalPedido="Lista.IDEtapaOriginal" estadoPedido="Lista" />
+                                </th>
+                                <th>
+                                    <MudText><b>Monto Total:</b></MudText>
+                                </th>
+                                <th>
+                                    <MudText>@Lista.MontoTotal.ToString("$ ###,###,###")</MudText>
+                                </th>                           
+                            </tr>
+                        </tbody>
+                    </table>
+                </MudItem>
+
+            </MudGrid>
+            <hr style="width:100%; border: 2px solid black" />
+            <MudItem Style="display:flex; flex-direction:row; width: 100%; gap: 25px; margin: 0 auto; overflow-x: scroll">
+                @{
+                    if (option == "Cotizacion")
+                    {
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column; justify-content: space-between;">
+                            <CardEstadoPedidos titulo="COTIZACIÓN" inicio="@Lista.FechaInicioCoticacion" termino="@Lista.FechaTemrinoCotizacion" responsable="@Lista.Vendedor" sla="@CalculoSLA2(Lista.FechaInicioCoticacion, Lista.FechaTemrinoCotizacion,2.2)" />
+                            <CardEstadoPedidos titulo="AUTORIZACIÓN" inicio="@Lista.FechaInicioAutorizacion" termino="@Lista.FechaTerminoAutorizacion" responsable="@Lista.IDUsuarioAutorizacion" sla="@CalculoSLA2(Lista.FechaInicioAutorizacion, Lista.FechaTerminoAutorizacion,2.2)" />
+                            <LeyendaEstadoPedido />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardEstadoPedidos titulo="REPOSICION BPM" />
+                            <CardEstadoPedidos titulo="REPOSICION BIT" />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardTiempoEspera titulo="ESPERA PICKING BVN" inicio="@Lista.FechaTerminoAutorizacion" termino="@Lista.FechaInicioPickingBV_BVN" sla="@CalculoSLA2(Lista.FechaTerminoAutorizacion, Lista.FechaInicioPickingBV_BVN,1.35)" />
+                            <CardTiempoEspera titulo="ESPERA PICKING BIT" inicio="@Lista.FechaTerminoAutorizacion" termino="@Lista.FechaInicioPickingBV_BIT" sla="@CalculoSLA2(Lista.FechaTerminoAutorizacion, Lista.FechaInicioPickingBV_BIT,1.35)" />
+                            <CardTiempoEspera titulo="ESPERA PICKING BPM" inicio="@Lista.FechaTerminoAutorizacion" termino="@Lista.FechaInicioPickingBV_BPM" sla="@CalculoSLA2(Lista.FechaTerminoAutorizacion, Lista.FechaInicioPickingBV_BPM,1.35)" />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardEstadoPedidos titulo="PICKING BVN" />
+                            <CardEstadoPedidos titulo="PICKING BIT" />
+                            <CardEstadoPedidos titulo="PICKING BPM" />
+                        </MudItem>
+                        <MudItem Style="gap:20px; display:flex; flex-direction:column">
+                            <CardTiempoEspera />
+                            <CardTiempoEspera />
+                            <CardTiempoEspera />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardEstadoPedidos titulo="REVISION BVN" />
+                            <CardEstadoPedidos titulo="REVISION BIT" />
+                            <CardEstadoPedidos titulo="REVISION BPM" />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardEstadoPedidos titulo="FACTURACION" />
+                            <CardEstadoPedidos titulo="LIBERACION" />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardEstadoPedidos titulo="EN HOJA DE RUTA" />
+                            <CardEstadoPedidos titulo="J A D" />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardEstadoPedidos titulo="EN CAMION" />
+                            <CardEstadoPedidos titulo="EN RUTA" />
+                            <CardEstadoPedidos titulo="ENTREGADO" />
+                        </MudItem>
+                    }
+                    else
+                    {
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column; justify-content: space-between;">
+                            <CardEstadoPedidos titulo="COTIZACIÓN" inicio="@Lista.FechaInicioCoticacion" termino="@Lista.FechaTemrinoCotizacion" responsable="@Lista.Vendedor" sla="@CalculoSLA2(Lista.FechaInicioCoticacion, Lista.FechaTemrinoCotizacion,2.2)" />
+                            <CardEstadoPedidos titulo="AUTORIZACIÓN" inicio="@Lista.FechaInicioAutorizacion" termino="@Lista.FechaTerminoAutorizacion" responsable="@Lista.IDUsuarioAutorizacion" sla="@CalculoSLA2(Lista.FechaInicioAutorizacion, Lista.FechaTerminoAutorizacion,2.2)" />
+                            <LeyendaEstadoPedido />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardEstadoPedidos titulo="REPOSICION BPM" inicio="@Lista.FechaInicioReposicionBPM" termino="@Lista.FechaTerminoReposicionBPM" responsable="@Lista.IDUsuarioReposicionBPM" sla="@CalculoSLA2(Lista.FechaInicioReposicionBPM, Lista.FechaTerminoReposicionBPM,1)" />
+                            <CardEstadoPedidos titulo="REPOSICION BIT" inicio="@Lista.FechaInicioReposicionBPM" termino="@Lista.FechaTerminoReposicionBPM" responsable="@Lista.IDUsuarioReposicionBPM" sla="@CalculoSLA2(Lista.FechaInicioReposicionBPM, Lista.FechaTerminoReposicionBPM,1)" />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardTiempoEspera titulo="ESPERA PICKING BVN" inicio="@(Lista.LineasPickingCDABVN > 0 ?Lista.FechaTerminoAutorizacion:"")" termino="@Lista.FechaInicioPickingBV_BVN" sla="@CalculoSLA2(Lista.FechaTerminoAutorizacion, Lista.FechaInicioPickingBV_BVN,1.35)" />
+                            <CardTiempoEspera titulo="ESPERA PICKING BIT" inicio="@(Lista.LineasPickingCDABVN > 0 ?Lista.FechaTerminoAutorizacion:"")" termino="@Lista.FechaInicioPickingBV_BIT" sla="@CalculoSLA2(Lista.FechaTerminoAutorizacion, Lista.FechaInicioPickingBV_BIT,1.35)" />
+                            <CardTiempoEspera titulo="ESPERA PICKING BPM" inicio="@(Lista.LineasPickingCDABVN > 0 ?Lista.FechaTerminoAutorizacion:"")" termino="@Lista.FechaInicioPickingBV_BPM" sla="@CalculoSLA2(Lista.FechaTerminoAutorizacion, Lista.FechaInicioPickingBV_BPM,1.35)" />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardEstadoPedidos titulo=@($"PICKING BVN (LINEAS: {Lista.LineasPickingCDABVN})") inicio="@Lista.FechaInicioPickingBV_BVN" termino="@Lista.FechaTerminoPickingBV_BVN" responsable="@Lista.SacadorPickingBV_BVN" sla="@CalculoSLA2(Lista.FechaInicioPickingBV_BVN, Lista.FechaTerminoPickingBV_BVN,1.89)" />
+                            <CardEstadoPedidos titulo=@($"PICKING BIT (LINEAS: {Lista.LineasPickingCDABIT})") inicio="@Lista.FechaInicioPickingBV_BIT" termino="@Lista.FechaTerminoPickingBV_BIT" responsable="@Lista.SacadorPickingBV_BIT" sla="@CalculoSLA2(Lista.FechaInicioPickingBV_BIT, Lista.FechaTerminoPickingBV_BIT,0.40)" />
+                            <CardEstadoPedidos titulo=@($"PICKING BPM (LINEAS: {Lista.LineasPickingCDABPM})") inicio="@Lista.FechaInicioPickingBV_BPM" termino="@Lista.FechaTerminoPickingBV_BPM" responsable="@Lista.SacadorPickingBV_BPM" sla="@CalculoSLA2(Lista.FechaInicioPickingBV_BPM, Lista.FechaTerminoPickingBV_BPM,1)" />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardTiempoEspera titulo="ESPERA PAKING BVN" inicio="@Lista.FechaTerminoPickingBV_BVN" termino="@Lista.FechaInicioPackingBV_BVN" sla="@CalculoSLA2(Lista.FechaTerminoPickingBV_BVN, Lista.FechaInicioPackingBV_BVN,3.95)" />
+                            <CardTiempoEspera titulo="ESPERA PAKING BIT" inicio="@Lista.FechaTerminoPickingBV_BIT" termino="@Lista.FechaInicioPackingBV_BIT" sla="@CalculoSLA2(Lista.FechaTerminoPickingBV_BIT, Lista.FechaInicioPackingBV_BIT,0.4)" />
+                            <CardTiempoEspera titulo="ESPERA PAKING BPM" inicio="@Lista.FechaTerminoPickingBV_BPM" termino="@Lista.FechaInicioPackingBV_BPM" sla="@CalculoSLA2(Lista.FechaTerminoPickingBV_BPM, Lista.FechaInicioPackingBV_BPM,3)" />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardEstadoPedidos titulo=@($"PACKING BVN (LINEAS: {Lista.LineasPackingCDABVN})") inicio="@Lista.FechaInicioPackingBV_BVN" termino="@Lista.FechaTerminoPackingBV_BVN" responsable="@Lista.RevisadorPackingBV_BVN" sla="@CalculoSLA2(Lista.FechaInicioPackingBV_BVN, Lista.FechaTerminoPackingBV_BVN,0.32)" />
+                            <CardEstadoPedidos titulo=@($"PACKING BIT (LINEAS: {Lista.LineasPackingCDABIT})") inicio="@Lista.FechaInicioPackingBV_BIT" termino="@Lista.FechaTerminoPackingBV_BIT" responsable="@Lista.RevisadorPackingBV_BIT" sla="@CalculoSLA2(Lista.FechaInicioPackingBV_BIT, Lista.FechaTerminoPackingBV_BIT,0.40)" />
+                            <CardEstadoPedidos titulo=@($"PACKING BPM (LINEAS: {Lista.LineasPackingCDABPM})") inicio="@Lista.FechaInicioPackingBV_BPM" termino="@Lista.FechaTerminoPackingBV_BPM" responsable="@Lista.RevisadorPackingBV_BPM" sla="@CalculoSLA2(Lista.FechaInicioPackingBV_BPM, Lista.FechaTerminoPackingBV_BPM,0.07)" />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardEstadoPedidos titulo="FACTURADO" inicio="@Lista.FechaRecibeCaja" termino="@Lista.FechaFacturacion" responsable="AUTOMATICO" sla="@CalculoSLA2(Lista.FechaRecibeCaja, Lista.FechaFacturacion,0.40)" />
+                            <CardEstadoPedidos titulo="LIBERADO" inicio="@Lista.FechaFacturacion" termino="@Lista.FechaLiberacion" responsable="@Lista.UsuarioLiberacion" sla="@CalculoSLA2(Lista.FechaFacturacion, Lista.FechaLiberacion,1.40)" />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardEstadoPedidos titulo="EN HOJA DE RUTA" inicio="@Lista.FechaLiberacion" termino="@Lista.FechaIngresoHR" responsable="JAIRO" sla="@CalculoSLA2(Lista.FechaLiberacion, Lista.FechaIngresoHR,0.40)" />
+                            <CardEstadoPedidos titulo="J A D" inicio="@Lista.FechaIngresoHR" termino="@Lista.FechaIngresoBodegaD" responsable="" sla="@CalculoSLA2(Lista.FechaIngresoHR, Lista.FechaIngresoBodegaD,0.40)" />
+                        </MudItem>
+                        <MudItem Style="gap:10px; display:flex; flex-direction:column">
+                            <CardEstadoPedidos titulo="EN CAMION" inicio="@Lista.FechaIngresoBodegaD" termino="@Lista.FechaIngresadoACamion" responsable="" sla="@CalculoSLA2(Lista.FechaIngresoBodegaD, Lista.FechaIngresadoACamion,1.25)" />
+                            <CardEstadoPedidos titulo="ENTREGADO" inicio="@Lista.FechaIngresadoACamion" termino="@Lista.FechaEntregado" responsable="@Lista.Transporte" sla="@CalculoSLA2(Lista.FechaIngresadoACamion, Lista.FechaEntregado,0.40)" />
+                        </MudItem>
+                    }
+                }
+
+            </MudItem>
+        </div>
+        <Loading Visibility="Loading" />
+    </DialogContent>
+    <DialogActions>
+
+        <MudButton Color="Color.Info" Variant="Variant.Outlined" OnClick="DialogImagenes">Imagenes</MudButton>
+
+        <MudButton Color="Color.Success" Variant="Variant.Outlined" OnClick="onClickBultos">Bultos</MudButton>
+
+        <MudButton Color="Color.Error" Variant="Variant.Outlined" OnClick="Cancel">Cerrar</MudButton>
+    </DialogActions>
+</MudDialog>

@@ -1,0 +1,434 @@
+﻿@page "/evaluacion"
+@using PortalAG_V2.Componentes
+@using PortalAG_V2.Componentes.EvaluacionCliente
+@using SheriffDataAccess.Models.SheriffModel
+@inject IDialogService DialogService
+@inject SfDialogService DialogServicesf
+
+<SurveyPrompt Title="Evaluacion Cliente" />
+<br />
+<br />
+
+
+<MudPaper Style="display:flex; flex-direction:column; max-width:1500px; margin:0 auto;">
+    <MudItem Class="pa-4 m-1" Style="align-content: center; z-index:0">
+        <MudGrid Style="display: flex; align-items:center; ">
+            <MudItem xs="12" md="6">
+                <MudTextField Style="background-color:white" OnKeyUp="(x) => x.Key != Enter ? null : Buscar()" @bind-Value="@IDcliente" T="string" Margin="Margin.Dense" Label="IDcliente" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
+            </MudItem>
+            <MudItem xs="6" md="3">
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@Buscar">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Color="Color.Success" Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Buscando...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Buscar</MudText>
+                    }
+                </MudButton>
+                <MudTooltip Text="$1 M = $1.000.000
+                                  $1 K = $1.000" Arrow="true" Style="white-space: pre-line; font-size:15px; font-weight:bold">
+                    <MudIcon style="margin-left:10px" Icon="@Icons.Material.Filled.QuestionMark" Color="Color.Info" />
+                </MudTooltip>
+            </MudItem>
+            <MudItem xs="6" md="3">
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@BuscarListaClientes">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Color="Color.Success" Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Buscando...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Cargar lista de clientes</MudText>
+                    }
+                </MudButton>
+                
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+</MudPaper>
+
+@{
+    if (Evaluacion)
+    {
+        <MudPaper Style="display:flex; flex-direction:column; max-width:1500px; margin:0 auto;">
+            <MudDivider Style="color:black; z-index:-9" />
+            <MudItem Class="pa-4 m-1">
+                <MudContainer Fixed>
+                    <div class="main-body">
+                        <MudGrid Class="row gutters-sm">
+                            <MudItem Style="top:-30px; position:relative" md="4" xs="12">
+                                <MudContainer Class="top-0 mb-3 sticky">
+                                    <MudCard Elevation="2" Style="padding:20px; margin-top: 40px;">
+                                        <div class="d-flex flex-column align-items-center text-center">
+                                            @*<MudAvatar Style="height:150px; width:150px; font-size:2rem; background-color:#0086D2;" Image="./" Color="Color.Primary">@(Cliente.RazonSocial != "" ? Cliente.RazonSocial.Substring(0, 1) : "N")</MudAvatar>*@
+                                            <RankingCLientes Ranking="ClienteAdicional.Ranking"></RankingCLientes>
+                                            <div class="mt-3">
+                                                <h4>@(Cliente.RazonSocial == "" ? "No Name" : Cliente.RazonSocial) </h4>
+                                                <MudRating SelectedValue="@Cliente.Rating" ReadOnly="true" Size="Size.Large" />
+                                                <p class="text-secondary mb-1">Ultima Actualizacion en: <b>@ClienteAdicional.FechaActualizacion</b></p>
+                                                <p class="text-secondary mb-1">Ultima compra en: <b>@Cliente.FechaUltimaCompra.Replace('-', '/')</b></p>
+                                                <p class="text-secondary mb-1">Ultima Comp. en meses: <b>@(ClienteAdicional.UltimaCompraEnMeses != null ? ClienteAdicional.UltimaCompraEnMeses: "")</b></p>
+                                                <p class="text-secondary mb-1">Ultima Comp. en semanas: <b>@(ClienteAdicional.UltimaCompraEnSemanas != null ? ClienteAdicional.UltimaCompraEnSemanas: "")</b></p>
+                                                <p class="text-secondary mt-1 mb-1" style="font-size:15px;">Ranking: <b style="font-size:15px;">#@ClienteAdicional.Ranking</b></p>
+                                                <p class="text-secondary mb-1">Zona: <b>@Cliente.Zona</b></p>
+                                            </div>
+                                        </div>
+                                    </MudCard>
+                                    <MudCard Elevation="2" Class="mt-3">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                                <h6 class="mb-0">Compra Anual</h6>
+                                                <span style="font-weight:bold;font-size:15px" class="text-secondary">@(Cliente.MontoCompraAnual != 0 ? Cliente.MontoCompraAnual.ToString("$ ###,###,###") : 0) </span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                                <h6 class="mb-0">Deuda:</h6>
+                                                <span style="font-weight:bold;font-size:15px" class="text-secondary">@(ClienteAdicional.TotalDeuda != 0 ? ClienteAdicional.TotalDeuda.ToString("$ ###,###,###").Replace("-", "") : 0) </span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                                <h6 class="mb-0">Riesgo</h6>
+                                                @{
+                                                    if (Cliente.RiesgoDICOM == "Medium")
+                                                    {
+                                                        <span style="font-weight:bold;color:orange">@(Cliente.RiesgoDICOM != "" ? "MEDIO" : "Sin Monitor") </span>
+                                                    }
+                                                    if (Cliente.RiesgoDICOM == "Low")
+                                                    {
+                                                        <span style="font-weight:bold;color:green">@(Cliente.RiesgoDICOM != "" ? "BAJO" : "Sin Monitor") </span>
+                                                    }
+                                                    if (Cliente.RiesgoDICOM == "High")
+                                                    {
+                                                        <span style="font-weight:bold;color:red">@(Cliente.RiesgoDICOM != "" ? "ALTO" : "Sin Monitor") </span>
+                                                    }
+                                                    if (Cliente.RiesgoDICOM == "Risk free")
+                                                    {
+                                                        <span class="text-secondary" style="font-weight:bold;">@(Cliente.RiesgoDICOM != "" ? "LIBRE" : "Sin Monitor") </span>
+                                                    }
+                                                    if (Cliente.RiesgoDICOM == "")
+                                                    {
+                                                        <span class="text-secondary" style="font-weight:bold;">@(Cliente.RiesgoDICOM != "" ? Cliente.RiesgoDICOM : "Sin Monitor") </span>
+                                                    }
+                                                }
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                                <h6 class="mb-0">Total Pedidos Web</h6>
+                                                <span class="text-secondary"><b>@(Cliente.CantidadPedidosWeb != 0 ? Cliente.CantidadPedidosWeb : "0")</b></span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                                <h6 class="mb-0">Notas de Credito</h6>
+                                                <span class="text-secondary"><b>@(Cliente.NCAnual != 0 ? Cliente.NCAnual : "0")</b></span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                                <h6 class="mb-0">Antiguedad</h6>
+                                                <span class="text-secondary"><b>@AntiguedadTexto(Cliente.AntiguedadClienteMeses)</b></span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                                <h6 class="mb-0">Cliente Contra Fact.</h6>
+                                                <span class="text-secondary"><b>@Cliente.ClienteContraFactura</b></span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                                <h6 class="mb-0">Cond. de pago</h6>
+                                                <span class="text-secondary"><b>@(ClienteAdicional.CondicionPago != null ? ClienteAdicional.CondicionPago : "") </b></span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                                <h6 class="mb-0">Ultimo descuento</h6>
+                                                <span class="text-secondary"><b>@ClienteAdicional.UltimoDescuento %</b></span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                                <h6 class="mb-0">Vendedor</h6>
+                                                <span class="text-secondary"><b>@Cliente.Vendedor</b></span>
+                                            </li>
+                                        </ul>
+                                    </MudCard>
+                                    <hr>
+                                    <MudCard Class="p-2" Elevation="2">
+                                        <MudItem>
+                                            <a onclick="@OnExpandCollapseClickDatosAdicionales">
+                                                <p class="ButtonSecondary">Datos adicionales <MudIcon Icon="@(_expanded3 ? @Icons.Material.Filled.KeyboardArrowDown: @Icons.Material.Filled.KeyboardArrowUp)" /></p>
+                                            </a>
+                                            <MudCollapse Expanded="_expanded3">
+                                                <a onclick="@OnClickOpenModalCompPag">
+                                                    <p class="ButtonCollaspse">Comportamiento pago</p>
+                                                </a>
+                                                <a onclick="@OnClickOpenModalCredito">
+                                                    <p class="ButtonCollaspse">Credito</p>
+                                                </a>
+                                            </MudCollapse>
+                                        </MudItem>
+                                    </MudCard>
+                                </MudContainer>
+                            </MudItem>
+                            <div class="col-md-8">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <h6 class="mb-0"><b>Razon Social</b></h6>
+                                            </div>
+                                            <div class="col-sm-9 text-secondary">
+                                                @Cliente.RazonSocial
+                                            </div>
+                                        </div>
+
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <h6 class="mb-0"><b>Rut</b></h6>
+                                            </div>
+                                            <div class="col-sm-9 text-secondary">
+                                                @ClienteAdicional.IDCliente
+                                            </div>
+                                        </div>
+
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <h6 class="mb-0"><b>Email</b></h6>
+                                            </div>
+                                            <div class="col-sm-9 text-secondary">
+                                                @Cliente.CorreoCliente
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <h6 class="mb-0"><b>Telefono</b></h6>
+                                            </div>
+                                            <div class="col-sm-9 text-secondary">
+                                                @Cliente.CelularCliente
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <h6 class="mb-0"><b>Ultimo Tipo Despacho</b></h6>
+                                            </div>
+                                            <div class="col-sm-9 text-secondary">
+                                                @(Cliente.UltimoTipoEntrega != "" ? Cliente.UltimoTipoEntrega : "Ninguno")
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <h6 class="mb-0"><b>Direccion</b></h6>
+                                            </div>
+                                            <div class="col-sm-9 text-secondary">
+                                                @Cliente.DireccionCliente
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <h6 class="mb-0"><b>Forma De Pago</b></h6>
+                                            </div>
+                                            <div class="col-sm-9 text-secondary">
+                                                @(ClienteAdicional.FormaPago != "" ? ClienteAdicional.FormaPago : "Ninguno")
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <h6 class="mb-0"><b>Ultima Forma Pago</b></h6>
+                                            </div>
+                                            <div class="col-sm-9 text-secondary">
+                                                @(Cliente.UltimaFormaPago != "" ? Cliente.UltimaFormaPago : "Ninguno")
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <h6 class="mb-0"><b>Ultimo Transporte</b></h6>
+                                            </div>
+                                            <div class="col-sm-9 text-secondary">
+                                                @(ClienteAdicional.Transporte != "" ? ClienteAdicional.Transporte : "Ninguno")
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        @{
+                                            if (ResponseSearch.total > 0)
+                                            {
+                                                <div style="justify-content:center ; display:flex">
+                                                    <MudButton OnClick="OnClickOpenModal">
+                                                        <MudImage Src="./sample-data/hubspotimg.png" alt="HubSpot" Width="120" Height="40" />
+                                                    </MudButton>
+                                                </div>
+                                                <hr>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <MudPaper Elevation="2" Class="p-2">
+                                    <MudGrid Spacing="2" Style="flex-wrap:wrap; " Class="row gutters-sm">
+                                        <CardPrecios titulo="Compra Promedio" Precio="@(Cliente.MontoCompraPromedio != 0 ? Cliente.MontoCompraPromedio : 0)" opcion="1" dias="365" />
+                                        @*<CardPrecios titulo="Monto Anual" Ranting="@Cliente.Rating" Precio="@(Cliente.MontoCompraAnual != 0 ? Cliente.MontoCompraAnual : 0)" opcion="4" />*@
+                                        <CardPrecios titulo="Monto Mensual" Ranting="@Cliente.RatingMensual" Precio="@(Cliente.MontoCompraMensual != 0 ? Cliente.MontoCompraMensual : 0)" opcion="4" dias="30" />
+                                        <CardPrecios titulo="Monto WEB" Ranting="@Cliente.RatingWeb" Precio="@(Cliente.MontoPedidosWeb != 0 ? Cliente.MontoPedidosWeb : 0)" opcion="4" dias="365" />
+                                    </MudGrid>
+                                </MudPaper>
+                                <MudPaper Elevation="2" Class="p-2">
+                                    <div>
+                                        <a onclick="@OnExpandCollapseClickGC">
+                                            <h3 class="Button">Grupos Contables <MudIcon Icon="@(_expanded2 ? @Icons.Material.Filled.KeyboardArrowDown: @Icons.Material.Filled.KeyboardArrowUp)" /></h3>
+                                        </a>
+                                        <div class="mb-2" style="border-top:3px solid navy; height:2px ; width:100%; padding: 0; margin: 20px auto 0 auto"></div>
+                                        <MudCollapse Expanded="_expanded2">
+                                            <MudGrid Spacing="2" Style="flex-wrap:wrap; " Class="row gutters-sm">
+                                                <CardPrecios titulo="GC Bicicletas" Ranting="@Cliente.RatingGCBicicletas" Precio="@(Cliente.CompraGCBicicletas != 0 ? Cliente.CompraGCBicicletas : 0)" opcion="4" dias="365"/>
+                                                <CardPrecios titulo="GC Rep. Imp" Ranting="0" Precio="@(Cliente.CompraGCRepuestosImp)" opcion="4" dias="365"/>
+                                                <CardPrecios titulo="GC Rep. Motos" Ranting="@Cliente.RatingGCRepuestosMotos" Precio="@(Cliente.CompraGCRepuestosMotos != 0 ? Cliente.CompraGCRepuestosMotos : 0)" opcion="4" dias="365"/>
+                                                <CardPrecios titulo="GC Pro" Ranting="@Cliente.RatingGCPro" Precio="@(Cliente.CompraGCPro != 0 ? Cliente.CompraGCPro : 0)" opcion="4" Imagen="https://imgs.andesindustrial.cl/footer/marcas/pro.svg" dias="365" />
+                                                <CardPrecios titulo="GC Shimano" Ranting="@Cliente.RatingGCShimano" Precio="@(Cliente.CompraGCShimano != 0 ? Cliente.CompraGCShimano : 0)" opcion="4" Imagen="https://imgs.andesindustrial.cl/footer/marcas/shimano.svg" dias="365"/>
+                                                <CardPrecios titulo="GC Motos" Ranting="0" Precio="@(Cliente.CompraGCMotos != 0 ? Cliente.CompraGCMotos : 0)" opcion="4" dias="365" />
+                                                <CardPrecios titulo="GC Disney" Ranting="@Cliente.RatingGCDisney" Precio="@(Cliente.CompraGCDisney != 0 ? Cliente.CompraGCDisney : 0)" opcion="4" Imagen="https://imgs.andesindustrial.cl/footer/marcas/disney.svg" dias="365"/>
+                                                <CardPrecios titulo="GC Maquinas" Ranting="@Cliente.RatingGCMaquinas" Precio="@(Cliente.CompraGCMaquinas != 0 ? Cliente.CompraGCMaquinas : 0)" opcion="4" dias="365" />
+                                            </MudGrid>
+                                        </MudCollapse>
+                                    </div>
+                                    <div>
+                                        <a onclick="@OnExpandCollapseClickMarcas">
+                                            <h3 class="Button">Marcas <MudIcon Icon="@(_expanded ? @Icons.Material.Filled.KeyboardArrowDown: @Icons.Material.Filled.KeyboardArrowUp)" /></h3>
+                                        </a>
+                                        <div class="mb-2" style="border-top:3px solid navy; height:2px ; width:100%; padding: 0; margin: 20px auto 0 auto"></div>
+                                        <MudCollapse Expanded="_expanded">
+                                            <MudGrid Spacing="2" Style="flex-wrap:wrap;" Class="row gutters-sm">
+                                                <CardPrecios titulo="Marca Elite" Ranting="@Cliente.RatinMarcaElite" Precio="@(Cliente.CompraMarcaElite != 0 ? Cliente.CompraMarcaElite : 0)" opcion="4" Imagen="https://imgs.andesindustrial.cl/footer/marcas/elite.svg" dias="365"/>
+                                                <CardPrecios titulo="Marca Lazer" Ranting="@Cliente.RatingMarcaLazer" Precio="@(Cliente.CompraMarcaElite != 0 ? Cliente.CompraMarcaElite : 0)" opcion="4" Imagen="https://imgs.andesindustrial.cl/footer/marcas/lazer.svg" dias="365"/>
+                                                <CardPrecios titulo="Marca Scott" Ranting="@Cliente.RatingMarcaScott" Precio="@(Cliente.CompraMarcaScott != 0 ? Cliente.CompraMarcaScott : 0)" opcion="4" Imagen="https://imgs.andesindustrial.cl/footer/marcas/scott.svg" dias="365" />
+                                                <CardPrecios titulo="Marca Merida" Ranting="@Cliente.RatingMarcaMerida" Precio="@(Cliente.CompraMarcaMerida != 0 ? Cliente.CompraMarcaMerida : 0)" opcion="4" Imagen="https://imgs.andesindustrial.cl/footer/marcas/merida.svg" dias="365"/>
+                                                <CardPrecios titulo="Marca Pro" Ranting="@Cliente.RatingMarcaPro" Precio="@(Cliente.CompraMarcaPro != 0 ? Cliente.CompraMarcaPro : 0)" opcion="4" Imagen="https://imgs.andesindustrial.cl/footer/marcas/pro.svg" dias="365"/>
+                                                <CardPrecios titulo="Marca Shimano" Ranting="@Cliente.RatingMarcaShimano" Precio="@(Cliente.CompraMarcaShimano != 0 ? Cliente.CompraMarcaShimano : 0)" opcion="4" Imagen="https://imgs.andesindustrial.cl/footer/marcas/shimano.svg" dias="365" />
+                                                <CardPrecios titulo="Marca Best" Ranting="@Cliente.RatingMarcaBest" Precio="@(Cliente.CompraMarcaBest != 0 ? Cliente.CompraMarcaBest : 0)" opcion="4" Imagen="https://imgs.andesindustrial.cl/footer/marcas/best.svg" dias="365" />
+                                                <CardPrecios titulo="Marca Continental" Ranting="@Cliente.MarcaContinental" Precio="@(Cliente.CompraMarcaContinental != 0 ? Cliente.CompraMarcaContinental : 0)" opcion="4" Imagen="https://imgs.andesindustrial.cl/footer/marcas/continental.svg" dias="365"/>
+                                                <CardPrecios titulo="Marca Vittoria" Ranting="@Cliente.RatingMarcaVittoria" Precio="@(Cliente.CompraMarcaVittoria != 0 ? Cliente.CompraMarcaVittoria : 0)" opcion="4" Imagen="https://imgs.andesindustrial.cl/footer/marcas/vittoria.svg" dias="365" />
+                                            </MudGrid>
+                                        </MudCollapse>
+                                    </div>
+                                    @if (ClienteAdicionalGama != null && ClienteAdicionalCategorias != null)
+                                    {
+                                        <div>
+                                            <a onclick="@OnExpandCollapseClickEstadisticas">
+                                                <h3 class="Button">Estadisticas <MudIcon Icon="@(_expanded4 ? @Icons.Material.Filled.KeyboardArrowDown: @Icons.Material.Filled.KeyboardArrowUp)" /></h3>
+                                            </a>
+                                            <div class="mb-2" style="border-top:3px solid navy; height:2px ; width:100%; padding: 0; margin: 20px auto 0 auto"></div>
+                                            <MudCollapse Expanded="_expanded4">
+                                                <MudGrid Justify="Justify.Center" Spacing="2" Style="flex-wrap:wrap;" Class="row gutters-sm">
+                                                    @if (ClienteAdicionalGama != null)
+                                                    {
+                                                        <PortalAG_V2.LazyLoad.Componentes.ChartGama LisGama="ClienteAdicionalGama" @ref="chartGamaComponent" />
+                                                    }
+                                                    @if (ClienteAdicionalCategorias != null)
+                                                    {
+                                                        <PortalAG_V2.LazyLoad.Componentes.ChartSubCategoria ListSub="ClienteAdicionalCategorias" @ref="chartSubCategoriaComponent" />
+                                                    }
+                                                </MudGrid>
+                                            </MudCollapse>
+                                        </div>
+                                    }
+                                </MudPaper>
+                            </div>
+                        </MudGrid>
+                    </div>
+                </MudContainer>
+            </MudItem>
+        </MudPaper>
+
+    }
+
+    if(ListaClientes)
+    {
+         <MudDivider Style="color:black; z-index:-9" />
+         <MudPaper Style="display:flex; flex-direction:column; max-width:1500px; margin:0 auto;">
+         <MudGrid  Spacing="0">
+            <MudItem md="4">
+                <MudCard>
+                    <MudCardContent>
+                       <MudGrid>
+                            <MudItem xs="12">
+                                 <MudText Typo="Typo.subtitle2">Compra Anual</MudText>
+                            </MudItem>
+                            <MudItem xs="6">
+                                    <MudNumericField Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" HideSpinButtons="true" Format="###,###,###" Label="Minimo" Margin="Margin.Dense" Variant="Variant.Outlined" Min="0" @bind-Value="minAnual" OnBlur="Filtros" />
+                                </MudItem>
+                            <MudItem xs="6">
+                                    <MudNumericField Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" HideSpinButtons="true" Format="###,###,###" Label="Maximo" Margin="Margin.Dense" Variant="Variant.Outlined" Min="0" @bind-Value="maxAnual" OnBlur="Filtros" />
+                            </MudItem>
+                    
+                        </MudGrid>
+                    </MudCardContent>
+                 </MudCard>
+            </MudItem>
+
+            <MudItem md="4">
+                <MudCard>
+                    <MudCardContent>
+                        <MudGrid>
+                            <MudItem xs="12">
+                                <MudText Typo="Typo.subtitle2">Compra Mensual</MudText>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudNumericField Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" HideSpinButtons="true" Format="###,###,###" Label="Minimo" Margin="Margin.Dense" Variant="Variant.Outlined" Min="0" @bind-Value="minMensual" OnBlur="Filtros"/>
+
+                            </MudItem>
+                            <MudItem xs="6">
+                                    <MudNumericField Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" HideSpinButtons="true" Format="###,###,###" Label="Maximo" Margin="Margin.Dense" Variant="Variant.Outlined" Min="0" @bind-Value="maxMensual" OnBlur="Filtros" />
+
+                            </MudItem>
+
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <MudItem md="4">
+                <MudCard>
+                    <MudCardContent>
+                        <MudGrid>
+                            <MudItem xs="12">
+                                <MudText Typo="Typo.subtitle2">Vendedor</MudText>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudSelect Margin="Margin.Dense" T="string" Label="Vendedor" Variant="Variant.Outlined" Value="vendedorFiltro" ValueChanged="((x)=>FiltroVendedor(x))" Clearable="true">
+                                    @foreach (string item in nombresVendedores)
+                                    {
+                                        <MudSelectItem Value="@item">@item</MudSelectItem>
+                                    }
+                                </MudSelect>
+
+                            </MudItem>
+
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+         </MudGrid>
+         </MudPaper>
+        
+        <MudPaper Style="display:flex; flex-direction:column; max-width:1500px; margin:0 auto;">
+            <MudDivider Style="color:black; z-index:-9" />
+            <MudItem Class="pa-4 m-1">
+                <MudDataGrid T="ClienteEvaluacionModel" Items="ClientesList">
+                    <Columns>
+                        <PropertyColumn Property="x => x.IDCliente" Title="Rut"/>
+                        <PropertyColumn Property="x => x.RazonSocial" Title=" Nombre"/>
+                        <PropertyColumn Property="@(x => x.MontoCompraAnual == 0 ? 0.0 : x.MontoCompraAnual)" Format="C" Culture="@CL" Title="Compra anual" />
+                        <PropertyColumn Property="@(x => x.MontoCompraMensual == 0 ? 0: x.MontoCompraMensual)" Format="C" Culture="@CL" Title="Compra mensual" />
+                        <PropertyColumn Property="x => x.Vendedor"  Title="Vendedor"/>
+                        <TemplateColumn CellClass="d-flex justify-center">
+                            <CellTemplate>
+                                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.RemoveRedEye" OnClick="@(() =>BuscarTest(@context.Item.IDCliente))" />
+                            </CellTemplate>
+                        </TemplateColumn>
+                    </Columns>
+                </MudDataGrid>
+               
+                   
+            </MudItem>
+        </MudPaper>
+    }
+}
+@* <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="BuscarTest">consultar</MudButton> *@
+
+<Loading Visibility="_Loading" />

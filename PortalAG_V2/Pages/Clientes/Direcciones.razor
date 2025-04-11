@@ -1,0 +1,134 @@
+﻿@page "/Direcciones"
+@using PortalAG_V2.Shared.Model;
+@using PortalAG_V2.Shared.Model.Direcciones;
+<SurveyPrompt Title="Direcciones Cliente" />
+<MudPaper Class="m-1 p-3">
+    <MudGrid >
+        <MudItem xs="12">
+            <MudGrid Justify="Justify.Center" Spacing="1">
+                <MudItem>
+                    <MudText Typo="Typo.subtitle1">Codigo cliente</MudText>
+                    <MudTextField @bind-Value="idCliente" Margin="Margin.Dense" Variant="Variant.Outlined" OnBlur="BuscarCliente"></MudTextField>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+        <MudItem xs="12">
+            <MudGrid Justify="Justify.FlexStart" Spacing="1">
+                <MudItem xs="12" md="3">
+                    <MudTextField @bind-Value="@nombreCliente" Label="Razón Social" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <MudTextField @bind-Value="@correElectronioCliente" Label="Correo Electrónico" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <MudTextField @bind-Value="@giroClienteEmpresa" Label="Giro" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <MudTextField @bind-Value="@telefonoCliente" T="int" Label="Teléfono" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="false"></MudTextField>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+
+
+        <MudItem xs="12">
+            <MudExpansionPanels MultiExpansion="false">
+                <MudExpansionPanel Text="Direcciones">
+                    <MudGrid>
+                        <MudItem xs="12" lg="12">
+                            <MudGrid Justify="Justify.FlexStart" Spacing="1">
+                                <MudItem md="4" xs="12">
+                                    <MudText Typo="Typo.subtitle1">Tipo direccion</MudText>
+                                    <MudTextField @bind-Value="@tipoDirecciones.tipoDireccion" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+                                </MudItem>
+                                <MudItem md="4" xs="12">
+                                    <MudText Typo="Typo.subtitle1">ID direccion</MudText>
+                                    <MudTextField @bind-Value="@idDireccion" Margin="Margin.Dense" Variant="Variant.Outlined"></MudTextField>
+                                </MudItem>
+                                <MudItem md="4" xs="12">
+                                    <MudText Typo="Typo.subtitle1">Codigo postal</MudText>
+                                    <MudTextField @bind-Value="@codigoPostal" Margin="Margin.Dense" Variant="Variant.Outlined"></MudTextField>
+                                </MudItem>
+                                <MudItem md="6" xs="8">
+                                    <MudText Typo="Typo.subtitle1">Calle</MudText>
+                                    <MudTextField @bind-Value="@calle" Margin="Margin.Dense" Variant="Variant.Outlined"></MudTextField>
+                                </MudItem>
+                                <MudItem md="2" xs="4">
+                                    <MudText Typo="Typo.subtitle1">Nro Calle</MudText>
+                                    <MudTextField @bind-Value="@nroCalle" Margin="Margin.Dense" Variant="Variant.Outlined"></MudTextField>
+                                </MudItem>
+                                <MudItem md="4" xs="12">
+                                    <MudText Typo="Typo.subtitle1">Ciudad</MudText>
+                                    <MudTextField @bind-Value="@ciudad" Margin="Margin.Dense" Variant="Variant.Outlined"></MudTextField>
+                                </MudItem>
+                                <MudItem md="4" xs="12">
+                                    <MudSelect T="RegionDTO" Label="Región" Value="@regiones" Margin="Margin.Dense" Variant="Variant.Outlined" AdornmentIcon="@Icons.Filled.Adjust"
+                                               AdornmentColor="Color.Secondary" ValueChanged="((x) => CambioRegion(x))" ToStringFunc="@converterRegiones">
+                                        @foreach (RegionDTO item in listaRegiones)
+                                        {
+                                            <MudSelectItem Value="@item">@item.region</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+
+                                <MudItem md="4" xs="12">
+                                    <MudSelect T="ComunaDTO" Label="Comuna" Value="@comunas" Margin="Margin.Dense" Variant="Variant.Outlined" AdornmentIcon="@Icons.Filled.Adjust"
+                                               AdornmentColor="Color.Secondary" ValueChanged="((x) => CambioComuna(x))" ToStringFunc="@converterComunas">
+                                        @foreach (ComunaDTO item in listaComunas)
+                                        {
+                                            <MudSelectItem Value="@item">@item.comuna</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+                                <MudItem md="4" xs="12">
+                                    @*<MudText Typo="Typo.subtitle1">Localidad</MudText>*@
+                                    <MudTextField @bind-Value="@localidad" Label="Localidad" Margin="Margin.Dense" Variant="Variant.Outlined"></MudTextField>
+                                </MudItem>
+                                <MudItem xs="12" Class="d-flex align-end">
+                                    <MudGrid Justify="Justify.FlexEnd" Spacing="1">
+                                        <MudItem>
+                                            <MudButton Variant="Variant.Outlined" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Secondary" OnClick="AgregarDireccion">Agregar</MudButton>
+                                        </MudItem>
+                                        <MudItem>
+                                            <MudButton Variant="Variant.Outlined" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Secondary" OnClick="LimpearCampos">Limpiar</MudButton>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudItem>
+                            </MudGrid>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudGrid Justify="Justify.SpaceEvenly">
+                                <MudItem xs="12">
+                                    <MudDataGrid T="DireccionesDTO" Items="@DireccionesCliente" Filterable="false" Dense="true" Striped="true" Bordered="true" MultiSelection="false"
+                                                 SortMode="@SortMode.None" Groupable="false" RowClick="@RowClicked">
+                                        <ToolBarContent>
+                                            <MudText Typo="Typo.h6">Lista de direcciones</MudText>
+                                        </ToolBarContent>
+                                        <Columns>
+                                            <PropertyColumn Property="x => x.linea" Title="Linea" />
+                                            <PropertyColumn Property="x => x.tipoDireccion" Title="Tipo" />
+                                            <PropertyColumn Property="x => x.idDireccion" Title="ID Direccion" />
+                                            <PropertyColumn Property="x => x.direccion" Title="Direccion" />
+                                            <PropertyColumn Property="x => x.nroDireccion" Title="Nro" />
+                                            <PropertyColumn Property="x => x.idRegion" Title="Region" />
+                                            <PropertyColumn Property="x => x.comuna" Title="Comuna" />
+                                            <PropertyColumn Property="x => x.ciudad" Title="Ciudad" />
+
+                                        </Columns>
+                                    </MudDataGrid>
+                                </MudItem>
+                            </MudGrid>
+                        </MudItem>
+                    </MudGrid>
+                </MudExpansionPanel>
+                <MudItem xs="12" Class="d-flex align-end mt-2">
+                    <MudGrid Justify="Justify.FlexEnd" Spacing="1">
+                        <MudItem>
+                            <MudButton Variant="Variant.Outlined" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Secondary" OnClick="GrabarDirecciones">Actualizar Datos</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+            </MudExpansionPanels>
+        </MudItem>
+    </MudGrid>
+
+</MudPaper>

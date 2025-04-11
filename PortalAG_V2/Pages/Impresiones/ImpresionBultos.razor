@@ -1,0 +1,48 @@
+﻿@page "/ImpresionBultos"
+<SurveyPrompt Title="Impresion Bultos " />
+<MudPaper Class="m-1 p-4" Style="width;:100%; display:flex; flex-direction:column;gap:10px">
+    <MudAlert Severity="Severity.Info" ShowCloseIcon="false" Style="color:black; margin-bottom:0px" Dense="true" Variant="Variant.Outlined">
+        <b style="color:black">NOTA: Las etiquetas de Bultos son de tamaño (5X10)</b>
+    </MudAlert>
+    <MudItem Style="width:100%;">
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudItem Style="display:flex; flex-direction:row; gap:10px; margin-bottom:10px">
+                <MudSelect Margin="Margin.Dense" Dense Style="align-self:center" Label="Selecciones una bodega" Variant="Variant.Outlined" T="int" Value="SelectedOption" ValueChanged="((x) => ConsultarArticulo(x))" Required RequiredError="Bodega Requerido!">
+                    @*<MudSelectItem T="int" Value="@(299)">BV_BVN</MudSelectItem>*@
+                    <MudSelectItem T="int" Value="@(22)">BV_BIT</MudSelectItem>
+                    <MudSelectItem T="int" Value="@(21)">BV_BPM</MudSelectItem>
+                    <MudSelectItem T="int" Value="@(23)">BV_BMT</MudSelectItem>
+                    <MudSelectItem T="int" Value="@(24)">BV_BRE</MudSelectItem>
+                </MudSelect>
+                <MudTextField T="string" @bind-Value="IDArtiuclo" Variant="Variant.Outlined" Label="ID Articulo" Margin="Margin.Dense" Required RequiredError="IDArticulo Requerido!" OnBlur="() => ConsultarArticulo()">  </MudTextField>
+            </MudItem>
+            <MudItem Style="margin-bottom:10px; display:flex; flex-direction:row; gap:10px">
+                <MudItem md="4" xs="12">
+                    <MudTextField T="int" @bind-Value="Copias" Mask="@(new PatternMask("000"))"  Variant="Variant.Outlined" Label="Cantidad de copias" Margin="Margin.Dense" Required> MODIFICAR HOJA DE RUTA </MudTextField>
+                </MudItem>
+                <MudItem md="4" xs="12">
+                    <MudSelect T="int" Margin="Margin.Dense" @bind-Value="Cantidad" Variant="Variant.Outlined" Label="Unidad X Bulto" Required>
+                        @{
+                            foreach (var item in responseBultos)
+                            {
+                                <MudSelectItem T="int" Value="@item.CantidadPorBulto">@(item.CantidadPorBulto)</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem md="4" xs="12">
+                    <MudSelect Margin="Margin.Dense" Dense Style="align-self:center; margin-bottom:10px;"  Label="Selecciones una Impresora" Variant="Variant.Outlined" T="string" @bind-Value="Impresora" Required RequiredError="Impresora Requerida!">
+                        <MudSelectItem T="string" Value="@("CDA_OficinaBodega")">OFICINA BODEGA</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("Logistica_Reimpresion")">IMPRESORA LOGISTICA</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("CDA_Recepcion_1")">RECEPCION 1</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("IMPRESORA_RECEPCION")">RECEPCION 2</MudSelectItem>
+
+                    </MudSelect>
+                </MudItem>
+            </MudItem>
+            <MudItem md="12" xs="12" Style="text-align:center">
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="@(() => Imprimir())"> IMPRIMIR </MudButton>
+            </MudItem>
+        </MudForm>
+    </MudItem>
+</MudPaper>

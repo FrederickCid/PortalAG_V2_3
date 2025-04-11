@@ -1,0 +1,91 @@
+﻿<MudPaper Class="rounded-lg btn-outline-info" Style=" background: #33FFF0; width: 180px; box-shadow: 2px 2px 2px 1px rgba(0,0,0,0.2) ">
+    @{
+        if ((IDEtapaPedido == 7 && IDEstadoPedido == 5) && (IDEtapaOriginalPedido == 5 && IDEstadoOriginalPedido == 5))
+        {
+            <MudText Style="font-weight:bold; text-align: center">Entregado</MudText>
+        }
+        if ((IDEtapaPedido == 9 && IDEstadoPedido == 9) && (IDEtapaOriginalPedido == 9 && IDEstadoOriginalPedido == 9))
+        {
+            <MudText Style="font-weight:bold; text-align: center">Cancelado</MudText>
+        }
+        if ((IDEtapaPedido == 0 && (IDEstadoPedido == 1 || IDEstadoPedido == 2 || IDEstadoPedido == 3 || IDEstadoPedido == 0)) &&
+        (IDEtapaOriginalPedido == 0 && (IDEstadoOriginalPedido == 1 || IDEstadoOriginalPedido == 2 || IDEstadoOriginalPedido == 3 || IDEstadoPedido == 0)))
+        {
+            <MudText Style="font-weight:bold; text-align: center">Cotizacion</MudText>
+        }
+        if (((IDEtapaPedido == 0 && (IDEstadoPedido == 5) &&
+        (IDEtapaOriginalPedido == 0 && (IDEstadoOriginalPedido == 5))) ||
+        (IDEtapaPedido == 1 && (IDEstadoPedido == 1 || IDEstadoPedido == 2 || IDEstadoPedido == 3)) && IDEtapaOriginalPedido == 1 && (IDEstadoOriginalPedido == 1 || IDEstadoOriginalPedido == 2 || IDEstadoOriginalPedido == 3)
+        ))
+        {
+            <MudText Style="font-weight:bold; text-align: center">En Picking</MudText>
+        }
+        if (((IDEtapaPedido == 1 && (IDEstadoPedido == 5) &&
+        (IDEtapaOriginalPedido == 1 && (IDEstadoOriginalPedido == 5))) ||
+        (IDEtapaPedido == 3 && (IDEstadoPedido == 1 || IDEstadoPedido == 2 || IDEstadoPedido == 3)) && IDEtapaOriginalPedido == 3 && (IDEstadoOriginalPedido == 1 || IDEstadoOriginalPedido == 2 || IDEstadoOriginalPedido == 3)
+        ))
+        {
+            <MudText Style="font-weight:bold; text-align: center">En Packing</MudText>
+        }
+        if ((IDEtapaPedido == 3 && IDEstadoPedido == 5) && (IDEtapaOriginalPedido == 3 && IDEstadoOriginalPedido == 5) )
+        {
+            <MudText Style="font-weight:bold; text-align: center">Por Facturar</MudText>
+        }
+        if ((IDEtapaPedido == 5 && IDEstadoPedido == 5) && (IDEtapaOriginalPedido == 5 && IDEstadoOriginalPedido == 5) && estadoPedido.FechaLiberacion == "")
+        {
+            <MudText Style="font-weight:bold; text-align: center">Facturado</MudText>
+        }       
+        // if ((IDEtapaPedido == 6 && (IDEstadoPedido == 5) &&
+        // (IDEtapaOriginalPedido == 5 && (IDEstadoOriginalPedido == 5))))
+        // {
+        //     <MudText Style="font-weight:bold; text-align: center">Liberado</MudText>
+        // }
+        if (((IDEtapaPedido == 6 && (IDEstadoPedido == 1 || IDEstadoPedido == 2 || IDEstadoPedido == 3)) && IDEtapaOriginalPedido == 5 && (IDEstadoOriginalPedido == 5)))
+        {
+            <MudText Style="font-weight:bold; text-align: center">En D</MudText>
+        }
+
+        if (((IDEtapaPedido == 7 && (IDEstadoPedido == 1 || IDEstadoPedido == 3)) && IDEtapaOriginalPedido == 5 && IDEstadoOriginalPedido == 5) && estadoPedido.FechaIngresoBodegaD == "")
+        {
+            <MudText Style="font-weight:bold; text-align: center">En Despacho</MudText>
+        }
+        if ((IDEtapaPedido == 5 && IDEstadoPedido == 5) && (IDEtapaOriginalPedido == 5 && IDEstadoOriginalPedido == 5) && estadoPedido.FechaLiberacion != "" && estadoPedido.FechaIngresoHR == "" && estadoPedido.FechaEntregado == "")
+        {
+            <MudText Style="font-weight:bold; text-align: center">Liberado</MudText>
+        }
+        if (((IDEtapaPedido == 6 && IDEstadoPedido == 5) && (IDEtapaOriginalPedido == 5 && IDEstadoOriginalPedido == 5) || (IDEtapaPedido == 5 && IDEstadoPedido == 5) && (IDEtapaOriginalPedido == 5 && IDEstadoOriginalPedido == 5)) && estadoPedido.FechaIngresoHR != "" && estadoPedido.FechaLiberacion != "" && estadoPedido.FechaEntregado == "" && estadoPedido.FechaIngresoBodegaD == "")
+        {
+            <MudText Style="font-weight:bold; text-align: center">En Hoja de Ruta</MudText>
+        }
+        if ((IDEtapaPedido == 6 && IDEstadoPedido == 5) && (IDEtapaOriginalPedido == 5 && IDEstadoOriginalPedido == 5) && estadoPedido.FechaLiberacion != "" && estadoPedido.FechaEntregado != "" && estadoPedido.FechaIngresoHR != "")
+        {
+            <MudText Style="font-weight:bold; text-align: center">Entregado</MudText>
+        }
+        if ((((IDEtapaPedido == 7 && (IDEstadoPedido == 1 || IDEstadoPedido == 3)) && IDEtapaOriginalPedido == 5 && IDEstadoOriginalPedido == 5) 
+        || (IDEtapaPedido == 5 && IDEstadoPedido == 5) 
+        && (IDEtapaOriginalPedido == 5 && IDEstadoOriginalPedido == 5) )
+        && estadoPedido.FechaIngresoBodegaD != "" && estadoPedido.FechaIngresadoACamion == "")
+        {
+            <MudText Style="font-weight:bold; text-align: center">En J</MudText>
+        }
+        if ((((IDEtapaPedido == 7 && (IDEstadoPedido == 1 || IDEstadoPedido == 3)) && IDEtapaOriginalPedido == 5 && IDEstadoOriginalPedido == 5)
+        || (IDEtapaPedido == 5 && IDEstadoPedido == 5)
+        && (IDEtapaOriginalPedido == 5 && IDEstadoOriginalPedido == 5))
+        && estadoPedido.FechaIngresoBodegaD != "" && estadoPedido.FechaIngresadoACamion != "")
+        {
+            <MudText Style="font-weight:bold; text-align: center">En Despacho</MudText>
+        }
+        else
+        {            
+
+            if ((IDEtapaPedido == 6 && IDEstadoPedido == 5) && (IDEtapaOriginalPedido == 5 && IDEstadoOriginalPedido == 5) && estadoPedido.FechaLiberacion != "" && estadoPedido.FechaEntregado != "" && estadoPedido.FechaIngresoHR == "")
+            {
+                <MudText Style="font-weight:bold; text-align: center">Entregado</MudText>
+            }
+            if ((IDEtapaPedido == 6 && IDEstadoPedido == 5) && (IDEtapaOriginalPedido == 5 && IDEstadoOriginalPedido == 5) && estadoPedido.FechaLiberacion == "" && estadoPedido.FechaEntregado == "" && estadoPedido.FechaIngresoHR == "")
+            {
+                <MudText Style="font-weight:bold; text-align: center">Facturado</MudText>
+            }
+        }
+    }
+</MudPaper>

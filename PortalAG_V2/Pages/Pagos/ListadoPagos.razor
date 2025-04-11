@@ -1,0 +1,128 @@
+﻿@page "/pagos"
+@using PortalAG_V2.Shared.Model.Pagos;
+
+<MudGrid>
+
+    <MudItem xs="3">
+        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+            <MudItem>
+                <MudButton Variant="Variant.Outlined" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Secondary" OnClick="NuevoPago">Nuevo</MudButton>
+            </MudItem>
+            <MudItem>
+                <MudButton Variant="Variant.Outlined" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Secondary" OnClick="Recargar">
+                    @if (_processingDos)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Process..</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Recargar</MudText>
+                    }
+                </MudButton>
+            </MudItem>
+            @*<MudItem>
+                <MudButton Variant="Variant.Outlined" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Secondary">Ver</MudButton>
+            </MudItem>*@
+            
+        </MudGrid>
+    </MudItem>
+    <MudItem xs="6">
+        <MudGrid Justify="Justify.Center" Spacing="3">
+            <MudItem>
+                <MudText Typo="Typo.subtitle1">Fecha desde</MudText>
+                <MudDatePicker Margin="Margin.Dense" Editable="true" @bind-Date="date1" DateFormat="dd-MM-yyyy" PickerClosed="CambioFechaDesde" />
+            </MudItem>
+            <MudItem>
+                <MudText Typo="Typo.subtitle1">Fecha hasta</MudText>
+                <MudDatePicker Margin="Margin.Dense" Editable="true" @bind-Date="date2" DateFormat="dd-MM-yyyy" PickerClosed="CambioFechaHasta" />
+            </MudItem>
+            <MudItem xs="3">
+                <MudText Typo="Typo.subtitle1">Usuario</MudText>
+                <MudSelect Margin="Margin.Dense" T="string" Variant="Variant.Outlined" Value=usuarioSelect ValueChanged="((x) => SeleccionUsuario(x))">
+                    @foreach (string item in _listUsuarios)
+                    {
+                        <MudSelectItem Value="@item">@item</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+
+        </MudGrid>
+    </MudItem>
+    <MudItem xs="3">
+        <MudGrid Justify="Justify.FlexEnd" Spacing="1">
+            <MudItem>
+                <MudButton Variant="Variant.Outlined" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Secondary" OnClick="ExportExcel">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Export..</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Excel</MudText>
+                    }
+
+                </MudButton>
+            </MudItem>
+            <MudItem>
+                <MudButton Variant="Variant.Outlined" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Secondary">Notificacion</MudButton>
+            </MudItem>
+            
+        </MudGrid>
+    </MudItem>
+
+</MudGrid>
+
+<MudGrid Justify="Justify.SpaceEvenly">
+    <MudItem xs="12">
+        <MudDataGrid T="PagosDTO" Items="@_listaPagos" Filterable="true" Dense="true" Striped="true" Bordered="true">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Lista de pagos</MudText>
+                <MudSpacer />
+                
+            </ToolBarContent>
+            <Columns>
+                <PropertyColumn Property="x => x.numeroCobranza" Title="Pago" Sortable="false" />
+                <PropertyColumn Property="x => x.iDCliente" Title="Codigo" Sortable="false" />
+                <PropertyColumn Property="x => x.razonSocial" Title="Nombre" Sortable="false" />
+                <PropertyColumn Property="x => x.fechaPago" Title="Fecha" Sortable="false" />
+                <PropertyColumn Property="x => x.idUsuario" Title="Usuario" Sortable="false" />
+                <PropertyColumn Property="x => x.valorCobranza" Title="Monto" Sortable="false"  />
+                <PropertyColumn Property="x => x.cantidadPedidos" Title="Pedidos" Sortable="false" />
+                <PropertyColumn Property="x => x.totalPedidos" Title="Total Pedidos" Sortable="false" />
+                <PropertyColumn Property="x => x.notasCredio" Title="notas Credio" Sortable="false" />
+                <PropertyColumn Property="x => x.notaDebito" Title="notas Debito" Sortable="false" />
+                <PropertyColumn Property="x => x.saldosFavor" Title="saldos a Favor" Sortable="false" />
+                <PropertyColumn Property="x => x.saldoEnContra" Title="saldo En Contra" Sortable="false" />
+                <PropertyColumn Property="x => x.totalApagar" Title="Total" Sortable="false" />
+
+                <PropertyColumn Property="x => x.efectivo" Title="Efectivo" Sortable="false" />
+                <PropertyColumn Property="x => x.tarjetaCredito" Title="Tarjeta Crédito" Sortable="false" />
+                <PropertyColumn Property="x => x.tarjetaDebito" Title="Tarjeta Débito" Sortable="false" />
+                <PropertyColumn Property="x => x.transferencia" Title="Transferencia" Sortable="false" />
+                <PropertyColumn Property="x => x.deposito" Title="Deposito" Sortable="false" />
+                <PropertyColumn Property="x => x.cheque" Title="Cheque" Sortable="false" />
+                <PropertyColumn Property="x => x.letra" Title="Letra" Sortable="false" />
+                <PropertyColumn Property="x => x.pagoAnticipado" Title="pagoAnticipado" Sortable="false" />
+
+               
+                <TemplateColumn Sortable="false" Filterable="false">
+                    <CellTemplate>
+                        <MudStack Row>
+                            <MudButton Size="@Size.Small" Variant="@Variant.Outlined" Color="@Color.Primary" OnClick="@(() => VerDetalle(@context.Item))" >Ver</MudButton>
+                            @*<MudButton Size="@Size.Small" Variant="@Variant.Outlined" Color="@Color.Primary">Borrar</MudButton>*@
+                        </MudStack>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="PagosDTO" PageSizeOptions=@(new int[] {10,20,30}) />
+            </PagerContent>
+        </MudDataGrid>
+
+
+    </MudItem>
+
+</MudGrid>
+

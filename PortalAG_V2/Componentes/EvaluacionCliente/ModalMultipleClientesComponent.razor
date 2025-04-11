@@ -1,0 +1,26 @@
+﻿@using SheriffDataAccess.Models.SheriffModel
+<MudDialog>
+    <TitleContent>
+        Clientes Encontrados
+    </TitleContent>
+    <DialogContent>
+        <MudItem Style="max-width:1000px;max-height:500px; overflow:auto">
+            <MudDataGrid T="ClienteEvaluacionModel" Items="@List" FixedHeader >
+                <Columns>
+                    <PropertyColumn Property="x => x.IDCliente" />
+                    <PropertyColumn Property="x => x.RazonSocial" />
+                    <TemplateColumn CellClass="d-flex justify-end">
+                        <CellTemplate>
+                            <MudStack Row>
+                                <MudButton Size="@Size.Small" Variant="@Variant.Outlined" Color="@Color.Primary" OnClick="() => Submit(context.Item)">Seleccionar</MudButton>
+                            </MudStack>
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+            </MudDataGrid>
+        </MudItem>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>

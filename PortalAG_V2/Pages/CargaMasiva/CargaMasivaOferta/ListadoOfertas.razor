@@ -1,0 +1,43 @@
+﻿@page "/ListadoOfertas"
+@using PortalAG_V2.Shared.Model.CargaMAsivaOfertas
+
+<SurveyPrompt Title="Lista de ofertas" />
+<br />
+<br />
+<MudPaper Style="margin:0 auto;">
+    <MudItem Class="pa-4 m-1" Style="align-content: center">
+        <MudItem>
+            <SfGrid ID="Grid" @ref="Grid" DataSource="@OfertaLista" AllowPaging="true" style="width:100%; " Toolbar="@ButtonsGrid" OnToolbarClick="ToolbarClick"
+                    AllowExcelExport="true" AllowSelection="true" AllowFiltering="true" AllowSorting="true" AllowResizing="true">
+                <GridEvents OnToolbarClick="ToolbarClick" TValue="OfertaSistemaModel"></GridEvents>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                <GridSearchSettings Fields="@SpecificCols" IgnoreCase="true"></GridSearchSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(OfertaSistemaModel.IDListaDescuento) HeaderText="ID ListaDescuento" TextAlign="TextAlign.Right"></GridColumn>
+                    <GridColumn Field=@nameof(OfertaSistemaModel.ListaDescuento) HeaderText="Lista Descuento" Width="180"></GridColumn>
+                    <GridColumn Field=@nameof(OfertaSistemaModel.PorcentajeDescuento) HeaderText="Porcentaje Descuento">
+                        <Template>
+                            @{
+                                var Porcentaje = (context as OfertaSistemaModel).PorcentajeDescuento;
+                                <span>@(Porcentaje == 0 ? "0 %" :  $"{Porcentaje} %")</span>
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(OfertaSistemaModel.DescripcionWeb) HeaderText="Descripcion Web"></GridColumn>
+                    <GridColumn Field=@nameof(OfertaSistemaModel.IDEstado) HeaderText="ID Estado">
+                        <Template>
+                            @{
+                                var estado = (context as OfertaSistemaModel).IDEstado == 1 ? "Activado" : "Desactivado";
+                                <span>@estado</span>
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(OfertaSistemaModel.Orden) HeaderText="Orden"></GridColumn>
+                    <GridColumn Field=@nameof(OfertaSistemaModel.FechaActualizacion) HeaderText="Fecha Actualizacion"></GridColumn>
+                    <GridColumn Field=@nameof(OfertaSistemaModel.IDUsuario) HeaderText="ID Usuarioe"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </MudItem>
+    </MudItem>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="loading"></PortalAG_V2.Componentes.Loading>

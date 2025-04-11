@@ -1,0 +1,190 @@
+﻿@using System.Timers;
+@using Newtonsoft.Json
+@using PortalAG_V2.Shared.Services
+@using PortalAG_V2.Shared.Model.AvisoDePago;
+
+<SfButton aria-label="menu" CssClass="e-inherit position-relative" IconCss="e-icons e-comment-show" OnClick="open">
+    @if (numNotificacion > 0 && numNotificacion <= 99)
+    {
+        <span class="e-badge e-badge-info e-badge-overlap .e-badge-bottom">
+            @numNotificacion
+        </span>
+    }
+    else if (numNotificacion > 99)
+    {
+        <span class="e-badge e-badge-info e-badge-overlap .e-badge-bottom">
+            99+
+        </span>
+    }
+    else if (numNotificacion == 0)
+    {
+
+    }
+</SfButton>
+
+<SfSidebar @ref="lateral" Position="SidebarPosition.Right" @bind-IsOpen="openNotification" Type="SidebarType.Over" Width="20%" CloseOnDocumentClick="false" ShowBackdrop="true">
+    <SfCard>
+        <CardHeader>
+            <SfButton aria-label="menu" CssClass="e-inherit menu" IconCss="e-icons e-close" OnClick="open"></SfButton>
+            <SfButton aria-label="menu" CssClass="e-inherit menu" IconCss="e-icons e-refresh" OnClick="LeerApi"></SfButton>
+        </CardHeader>
+        <CardContent>
+            <SfGrid @ref="grillaNotificacion" DataSource="@_listPedidos">
+                <GridColumns>
+                    <GridColumn Field=@nameof(NotificacionModel.NroDocumento) HeaderText="Notificaciones" Width="120">
+                        <Template>
+                            @if ((context as NotificacionModel).Tipo == 1)
+                            {
+                                <div class="activity-container appointment">
+                                    <div class="activity-message"><span class="type-name fw-bold">@((context as NotificacionModel).Titulo)</span></div>
+                                    <div class="activity-message"><span class="type-name">Nro Pedido: @((context as NotificacionModel).NroDocumento)</span></div>
+                                    <div class="activity-message"><span class="type-name">Razon Social: @((context as NotificacionModel).RazonSocial)</span></div>
+                                    <div class="activity-message"><span class="type-name">Fecha Liberacion: @((context as NotificacionModel).FechaAutorizaLiberacion)</span></div>
+                                    <br />
+                                    <div class="activity-message; mt-2">
+                                        <MudButton Variant="Variant.Text" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Secondary" Href="/confirmaciondespacho" OnClick="open">Procesar</MudButton>
+                                    </div>
+                                </div>
+                            }
+                            @if ((context as NotificacionModel).Tipo == 2)
+                            {
+                                <div class="activity-container appointment">
+                                    <div class="activity-header"><span class="type-name fw-bold">@((context as NotificacionModel).Titulo)</span></div>
+                                    <div class="activity-message"><span class="type-name">ID: @((context as NotificacionModel).IDCliente)</span></div>
+                                    <div class="activity-message"><span class="type-name">Razon Social: @((context as NotificacionModel).RazonSocial)</span></div>
+                                    @*<div class="activity-message"><span class="type-name">Tipo: @((context as NotificacionModel).TipoPago)</span></div>*@
+                                    <br />
+                                    <div class="activity-message; mt-2">
+                                        <MudButton Variant="Variant.Text" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Secondary" Href="/NotificacionAvisoDePago" OnClick="open">Procesar</MudButton>
+                                    </div>
+                                </div>
+                            }
+                        </Template>
+                    </GridColumn>
+                </GridColumns>
+            </SfGrid>
+
+        </CardContent>
+    </SfCard>
+</SfSidebar>
+
+
+<SfDialog Height="80%" Width="50%" ShowCloseIcon="true" AllowDragging="false" IsModal="true" @bind-Visible="@dlgDespacho">
+    <DialogTemplates>
+        <Header>
+            <text class="font-weight-bold">Autorizar Despacho</text>
+        </Header>
+        <Content>
+
+            <label class="font-weight-bold">PEDIDO NRO° @(_listPedidos[0].NroDocumento)</label>
+
+            <label class="font-weight-bold"> @(_listPedidos[0].RazonSocial)</label>
+
+
+
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+
+@code {
+    internal SfGrid<NotificacionModel> grillaNotificacion;
+    private System.Timers.Timer _timer;
+    private ClientFactory conexion;
+
+    int numNotificacion = 6000;
+    bool openNotification = false;
+    bool dlgDespacho = false;
+    string _IDUser = "";
+    List<NotificacionModel> _listPedidos = new List<NotificacionModel>();
+    SfSidebar lateral;
+
+    const string urlNotificacion = "api/v2/ConfirmacionDespacho/Notificacion";
+    const string urlNotificacionPago = "/api/v2/AvisodePagos/Notificacion";
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        _timer = new System.Timers.Timer(60000); // 60000 milisegundos = 60 segundos
+        _timer.Elapsed += async (Object source, ElapsedEventArgs e) => await LeerApi();
+        _timer.AutoReset = true;
+        _timer.Enabled = true;
+        await LeerApi();
+    }
+
+    private async Task LeerApi()
+    {
+        try
+        {
+            var user = await _authenticationManager.CurrentUser();
+            _IDUser = user.GetUserId();
+            conexion = new MainServices().Formularios;
+
+            var response = await conexion.HttpClientInstance.GetAsync($"{urlNotificacion}/{_IDUser}");
+            if (response.IsSuccessStatusCode)
+            {
+                _listPedidos = JsonConvert.DeserializeObject<List<NotificacionModel>>(await response.Content.ReadAsStringAsync());
+
+                await grillaNotificacion.Refresh();
+                numNotificacion = _listPedidos.Count;
+                StateHasChanged();
+            }
+            else
+            {
+                _snackBar.Add("Error al consultar Api Listado", Severity.Error);
+            }
+
+            var responsePago = await conexion.HttpClientInstance.GetAsync($"{urlNotificacionPago}/{_IDUser}");
+            if (response.IsSuccessStatusCode)
+            {
+                List<NotificacionModel> _listPedidosAux = new List<NotificacionModel>();
+                _listPedidosAux = JsonConvert.DeserializeObject<List<NotificacionModel>>(await responsePago.Content.ReadAsStringAsync());
+
+                _listPedidos.AddRange(_listPedidosAux);
+                await grillaNotificacion.Refresh();
+                numNotificacion = _listPedidos.Count;
+                StateHasChanged();
+            }
+            else
+            {
+                _snackBar.Add("Error al consultar Api Listado", Severity.Error);
+            }
+        }
+        catch (Exception e) { _snackBar.Add($"Error al consultar Api Listado: {e.Message}", Severity.Error); }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Task.Delay(1);
+            _timer.Start();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_timer != null)
+        {
+            _timer.Stop();
+            _timer.Dispose();
+        }
+        //await base.DisposeAsync();
+    }
+    internal void open()
+    {
+        openNotification = !openNotification;
+        StateHasChanged();
+    }
+
+    // private void ProcesarAviso()
+    // {
+
+    // }
+    public class Notificacion
+    {
+        public string titulo { get; set; }
+        public string texto { get; set; }
+
+    }
+}

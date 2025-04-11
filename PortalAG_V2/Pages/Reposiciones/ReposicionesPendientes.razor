@@ -1,0 +1,32 @@
+﻿@page "/Reposiciones"
+@using PortalAG_V2.Componentes.ReposicionesPendientes
+@using agDataAccess.Models.Solicitudes
+<SurveyPrompt Title="@($"Reposiciones Pendientes  -  Cantidad: {ReposicionesGet.Count}  -  Se Actualiza en:{Count}")" />
+<MudPaper Style="display:flex; flex-direction:column; max-width:auto; margin:0 auto; height:100%">
+    <MudItem md="12" xs="12">
+        <MudDataGrid T="ReposicionesPendientesModel" Items="ReposicionesGet" MultiSelection="true" Breakpoint="Breakpoint.Sm"
+                     Bordered="true" Dense="true" SortMode="SortMode.None" Hover Striped QuickFilter="@QuickFilter">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudItem Style="display:flex;flex-direction:row;gap: 20px; width: 100%">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="@Actualizar">Actualizar</MudButton>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@GenerarPDFPrePacking">export</MudButton>
+                    <MudTextField @bind-Value="_searchString" Placeholder="Buscar..." Adornment="Adornment.Start" Immediate="true"  
+                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                </MudItem>
+            </ToolBarContent>
+            <Columns>
+                <PropertyColumn Property="x => x.IDArticulo"/>
+                <PropertyColumn Property="x => x.NombreArticulo"  />
+                <PropertyColumn Property="x => x.CantidadSolicitada"  />
+                @*<PropertyColumn Property="x => x.NroPallet" HeaderStyle="font-size:20px; font-weight:bold" CellStyle="font-size:22px; font-weight:bold" Style="font-weight" />*@
+                <PropertyColumn Property="x => x.Estado"   />
+                <PropertyColumn Property="x => x.Bodegas"  />
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="ReposicionesPendientesModel"  RowsPerPageString="13"  PageSizeOptions="new int[] {13}" />
+            </PagerContent>
+        </MudDataGrid>
+    </MudItem>
+</MudPaper>
+

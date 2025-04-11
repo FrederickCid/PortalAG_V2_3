@@ -1,0 +1,25 @@
+﻿@using ApexCharts
+@using PortalAG_V2.Shared.Model.SolicitudesInformes
+@{
+    if (Lista.Count > 0)
+    {
+        <MudItem xs="12" md="3" xxl="2">
+            <MudCard Style="background-color:rgb(0,0,0,.05); height:100%">
+                <CardContent>
+                    <ApexChart TItem="LineasPickeadasNoPickeadasModel"
+                               Title="@($"Lineas Pickeadas Total: {Lista.Find(x => x.Cabecera == "Total").Total}")"
+                               @ref="@chartPickeadasNoPickeadas">
+                        <ApexPointSeries TItem="LineasPickeadasNoPickeadasModel"
+                                         Items="@(Lista.Where(x=> x.Cabecera != "Total"))"
+                                         SeriesType="SeriesType.Pie"
+                                         Name="Lineas Pickeadas"
+                                         XValue="@(e => e.Cabecera)"
+                                         YValue="@(e => e.Total)"
+                                         PointColor="e=> GetPointColor(e)"
+                                         ShowDataLabels />
+                    </ApexChart>
+                </CardContent>
+            </MudCard>
+        </MudItem>
+    }
+}

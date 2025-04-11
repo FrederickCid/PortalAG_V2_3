@@ -1,0 +1,11 @@
+﻿<MudDialog>
+<DialogContent>
+<MudText>¿Por que rechaza el pago?</MudText>
+        <MudTextField @bind-Value="Comentario" T="string" Label="Comentario" Variant="Variant.Outlined" Lines="3" />
+</DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Success" Variant="Variant.Outlined" OnClick="@Enviar">enviar</MudButton>
+
+        <MudButton Color="Color.Error" Variant="Variant.Outlined" OnClick="Cancel">Cerrar</MudButton>
+    </DialogActions>
+</MudDialog>

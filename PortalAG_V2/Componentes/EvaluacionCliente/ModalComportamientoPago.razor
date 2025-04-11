@@ -1,0 +1,22 @@
+﻿@using static PortalAG_V2.Shared.Models.ClienteEvaluacion.ClienteAdicionalModel
+
+<MudDialog>
+    <TitleContent>
+        <h3>Comportamiento De Pago</h3>
+    </TitleContent>
+    <DialogContent>
+        <div style="overflow:scroll; height:600px">
+            <MudDataGrid T="Comportamientospago" Items="compPag" MultiSelection="true" Height="600" Breakpoint="Breakpoint.Sm"
+                         Bordered="true" Dense="true" SortMode="SortMode.None" Striped>
+                <Columns>
+                    <PropertyColumn Property="x => x.FolioNum" HeaderStyle=" font-weight:bold" Title="Nro. Folio" />
+                    <PropertyColumn Property="@(x => x.DocTotal.ToString("$###,###,###"))" HeaderStyle=" font-weight:bold" Title="Total Doc." />
+                    <PropertyColumn Property="@(x => x.PaidToDate.ToString("$###,###,###"))" HeaderStyle=" font-weight:bold" Title="´Pagado" />
+                    <PropertyColumn Property="x => x.DocDate" HeaderStyle=" font-weight:bold" Title="Fecha Doc." />
+                    <PropertyColumn Property="x => x.Estado" HeaderStyle=" font-weight:bold" Title="Estado" />
+                </Columns>
+            </MudDataGrid>
+        </div>
+    </DialogContent>
+</MudDialog>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" />

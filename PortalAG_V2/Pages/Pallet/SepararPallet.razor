@@ -1,0 +1,32 @@
+﻿@page "/Pallet"
+
+<SurveyPrompt Title="Despaletizado"/>
+<br />
+
+<MudPaper Class="m-1 p-4" Style="width;:100%; display:flex; flex-direction:column;gap:10px">
+
+    <MudAlert Severity="Severity.Warning" ShowCloseIcon="false" Style="color:black; margin-bottom:0px" Dense="true"  Variant="Variant.Outlined">
+                <b style="color:black">NOTA: Las cantidades de bultos extraidas de un pallet quedaran disponibles en bodega recepción (BV_BRE) para ubicar nuevamente</b>
+    </MudAlert>
+    
+    <MudGrid Justify="Justify.Center" Spacing="2">
+        <MudItem xs="12" Style="display:flex;flex-direction:row; gap:10px">
+            <MudItem md="6" xs="12" Style="justify-item: center; margin:0 auto; align-content:center; align-items: center">
+                <MudTextField Variant="Variant.Outlined" Margin="Margin.Dense" T="int" Label="Nro. Pallet" @bind-Value="@pallet" Mask="@(new PatternMask("000000000000"))" OnKeyUp="@(x => x.Key != Enter ? null : Digito(x))" OnBlur="@(() => BlurPalletAsync())"></MudTextField>
+            </MudItem>
+            <MudItem md="6" xs="12" Style="justify-item: center; margin:0 auto; align-content:center; align-items: center">
+                <MudTextField  Variant="Variant.Outlined" Margin="Margin.Dense" T="int" Label="Cantidad a extraer" @bind-Value="@cantidadExt" Mask="@(new PatternMask("000000000000"))"></MudTextField>
+            </MudItem>
+        </MudItem>
+
+        <MudItem Style="justify-item: center; margin:0 auto; align-content:center; align-items: center">
+            <MudButton Variant="Variant.Outlined" Color="Color.Success" OnClick="Procesar" Disabled="habilitar_procesar"> Procesar </MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="Cancelar"> Cancelar </MudButton>
+        </MudItem>
+    </MudGrid>
+       
+  
+
+</MudPaper>
+
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" />

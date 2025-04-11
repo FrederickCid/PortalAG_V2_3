@@ -1,0 +1,127 @@
+﻿@page "/HojaDeRuta"
+@using PortalAG_V2.Shared.Model.HojaDeRuta;
+@inject SfDialogService DialogService
+@inject IDialogService DialogServices
+@inject SfDialogService DialogServicesf
+
+
+
+
+<SurveyPrompt Title="Hoja de Ruta" />
+<MudPaper Class="m-1 p-4" Style="width;:100%; display:flex; flex-direction:column;gap:10px">
+    @{
+        if (Click)
+        {
+            <MudItem Style="justify-item: center; margin:0 auto; align-content:center; align-items: center">
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="@onClickCrear"> CREAR HOJA DE RUTA </MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="@OnClickModificar"> MODIFICAR HOJA DE RUTA </MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="@OnClickModificarTransporte"> MODIFICAR TRANSPORTE </MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="@ReimprimiHR"> REIMPRIMIR HR </MudButton>
+            </MudItem>
+        }
+        if (!Click)
+        {
+            <MudItem Style="margin-bottom=-100px;">
+                <MudItem Style="display:flex; width:100%;">
+                    <MudText Style="font-weight:bold; width:100%; display:flex;">
+                        HOJA DE RUTA:<MudText> @IDHoja </MudText>
+                        </MudText>
+                        <MudText Style="font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end ">
+                            USUARIO:  <MudText> @appSatate.IDUsuario.ToUpper() </MudText>
+                        </MudText>
+                    </MudItem>
+                </MudItem>
+
+            <MudItem Class="pa-4 m-1">
+                <MudGrid Style="display:flex; flex-direction:column; gap: 10px">
+                    <MudItem md="12" xs="12">
+
+                        <MudDataGrid @ref="@GridHO" T="ConsultaDisponiblesHojaDeRutaModel"
+                                     MultiSelection="!transfiriendoDatos" Items="@ListaDisponibles" Hover="true" Striped="true"
+                                     Bordered="true" Dense="true" SortMode="SortMode.Multiple" RowClick="@clickDesde" QuickFilter="@QuickFilter">
+                            <ToolBarContent>
+                                <MudSpacer />
+                                <MudItem Class="pa-4 m-1">
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@Actualizar">Actualizar</MudButton>
+                                </MudItem>
+                                <MudTextField @bind-Value="_searchString" Placeholder="Buscar..." Adornment="Adornment.Start" Immediate="true"
+                                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" bor Class="mt-0" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                            </ToolBarContent>
+                            <Columns>                               
+                                <PropertyColumn Property="x => x.NroDocumento" IsEditable="false" Style="width:50px" />
+                                <PropertyColumn Property="x => x.Transporte" IsEditable="false" Style="width:50px" />
+                                <PropertyColumn Property="x => x.NroBultos" IsEditable="false" Style="width:auto" />
+                                <PropertyColumn Property="x => x.RazonSocial" IsEditable="false" Style="width:auto" />
+                                <PropertyColumn Property="x => x.Descripcion" IsEditable="false" Style="width:auto" />
+                                <PropertyColumn Property="x => x.Direccion" IsEditable="false" />
+                                <PropertyColumn Property="x => x.Region" IsEditable="false" Style="width:auto" />
+                                <PropertyColumn Property="x => x.Ciudad" IsEditable="false" Style="width:auto" />
+                                <PropertyColumn Property="x => x.Comuna" IsEditable="false" Style="width:auto" />
+                            </Columns>
+                            <PagerContent>
+                                <MudDataGridPager T="ConsultaDisponiblesHojaDeRutaModel" PageSizeOptions="new int[] {25}" />
+
+                            </PagerContent>
+                        </MudDataGrid>
+                    </MudItem>
+                    <MudItem md="12" xs="12">
+
+                        <MudDataGrid ReadOnly="true" T="ConsultaDisponiblesHojaDeRutaModel"
+                                     Items="@ListaHojaDetalle" Style="height:100%;" Bordered="true" EditTrigger="DataGridEditTrigger.OnRowClick "
+                                     Dense="true" SortMode="SortMode.Multiple" MultiSelection="true">
+                            <Columns>                                
+                                <PropertyColumn Property="x => x.NroDocumento" IsEditable="false" Style="width:auto" />
+                                <PropertyColumn Property="x => x.Transporte" IsEditable="false" Style="width:50px" />
+                                <PropertyColumn Property="x => x.NroBultos" IsEditable="false" Style="width:auto" />
+                                <PropertyColumn Property="x => x.RazonSocial" IsEditable="false" Style="width:auto" />
+                                <PropertyColumn Property="x => x.Descripcion" IsEditable="false" Style="width:auto" />
+                                <PropertyColumn Property="x => x.Direccion" IsEditable="false" />
+                                <PropertyColumn Property="x => x.Region" IsEditable="false" Style="width:auto" />
+                                <PropertyColumn Property="x => x.Ciudad" IsEditable="false" Style="width:auto" />
+                                <PropertyColumn Property="x => x.Comuna" IsEditable="false" Style="width:auto" />
+                                <TemplateColumn>
+                                    <CellTemplate>
+                                        <MudStack Row>
+                                         <MudTooltip Text="Borrar">
+                                             <MudIconButton Style="height:20px; width:20px" Color="Color.Error" Icon="@Icons.Material.Outlined.Delete" Size="Size.Medium" OnClick="@(() =>RemoveItem(@context.Item))"></MudIconButton>
+                                         </MudTooltip>
+                                     </MudStack>
+                                 </CellTemplate>
+                             </TemplateColumn>
+                         </Columns>
+                         <PagerContent>
+                             <MudDataGridPager T="ConsultaDisponiblesHojaDeRutaModel" PageSizeOptions="new int[] {25}" />
+                         </PagerContent>
+                     </MudDataGrid>
+                 </MudItem>
+             </MudGrid>
+         </MudItem>
+            <MudItem Class="m-1 p-4" sm="12" md="12">
+                <MudText Style="padding-bottom:10px; font-weight:bold; width:100%">Seleccione una zona:</MudText>
+                <MudRadioGroup T="int" @bind-SelectedOption="@SelectedOption" Disabled="@(ListaHojaDetalle.Count == 0)" Style="margin:0 auto; justify-content:center; align-content:center; align-items: center">
+                    <MudRadio Option="1">Zona 1</MudRadio>
+                    <MudRadio Option="2">Zona 2</MudRadio>
+                    <MudRadio Option="3">Zona 3</MudRadio>
+                    <MudRadio Option="4">Zona 4</MudRadio>
+                    <MudRadio Option="5">Zona 5</MudRadio>
+                    <MudRadio Option="6">Zona 6</MudRadio>
+                </MudRadioGroup>
+            </MudItem>
+            <MudItem Style="display:flex; " Class="pa-4 m-1">
+                <MudItem xs="12" Style="display:flex; justify-content:start;">
+                    @*<MudButton Variant="Variant.Outlined" Disabled="@(!fileComplete.Any() || _Comentarios == "" || _NroFactura == "" || _Observaciones == "" )" Color="Color.Primary" DisableElevation="true" OnClick="@(()=>form.Validate())">Liberar</MudButton>*@
+                </MudItem>
+                <MudItem xs="12" Style="display:flex; justify-content:end;">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Error" DisableElevation="true" OnClick="@onClickCancelar">Cancelar</MudButton>
+                    @*<MudButton Variant="Variant.Outlined" Color="Color.Error" DisableElevation="true" OnClick="@PruebaPdf">Prueba</MudButton>*@
+                    <MudButton Variant="Variant.Outlined" Color="Color.Info" DisableElevation="true" Class="mx-2" Disabled="@(ListaHojaDetalle.Count == 0 || SelectedOption == 0)" OnClick="@BtnCrear">Crear</MudButton>
+
+
+                </MudItem>
+            </MudItem>
+        }
+    }
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" />
+<PortalAG_V2.Componentes.LoadingImpresion Visibility="@LoadingImpresion" />
+

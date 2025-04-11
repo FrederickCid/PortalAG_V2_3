@@ -1,0 +1,30 @@
+﻿@using PortalAG_V2.Shared.Models.Cheques
+@using System.Globalization
+<MudDialog>
+    <TitleContent>
+        Se encontraron @List.Count Cheques con la serie: <b>@numeroSerie</b>
+    </TitleContent>
+    <DialogContent>
+        <MudItem Style="max-height:500px; overflow:auto">
+            <MudDataGrid T="ChequesModel" Items="@List" FixedHeader>
+                <Columns>
+                    <PropertyColumn Property="x => x.IDCliente" />
+                    <PropertyColumn Property="x => x.RazonSocial" />
+                    <PropertyColumn Property="x => x.Banco" />
+                    <PropertyColumn Property="@(x => x.Monto.ToString("$ ###,###,###"))" />
+                    <PropertyColumn Property="@(x => DateTime.ParseExact(x.FechaVencimiento, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture).ToString("dd/MM/yyyy"))" />
+                    <TemplateColumn CellClass="d-flex justify-end">
+                        <CellTemplate>
+                            <MudStack Row>
+                                <MudButton Size="@Size.Small" Variant="@Variant.Outlined" Color="@Color.Primary" OnClick="() => Submit(context.Item)">Seleccionar</MudButton>
+                            </MudStack>
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+            </MudDataGrid>
+        </MudItem>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>

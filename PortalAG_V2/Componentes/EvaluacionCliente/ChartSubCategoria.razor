@@ -1,0 +1,21 @@
+﻿@using ApexCharts
+@using static PortalAG_V2.Shared.Models.ClienteEvaluacion.ClienteAdicionalModel
+
+<MudItem xs="12" md="8">
+    <MudCard Style="background-color:rgb(0,0,0,.05);">
+        <CardContent>
+            <ApexChart TItem="Ventasporsubcastegoria"
+                       Title="Compras por subcategoria"
+                       @ref="@chart"
+                       Height="360">
+                <ApexPointSeries TItem="Ventasporsubcastegoria"
+                                 Items="@(ListSub.Where(x => x.SubCategoria != "" && x.SubCategoria != null ))"
+                                 SeriesType="SeriesType.Treemap"
+                                 Name="Lineas Pickeadas"
+                                 XValue="@(e => String.IsNullOrEmpty(e.SubCategoria)? "OTROS": e.SubCategoria)"
+                                 YValue="@(e => Convert.ToDecimal(e.suma))"
+                                 ShowDataLabels />
+            </ApexChart>
+        </CardContent>
+    </MudCard>
+</MudItem>

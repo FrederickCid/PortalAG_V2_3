@@ -1,0 +1,715 @@
+@page "/SolicitudMovimientos"
+@inject IDialogService DialogService
+@using PortalAG_V2.Shared.Model.SolicitudMovimiento;
+
+<style>
+    .selected {
+        background-color: #1E88E5 !important;
+    }
+
+        .selected > td {
+            color: white !important;
+        }
+
+            .selected > td .mud-input {
+                color: white !important;
+            }
+
+    .mud-card-content {
+        display: flex;
+        flex-direction: column;
+        height: calc(100% - 58px);
+    }
+
+    .mud-data-grid {
+        flex-grow: 1;
+    }
+
+    .full-width {
+        width: 100%;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .search-section {
+        margin-bottom: 2rem;
+    }
+</style>
+
+<SurveyPrompt Title="Solicitud De Movimientos" />
+
+<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
+    <!-- Selector de Tipo de Solicitud -->
+    <MudPaper Elevation="3" Class="pa-4 mb-4">
+        <MudText Typo="Typo.h6" Class="mb-3">Tipo de Solicitud</MudText>
+        <MudSelect T="TipoOperacionModel"
+                   Value="MostrarSolicitudDesde"
+                   Label="Seleccione tipo de operación"
+                   Variant="Variant.Outlined"
+                   ToStringFunc="@convertTipoSolicitud"
+                   ValueChanged="((x) => Solicitud(x))"
+                   FullWidth="true"
+                   Margin="Margin.Dense">
+            @foreach (TipoOperacionModel item in _listTipoSolicitud)
+            {
+                <MudSelectItem Value="@item">@item.Descripcion</MudSelectItem>
+            }
+        </MudSelect>
+    </MudPaper>
+
+    <!-- Contenido dinámico según tipo de solicitud -->
+    @if (MostrarSolicitudDesde.IDTipoOperacion == 123)
+    {
+        <!-- Traspaso - Mantenemos el diseño existente -->
+        <MudPaper Elevation="3" Class="pa-4 mb-4">
+            <!-- Sección de filtros y búsqueda -->
+            <MudGrid Spacing="2">
+                <!-- Selectores de bodegas -->
+                <MudItem xs="12" md="4">
+                    <MudSelect T="Bodegas"
+                               Value="mostrarBodegasDesde"
+                               Label="Bodega Origen"
+                               Variant="Variant.Outlined"
+                               ToStringFunc="convertBodega"
+                               ValueChanged="((x) => ListDesde(x))"
+                               AnchorOrigin="Origin.BottomCenter"
+                               Required="true"
+                               Margin="Margin.Dense">
+                        @foreach (var item in _listBodegaDesde)
+                        {
+                            <MudSelectItem Value="@item">@item.Descripcion</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" md="4">
+                    <MudSelect T="Bodegas"
+                               Value="mostrarBodegasHasta"
+                               Label="Bodega Destino"
+                               Variant="Variant.Outlined"
+                               ToStringFunc="convertBodega"
+                               ValueChanged="((x) => ListHasta(x))"
+                               AnchorOrigin="Origin.BottomCenter"
+                               Required="true"
+                               Margin="Margin.Dense">
+                        @foreach (var item in _listBodegaHasta)
+                        {
+                            <MudSelectItem Value="@item">@item.Descripcion</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" md="4">
+                    <MudTextField Label="Número de Guía"
+                                  @bind-Value="_numeroGuia"
+                                  Variant="Variant.Outlined"
+                                  Disabled="true"
+                                  FullWidth="true"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+
+                <!-- Búsqueda de artículos -->
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="ID Artículo"
+                                  @bind-Value="_numero"
+                                  Variant="Variant.Outlined"
+                                  HelperText="Ingrese el ID del artículo"
+                                  Immediate="true"
+                                  FullWidth="true"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+
+                <MudItem xs="12" md="5">
+                    <MudTextField Label="Nombre Artículo"
+                                  @bind-Value="_nombreArticulo123"
+                                  Variant="Variant.Outlined"
+                                  Disabled="true"
+                                  FullWidth="true"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+
+                <!-- Botón Buscar -->
+                <MudItem xs="12" md="4" Class="d-flex align-center">
+                    @if (_buscarProcessing)
+                    {
+                        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Small" Class="ml-auto" />
+                    }
+                    else
+                    {
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   OnClick="ListaUbicacion"
+                                   StartIcon="@Icons.Material.Filled.Search"
+                                   Class="ml-auto">
+                            Buscar
+                        </MudButton>
+                    }
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+
+        <!-- Sección de ubicaciones -->
+        <MudGrid Spacing="2" Class="mb-4">
+            <!-- Bodega origen -->
+            <MudItem xs="12" md="6">
+                <MudCard Class="h-100">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Ubicación en: @mostrarBodegasDesde.SiglaBodega</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudDataGrid T="UbicacionDesde"
+                                     Items="@Elements1"
+                                     Bordered="true"
+                                     Hover = "true"
+                                     Dense="true"
+                                     @bind-SelectedItems="bodegaDesde1"
+                                     RowClick="(x) => ClickDesde123(x.Item)"
+                                     HorizontalScrollbar="true"
+                                     MultiSelection="false">
+                            <Columns>
+                                <SelectColumn T="UbicacionDesde"  ShowInFooter="false" ShowInHeader="false" />
+                                <PropertyColumn Property="x => x.IDArticulo" Title="ID Artículo" />
+                                <PropertyColumn Property="x => x.NroPallet" Title="N° Pallet" />
+                                <PropertyColumn Property="x => x.IDUbicacion" Title="ID Ubicación" />
+                                <PropertyColumn Property="x => x.UnidadPorBulto" Title="Unid/Bulto" />
+                                <PropertyColumn Property="x => x.Cantidad" Title="Cantidad" />
+                                <PropertyColumn Property="x => x.Ubicacion" Title="Ubicación" />
+                            </Columns>
+                            <PagerContent>
+                                <MudDataGridPager T="UbicacionDesde" PageSizeOptions="new int[] {5, 10}" />
+                            </PagerContent>
+                        </MudDataGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <!-- Bodega destino -->
+            <MudItem xs="12" md="6">
+                <MudCard Class="h-100">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Ubicación en: @mostrarBodegasHasta.SiglaBodega</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudGrid Class="mb-3">
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="_searchString"
+                                              Placeholder="Buscar Ubicación"
+                                              Variant="Variant.Outlined"
+                                              Adornment="Adornment.Start"
+                                              AdornmentIcon="@Icons.Material.Filled.Search"
+                                              IconSize="Size.Medium"
+                                              FullWidth="true"
+                                              Margin="Margin.Dense"
+
+                                              />
+                            </MudItem>
+                        </MudGrid>
+
+                        <MudDataGrid T="UbicacionHasta"
+                                     Items="@Elements2"
+                                     Bordered="true"
+                                     Dense="true"
+                                     MultiSelection="false"
+                                     Hover="true"
+                                     @bind-SelectedItems="bodegaHasta1"
+                                     RowClick="(x) => ClickHasta123(x.Item)"
+                                     HorizontalScrollbar="true"
+                                     QuickFilter="@_quickFilter">
+                            <Columns>
+                                <SelectColumn T="UbicacionHasta" ShowInFooter="false" ShowInHeader="false" />
+                                <PropertyColumn Property="x => x.Ubicacion" Title="Ubicación" />
+                                <PropertyColumn Property="x => x.IDArticulo" Title="ID Artículo" />
+                                <PropertyColumn Property="x => x.NroPallet" Title="N° Pallet" />
+                                <PropertyColumn Property="x => x.IDUbicacion" Title="ID Ubicación" />
+                                <PropertyColumn Property="x => x.UnidadPorBulto" Title="Unid/Bulto" />
+                                <PropertyColumn Property="x => x.Cantidad" Title="Cantidad" />
+                            </Columns>
+                            <PagerContent>
+                                <MudStack Justify="Justify.FlexEnd" Direction="Direction.Row" Spacing="2">
+                                    <MudDataGridPager T="UbicacionHasta" PageSizeOptions="new int[] {5, 10}" />
+                                </MudStack>
+                            </PagerContent>
+                        </MudDataGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+
+        <!-- Botón Agregar -->
+        <MudItem Class="d-flex justify-end mb-4">
+            @if (_agregarProcessing)
+            {
+                <MudProgressCircular Size="Size.Small" Color="Color.Primary" Indeterminate="true" />
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           OnClick="Agregar123"
+                           StartIcon="@Icons.Material.Filled.AddCircle"
+                           Class="full-width"
+                           Disabled="bodegaDesde1.Count == 0 || bodegaHasta1.Count == 0">
+                    Agregar
+                </MudButton>
+            }
+        </MudItem>
+
+        <!-- Detalle del envío -->
+        <MudPaper Elevation="3" Class="pa-4 mb-4">
+            <MudText Typo="Typo.h6" Class="mb-3">Detalle de envío a @mostrarBodegasHasta.SiglaBodega</MudText>
+
+            <MudDataGrid T="DetalleRecepcion123"
+                         Items="@Detalle123"
+                         Bordered="true"
+                         Dense="true"
+                         Style="width: 100%"
+                         HorizontalScrollbar="true">
+                <Columns>
+                    <PropertyColumn Property="x => x.IDArticulo" Title="ID Artículo" />
+                    <PropertyColumn Property="x => x.NroPallet" Title="N° Pallet" />
+                    <PropertyColumn Property="x => x.IDUbicacionDesde" Title="Ubicación Origen" />
+                    <PropertyColumn Property="x => x.IDUbicacionHasta" Title="Ubicación Destino" />
+                    <PropertyColumn Property="x => x.BodegaDesde" Title="Bodega Origen" />
+                    <PropertyColumn Property="x => x.Bultos" Title="Bultos" />
+                    <PropertyColumn Property="x => x.UnidadxBultos" Title="Unidades/Bulto" />
+
+                    <TemplateColumn Title="Acciones">
+                        <CellTemplate>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                           Color="Color.Error"
+                                           Size="Size.Small"
+                                           OnClick="@(() => BorrarLinea123(context.Item))" />
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="DetalleRecepcion123" PageSizeOptions="new int[] {5, 10}" />
+                </PagerContent>
+            </MudDataGrid>
+        </MudPaper>
+
+        <!-- Botones de Confirmar y Enviar -->
+        <MudItem Class="d-flex justify-end" Style="gap: 1rem; margin-bottom: 1rem">
+            @if (_listoProcessing)
+            {
+                <MudProgressCircular Size="Size.Small" Color="Color.Primary" Indeterminate="true" />
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Secondary"
+                           OnClick="Listo123"                           
+                           StartIcon="@Icons.Material.Filled.CheckCircle"
+                           Disabled="_numeroGuia > 0">
+                    Confirmar
+                </MudButton>
+            }
+
+            @if (_processing)
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Small" />
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Success"
+                           OnClick="Enviar"
+                           Disabled="_desactivar"
+                           StartIcon="@Icons.Material.Filled.Send">
+                    Enviar
+                </MudButton>
+            }
+        </MudItem>
+
+    }
+    else if (MostrarSolicitudDesde.IDTipoOperacion == 280 ||
+    MostrarSolicitudDesde.IDTipoOperacion == 285 ||
+    MostrarSolicitudDesde.IDTipoOperacion == 290)
+    {
+        <!-- Plantilla para Reposición a BIT, BIT a BVN y Reposición a BVN -->
+        <MudPaper Elevation="3" Class="pa-4 mb-4 search-section">
+            <MudGrid Spacing="2">
+                <MudItem xs="12" md="4">
+                    <MudTextField Label="Número de Guía"
+                                  @bind-Value="_numeroGuia"
+                                  Variant="Variant.Outlined"
+                                  Disabled="true"
+                                  FullWidth="true"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+
+                <MudItem xs="12" md="4">
+                    <MudTextField Label="ID Artículo"
+                                  @bind-Value="_numero"
+                                  Variant="Variant.Outlined"
+                                  HelperText="Ingrese el ID del artículo"
+                                  Immediate="true"
+                                  FullWidth="true"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+
+                <MudItem xs="12" md="4">
+                    <MudTextField Label="Nombre Artículo"
+                                  @bind-Value="_nombreArticulo"
+                                  Variant="Variant.Outlined"
+                                  Disabled="true"
+                                  FullWidth="true"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+
+                <MudItem xs="12" md="12" Class="d-flex align-center">
+                    @if (_buscarProcessing)
+                    {
+                        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Small" />
+                    }
+                    else
+                    {
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   OnClick="ListaUbicacion"
+                                   StartIcon="@Icons.Material.Filled.Search"
+                                   FullWidth="true">
+                            Buscar
+                        </MudButton>
+                    }
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+
+        <MudGrid Spacing="2" Class="mb-4">
+            <!-- Bodega origen -->
+            <MudItem xs="12" md="6">
+                <MudCard Class="h-100">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">
+                            @(MostrarSolicitudDesde.IDTipoOperacion == 280 ? "Ubicación en Mayor" :
+                                MostrarSolicitudDesde.IDTipoOperacion == 285 ? "Ubicación en Intermedia" :
+                                "Ubicación en Mayor")
+                        </MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudDataGrid T="UbicacionArticuloMayor"
+                                     Items="@Elements"
+                                     Bordered="true"
+                                     Dense="true"
+                                     MultiSelection="true"
+                                     @bind-SelectedItems="bodegaDesde"
+                                     SelectedItemChanged="(x) => clickDesde(x)"
+                                     Striped
+                                     HorizontalScrollbar="true">
+                            <Columns>
+                                <PropertyColumn Property="x => x.IDArticulo" Title="ID Artículo" />
+                                <PropertyColumn Property="x => x.NroPallet" Title="N° Pallet" />
+                                <PropertyColumn Property="x => x.IDUbicacion" Title="ID Ubicación" />
+                                <PropertyColumn Property="x => x.UnidadPorBulto" Title="Unid/Bulto" />
+                                <PropertyColumn Property="x => x.Cantidad" Title="Cantidad" />
+                                <PropertyColumn Property="x => x.Ubicacion" Title="Ubicación" />
+                            </Columns>
+                            <PagerContent>
+                                <MudDataGridPager T="UbicacionArticuloMayor" PageSizeOptions="new int[] {5, 10}" />
+                            </PagerContent>
+                        </MudDataGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <!-- Bodega destino -->
+            <MudItem xs="12" md="6">
+                <MudCard Class="h-100">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">
+                            @(MostrarSolicitudDesde.IDTipoOperacion == 280 ? $"Detalle envío a Intermedia: {_ubicacionDestino}" :
+                                MostrarSolicitudDesde.IDTipoOperacion == 285 ? $"Detalle envío a Ventas: {_ubicacionDestino}" :
+                                $"Detalle envío a Ventas: {_ubicacionDestino}")
+                        </MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudDataGrid T="DetalleRecepcion"
+                                     Items="@Detalle"
+                                     Bordered="true"
+                                     Dense="true"
+                                     Striped
+                                     Breakpoint="Breakpoint.Sm">
+                            <Columns>
+                                <PropertyColumn Property="x => x.IDArticulo" Title="ID Artículo" />
+                                <PropertyColumn Property="x => x.NroPallet" Title="N° Pallet" />
+                                <PropertyColumn Property="x => x.IDUbicacion" Title="ID Ubicación" />
+                                <PropertyColumn Property="x => x.BodegaDesde" Title="Bodega Origen" />
+                                <PropertyColumn Property="x => x.Bultos" Title="Bultos" />
+                                <PropertyColumn Property="x => x.UnidadxBultos" Title="Unidades/Bulto" />
+                                <TemplateColumn Title="Acciones">
+                                    <CellTemplate>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Color="Color.Error"
+                                                       Size="Size.Small"
+                                                       OnClick="@(() => BorrarLinea(context.Item))" />
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                            <PagerContent>
+                                <MudStack Justify="Justify.FlexEnd" Spacing="2">
+
+                                    <MudDataGridPager T="DetalleRecepcion" PageSizeOptions="new int[] {5, 10}" />
+                                </MudStack>
+                            </PagerContent>
+                        </MudDataGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+
+        <MudItem Class="d-flex justify-end" Style="gap: 1rem; margin-bottom: 1rem">
+            @if (_processing1)
+            {
+                <MudProgressCircular Size="Size.Small" Color="Color.Primary" Indeterminate="true" />
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Secondary"
+                           OnClick="Listo"
+                           StartIcon="@Icons.Material.Filled.CheckCircle">
+                    Confirmar
+                </MudButton>
+            }
+            @if (_processing)
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Small" />
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Success"
+                           OnClick="Enviar"
+                           Disabled="_desactivar"
+                           StartIcon="@Icons.Material.Filled.Send">
+                    Enviar
+                </MudButton>
+            }
+        </MudItem>
+    }
+    else if (MostrarSolicitudDesde.IDTipoOperacion == 310)
+    {
+        <!-- Plantilla para Reubicación -->
+        <MudPaper Elevation="3" Class="pa-4 mb-4 search-section">
+            <MudGrid Spacing="2">
+                <MudItem xs="12" md="4">
+                    <MudSelect T="Bodegas"
+                               Value="mostrarBodegasDesde"
+                               ValueChanged="((x) => ListDesde(x))"
+                               Label="Bodega Origen"
+                               Variant="Variant.Outlined"
+                               ToStringFunc="convertBodega"
+                               FullWidth="true"
+                               Margin="Margin.Dense"
+                               Disabled ="Detalle310.Count>0">
+                        @foreach (Bodegas item in _listBodega)
+                        {
+                            <MudSelectItem Value="@item">@item.Descripcion</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" md="4">
+                    <MudTextField Label="Número de Guía"
+                                  @bind-Value="_numeroGuia"
+                                  Variant="Variant.Outlined"
+                                  Disabled="true"
+                                  FullWidth="true"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+
+                <MudItem xs="12" md="4">
+                    <MudTextField Label="ID Artículo"
+                                  @bind-Value="_numero"
+                                  Variant="Variant.Outlined"
+                                  HelperText="Ingrese el ID del artículo"
+                                  Immediate="true"
+                                  FullWidth="true"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+
+                <MudItem xs="12" md="12" Class="d-flex align-center">
+                    @if (_buscarProcessing)
+                    {
+                        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Small" />
+                    }
+                    else
+                    {
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   OnClick="ListaUbicacion"
+                                   StartIcon="@Icons.Material.Filled.Search"
+                                   FullWidth="true">
+                            Buscar
+                        </MudButton>
+                    }
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+
+        <MudGrid Spacing="2" Class="mb-4">
+            <!-- Bodega origen -->
+            <MudItem xs="12" md="6">
+                <MudCard Class="h-100">
+                    <MudCardHeader>
+                        <MudText  Typo="Typo.h6">Ubicación en: @mostrarBodegasDesde.SiglaBodega</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudDataGrid T="UbicacionDesde"
+                                     Items="@Elements1"
+                                     MultiSelection="false"
+                                     @bind-SelectedItems="bodegaDesde1"
+                                     RowClick="(x) => ClickDesde310(x.Item)"                              
+                                     Bordered="true"
+                                     Dense="true"
+                                     Hover
+                                     Striped
+                                     HorizontalScrollbar="true">
+                            <Columns>
+                                <SelectColumn T="UbicacionDesde" ShowInFooter="false" ShowInHeader="false" />
+                                <PropertyColumn Property="x => x.IDArticulo" Title="ID Artículo" />
+                                <PropertyColumn Property="x => x.NroPallet" Title="N° Pallet" />
+                                <PropertyColumn Property="x => x.IDUbicacion" Title="ID Ubicación" />
+                                <PropertyColumn Property="x => x.UnidadPorBulto" Title="Unid/Bulto" />
+                                <PropertyColumn Property="x => x.Cantidad" Title="Cantidad" />
+                                <PropertyColumn Property="x => x.Ubicacion" Title="Ubicación" />
+                            </Columns>
+                            <PagerContent>
+                                <MudDataGridPager T="UbicacionDesde" PageSizeOptions="new int[] {5, 10}" />
+                            </PagerContent>
+                        </MudDataGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <!-- Bodega destino -->
+            <MudItem xs="12" md="6">
+                <MudCard Class="h-100">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Ubicación destino en: @mostrarBodegasDesde.SiglaBodega</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudGrid Class="mb-3">
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="_searchString"
+                                              Placeholder="Buscar Ubicación"
+                                              Variant="Variant.Outlined"
+                                              Adornment="Adornment.Start"
+                                              AdornmentIcon="@Icons.Material.Filled.Search"
+                                              IconSize="Size.Medium"
+                                              FullWidth="true" 
+                                              Margin="Margin.Dense"/>
+                            </MudItem>
+                        </MudGrid>
+
+                        <MudDataGrid T="UbicacionHasta"
+                                     Items="@Elements2"
+                                     MultiSelection="false"
+                                     @bind-SelectedItems="bodegaHasta1"
+                                     RowClick="(x) => ClickHasta310(x.Item)"
+                                     Bordered="true"
+                                     Dense="true"
+                                     Striped
+                                     HorizontalScrollbar="true"
+                                     QuickFilter="@_quickFilter">
+                            <Columns>
+                                <SelectColumn T="UbicacionHasta" ShowInFooter="false" ShowInHeader="false" />
+                                <PropertyColumn Property="x => x.Ubicacion" Title="Ubicación" />
+                                <PropertyColumn Property="x => x.IDArticulo" Title="ID Artículo" />
+                                <PropertyColumn Property="x => x.NroPallet" Title="N° Pallet" />
+                                <PropertyColumn Property="x => x.IDUbicacion" Title="ID Ubicación" />
+                                <PropertyColumn Property="x => x.UnidadPorBulto" Title="Unid/Bulto" />
+                                <PropertyColumn Property="x => x.Cantidad" Title="Cantidad" />
+                            </Columns>
+                            <PagerContent>
+                                <MudStack Justify="Justify.FlexEnd" Spacing="2">
+
+                                    <MudDataGridPager T="UbicacionHasta" PageSizeOptions="new int[] {5, 10}" />
+                                </MudStack>
+                            </PagerContent>
+                        </MudDataGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+        <MudItem Class="d-flex justify-end mb-4">
+            @if (_agregarProcessing)
+            {
+                <MudProgressCircular Size="Size.Small" Color="Color.Primary" Indeterminate="true" />
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           OnClick="Listo310"
+                           StartIcon="@Icons.Material.Filled.AddCircle"
+                           FullWidth
+                           Disabled="bodegaDesde1.Count == 0 || bodegaHasta1.Count == 0">
+                    Agregar
+                </MudButton>
+            }
+        </MudItem>
+        <!-- Detalle de reubicación -->
+        <MudPaper Elevation="3" Class="pa-4 mb-4">
+            <MudText Typo="Typo.h6" Class="mb-3">Detalle de reubicación en @mostrarBodegasDesde.SiglaBodega</MudText>
+            <MudDataGrid T="DetalleRecepcion310"
+                         Items="@Detalle310"
+                         Bordered="true"
+                         Dense="true"
+                         Striped
+                         HorizontalScrollbar="true">
+                <Columns>
+
+                    <PropertyColumn Property="x => x.IDArticulo" Title="ID Artículo" />
+                    <PropertyColumn Property="x => x.NroPallet" Title="N° Pallet" />
+                    <PropertyColumn Property="x => x.IDUbicacionDesde" Title="Ubicación Origen" />
+                    <PropertyColumn Property="x => x.IDUbicacionHasta" Title="Ubicación Destino" />
+                    <PropertyColumn Property="x => x.BodegaDesde" Title="Bodega Origen" />
+                    <PropertyColumn Property="x => x.Bultos" Title="Bultos" />
+                    <PropertyColumn Property="x => x.UnidadxBultos" Title="Unidades/Bulto" />
+                    <TemplateColumn Title="Acciones">
+                        <CellTemplate>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                           Color="Color.Error"
+                                           Size="Size.Small"
+                                           OnClick="@(() => BorrarLinea310(context.Item))" />
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="DetalleRecepcion310" PageSizeOptions="new int[] {5, 10}" />
+                </PagerContent>
+            </MudDataGrid>
+        </MudPaper>
+
+        <MudItem Class="d-flex justify-end" Style="gap: 1rem; margin-bottom: 1rem">
+            @if (_processing)
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Small" />
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Success"
+                           OnClick="Enviar"
+                           Disabled="_desactivar"
+                           StartIcon="@Icons.Material.Filled.Send">
+                    Enviar
+                </MudButton>
+            }
+        </MudItem>
+    }
+</MudContainer>
+
+@code {
+    private HashSet<UbicacionArticuloMayor> bodegaDesde = new();
+    private HashSet<UbicacionDesde> bodegaDesde1 = new();
+    private HashSet<UbicacionHasta> bodegaHasta1 = new();
+    private HashSet<UbicacionArticulo> bodegaHasta = new();
+}

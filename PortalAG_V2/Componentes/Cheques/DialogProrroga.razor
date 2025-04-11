@@ -1,0 +1,22 @@
+﻿<MudDialog>
+    <TitleContent>
+        Prorroga de cheque
+    </TitleContent>
+    <DialogContent>
+        <MudItem Style="display:flex;flex-direction:column">
+            <MudText>
+                ¿Seleccione la nueva fecha?
+            </MudText>
+            <MudDatePicker Label="Nueva fecha" @bind-Date="_date" @bind-Text="@Fecha" IsDateDisabledFunc="@((DateTime dt) => dt.Date <= DateTime.Now.Date)" />
+            <MudText Style="margin-top:10px">
+                ¿Porque?
+            </MudText>
+            <MudTextField @bind-Value="Respuesta" T="string" Label="Comentario" Variant="Variant.Outlined" Lines="3"/>        
+        </MudItem>
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Confirmacion">Ok</MudButton>
+    </DialogActions>
+</MudDialog>

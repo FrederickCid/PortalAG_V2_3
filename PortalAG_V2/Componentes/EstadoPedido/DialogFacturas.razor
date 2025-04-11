@@ -1,0 +1,23 @@
+﻿@using System.Globalization
+@using agDataAccess.Models
+<MudDialog Class="w-50 h-30">
+    <DialogContent>
+            <MudText Typo="Typo.h6">Nro Pedido: @nroDocumento</MudText>       
+            <MudText Typo="Typo.h6">ID Cliente: @idCliente</MudText>
+            <MudText Class="mt2" Typo="Typo.h6">Razon Social: @razonSocial</MudText>
+            <MudItem xs="12" Class="mt-5">
+                <MudDataGrid T="FacturaEstadoPedidoModel" Items="Detalle" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true">
+                    <Columns>
+                        <PropertyColumn Property="x => x.nroDocumeto" Title="Nro Factura" />
+                        <PropertyColumn Property="x => x.Total" Title="Total" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                        <PropertyColumn Property="x => x.PagadoAfecha" Title="Total Pagado" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                        <PropertyColumn Property="x => x.Estado" Title="Estado" />
+                    </Columns>
+                </MudDataGrid>
+            </MudItem>
+
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Cancel">Cerrar</MudButton>
+        </DialogActions>
+    </MudDialog>

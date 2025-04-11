@@ -1,0 +1,61 @@
+﻿@page "/SolicitudPedidosSacados"
+@using agDataAccess.Models.ConsultaLineasPickingPacking;
+
+<SurveyPrompt Title="Pedidos Sacados" />
+<br />
+<br />
+
+<MudPaper Style="margin=0 auto; max-width:">
+    <MudItem Class="pa-4 m-1">
+        <MudGrid Style="display: flex;align-items:center; ">
+            <MudItem xs="12" md="4">
+                <MudDatePicker @bind-Text="@Fecha" AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))"
+                               DateFormat="dd-MM-yyyy" DisableToolbar="true" Label="Fecha" />
+            </MudItem>
+            <MudItem xs="12" md="4" Style="display: flex">
+                <MudButton Disabled="@(Fecha == "" )" OnClick="BuscarPedidosSacados" Variant="Variant.Outlined" Color="Color.Primary">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Buscando...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Buscar</MudText>
+                    }
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+        <MudItem>
+            <SfGrid ID="Grid" @ref="Grid" DataSource="@PedidosSacados" AllowPaging="true" style="width:100%; " Toolbar="@ButtonsGrid" OnToolbarClick="ToolbarClick"
+                    AllowExcelExport="true" AllowSelection="true" AllowFiltering="true" AllowSorting="true" Width="auto" AllowResizing="true">
+                <GridEvents OnToolbarClick="ToolbarClick" TValue="PediDosSacadosModel"></GridEvents>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                <GridSearchSettings></GridSearchSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.NroDocumento) HeaderText="Nro Documento" Width="80" TextAlign="TextAlign.Right"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.IDOperacion) HeaderText="IDOperacion" Width="150"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.AnnoProceso) HeaderText="Año" Width="80"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.IDCliente) HeaderText="IDCliente" Width="120"> </GridColumn>
+                    @* <GridColumn Field=@nameof(ConsultaNCModel.Usuario) HeaderText="FechaSolicitud" Width="120"></GridColumn> *@
+                    <GridColumn Field=@nameof(PediDosSacadosModel.RazonSocial) HeaderText="Razon Social" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.Transporte) HeaderText="Transporte" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.NroOrden) HeaderText="Nro Orden" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.Sacador) HeaderText="Sacador" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.FechaAutorizacion) HeaderText="Fecha Autorizacion" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.FechaEntregaEstimada) HeaderText="Fecha Entrega Estimada" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.FechaInicioSacado) HeaderText="Fecha Inicio Sacado" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.FechaTerminoSacado) HeaderText="Fecha Termino Sacado" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.Region) HeaderText="Region" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.Comuna) HeaderText="Comuna" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.Ciudad) HeaderText="Ciudad" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.Direccion) HeaderText="Direccion" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.MontoTotal) HeaderText="Monto Total" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.Lineas) HeaderText="Lineas" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(PediDosSacadosModel.Vendedor) HeaderText="Vendedor" Width="120"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </MudItem>
+    </MudItem>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" />

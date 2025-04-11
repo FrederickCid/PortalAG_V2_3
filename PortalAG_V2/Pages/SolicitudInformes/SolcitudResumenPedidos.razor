@@ -1,0 +1,33 @@
+﻿@page "/SolicitudResumenPedido"
+@using PortalAG_V2.Shared.Model.SolicitudesInformes;
+
+<SurveyPrompt Title="Resumen Estado Pedido" />
+<br />
+<br />
+<MudPaper Style="margin=0 auto; max-width:">
+    <MudItem Class="pa-4 m-1">
+        <MudGrid Style="display: flex;align-items:center; ">
+            <MudItem xs="12" md="12" Style="display: flex; padding-bottom:10px">
+             
+            </MudItem>
+        </MudGrid>
+        <MudItem>
+            <SfGrid ID="Grid" @ref="Grid" DataSource="@ResumenPedidos" AllowPaging="true" style="width:100%; " Toolbar="@ButtonsGrid" OnToolbarClick="ToolbarClick"
+                    AllowExcelExport="true" AllowSelection="true" AllowFiltering="true" AllowSorting="true" AllowResizing="true">
+                <GridEvents OnToolbarClick="ToolbarClick" TValue="EstadoPedidoResumidoModel"></GridEvents>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(EstadoPedidoResumidoModel.NumeroPedido) HeaderText="NumeroPedido" TextAlign="TextAlign.Right"></GridColumn>
+                    <GridColumn Field=@nameof(EstadoPedidoResumidoModel.RazonSocial) HeaderText="Razon Social" Width="180"></GridColumn>
+                    <GridColumn Field=@nameof(EstadoPedidoResumidoModel.Rut) HeaderText="Rut"></GridColumn>
+                    <GridColumn Field=@nameof(EstadoPedidoResumidoModel.Fecha) HeaderText="Fecha"></GridColumn>
+                    <GridColumn Field=@nameof(EstadoPedidoResumidoModel.CantidadBultos) HeaderText="CantidadBultos"> </GridColumn>
+                    <GridColumn Field=@nameof(EstadoPedidoResumidoModel.CantidadLineas) HeaderText="CantidadLineas"></GridColumn>
+                    <GridColumn Field=@nameof(EstadoPedidoResumidoModel.CondicionDespacho) HeaderText="CondicionDespacho"></GridColumn>
+                    <GridColumn Field=@nameof(EstadoPedidoResumidoModel.Estado) HeaderText="Estado"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </MudItem>
+    </MudItem>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading"/>

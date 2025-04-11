@@ -1,0 +1,344 @@
+﻿@page "/avisodepago"
+@inject SfDialogService DialogService
+
+@using PortalAG_V2.Shared.Model.AvisoDePago;
+<SurveyPrompt Title="Aviso de Pago" />
+
+<div class="container-fluid">
+     <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <h5 class="card-header">Avisos de Pagos</h5>
+                <div class="card-body">
+                    <div class="col-md-12">
+            <div class="container-fluid" style="max-width: 1000px; width: 100%">
+                <div class="row justify-content-center m-2" >
+                    <div class="col-sm-3">
+                        <label>Rut Cliente</label>
+                        <SfTextBox @bind-Value="idCliente" OnChange="limpiarDatos"></SfTextBox>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Nombre</label>
+                        <SfTextBox @bind-Value="NombreCliente" Enabled="false" ></SfTextBox>
+                    </div>
+                    <div class="col-2 my-3 mt-5 justify-content-end display-0">
+                        
+                        <SfButton IconCss="e-icons e-search" OnClick="BuscarCliente">Buscar</SfButton>
+                        
+                    </div>
+                </div>
+                <div class="row justify-content-center m-2">
+                    <div class="col-sm-7 mx-2 align-items-center justify-content-center">
+                        <SfButton IconCss="e-icons e-menu" OnClick="AyudaCliente">Ayuda</SfButton>
+
+                        <SfButton IconCss="e-icons e-increase-indent" OnClick="BuscarPorCliente">Avisos Del Cliente</SfButton>
+                        <SfButton IconCss="e-icons e-file-new" OnClick="IngresarAvisoPago">Agregar Aviso</SfButton>
+                        @*<SfButton IconCss="e-icons e-close">Cancelar</SfButton>*@
+                
+                    </div>
+                </div>
+            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br/>
+<br/>
+<label>Avisos de Pagos registrados</label>
+<hr/>
+<SfButton aria-label="menu" CssClass="e-inherit menu" IconCss="e-icons e-refresh" OnClick="Cargar"></SfButton>
+<br />
+<SfGrid DataSource="@listadoPagos" AllowPaging="true" AllowSelection="true" AllowExcelExport="true" AllowGrouping="true" AllowFiltering="true" AllowSorting="true" Width="100%" Height="100%" GridLines="GridLine.Both">
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu" />
+        @*<GridEvents RowSelected="Click" RowDeselected="DesSeleccionar" TValue="PagoDTO" />*@
+    <GridPageSettings PageSize="10" />
+        <GridColumns>
+        <GridColumn Field=@nameof(AvisoPagoModel.IDOperacion) HeaderText="IDOperacion" IsPrimaryKey="true" Visible="false" Width="50" Format="###.##" />
+        <GridColumn Field=@nameof(AvisoPagoModel.IDCliente) HeaderText="Rut Cliente"  Width="50" Format="###.##" />
+        <GridColumn Field=@nameof(AvisoPagoModel.RazonSocial) HeaderText="Nombre" Width="50"  />
+        <GridColumn Field=@nameof(AvisoPagoModel.IDBanco) HeaderText="Banco" Width="50" Format="###.##">
+            <Template>
+                @{
+                    var id = (context as AvisoPagoModel);
+                    <label>@Bancos.Find(x=>x.IDBanco == id.IDBanco).Descripcion</label>
+                }
+            </Template>
+        </GridColumn>
+        
+        <GridColumn Field=@nameof(AvisoPagoModel.IDTipoPago) HeaderText="Tipo Pago" Width="50" Format="###.##">
+            <Template>
+                @{
+                    var id1 = (context as AvisoPagoModel);
+                    if (id1.IDTipoPago == 13)
+                    {
+                        <label>Transferencia</label>
+                    }
+                    else
+                    {
+                        <label>Deposito</label>
+                    }
+                }
+            </Template>
+        </GridColumn>
+        <GridColumn Field=@nameof(AvisoPagoModel.Valor) HeaderText="Monto de Aviso" Width="50" Format="###.##" />
+        <GridColumn Field=@nameof(AvisoPagoModel.Fecha) HeaderText="Fecha"   Width="50"  />
+        <GridColumn Field=@nameof(AvisoPagoModel.IDVendedor)  HeaderText="Vendedor"  Width="50" Format="###.##" />
+
+        </GridColumns>
+</SfGrid>
+   
+
+@*------------------ Ingresar Aviso de pago*@
+<SfDialog @ref="formularioAviso" Height="80%" Width="50%"  ShowCloseIcon="true"  AllowDragging="false" IsModal="true" @bind-Visible="@dlgFormulario">
+    <DialogTemplates>
+        <Header>
+            <text class="font-weight-bold">Carga de comprobante</text>
+        </Header>
+        <Content>
+            <SfTab  SelectedItemChanged="SelectedItemChanged">
+    
+                <TabItems>
+                    <TabItem>
+                        <ChildContent>
+                            <TabHeader Text="TRANSFERENCIA"></TabHeader>
+                        </ChildContent>
+                        <ContentTemplate>
+                            <br />
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <h5 class="card-header">Ingresar Información de Transferencia</h5>
+                                        <div class="card-body">
+                                            <div class="col-md-12">
+                                                <form class="row g-4">
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Banco</label>
+                                                        <SfDropDownList TValue="int?" Placeholder="Seleccione un banco" Value="@avisoPago.IDBanco" TItem="BancoAndesModel" DataSource="@BancosAndes">
+                                                            @*<DropDownListEvents TValue="string" TItem="BancoModel" ValueChange="onChangeComboBoxBanco"></DropDownListEvents>*@
+                                                            <DropDownListTemplates TItem="BancoAndesModel">
+                                                                <ItemTemplate>
+                                                                    @{
+                                                                        <label>@((context as BancoAndesModel).Descripcion) - Cta. cte. @((context as BancoAndesModel).CuentaCorriete)</label>
+                                                                    }
+                                                                </ItemTemplate>
+                                                            </DropDownListTemplates>
+                                                            <DropDownListFieldSettings  Text="Descripcion" Value="IDBanco"></DropDownListFieldSettings>
+                                                            <DropDownListEvents TValue="int?" TItem="BancoAndesModel" OnValueSelect="SelecionBanco"></DropDownListEvents>
+                                                        </SfDropDownList>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">N° Cuenta</label>
+                                                        <SfTextBox @bind-Value="avisoPago.NroCuenta" Enabled="false"></SfTextBox>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Monto Trasferencia</label>
+                                                        <SfNumericTextBox TValue="int" @bind-Value="avisoPago.Valor" Format="n0" Min="0" ShowSpinButton="false"></SfNumericTextBox>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">N° Comprobante</label>
+                                                        <SfTextBox @bind-Value="avisoPago.NroComprobante" Enabled="true"></SfTextBox>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Banco Cliente</label>
+                                                        <SfDropDownList TValue="int?" Placeholder="Seleccione un banco" @bind-Value="@avisoPago.IDBancoOrigen" TItem="BancoModel" DataSource="@Bancos">
+                                                            @*<DropDownListEvents TValue="string" TItem="BancoModel" ValueChange="onChangeComboBoxBanco"></DropDownListEvents>*@
+                                                            <DropDownListFieldSettings Text="Descripcion" Value="IDBanco"></DropDownListFieldSettings>
+                                                        </SfDropDownList>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">N° Cuenta Cliente</label>
+                                                        <SfTextBox @bind-Value="avisoPago.NroCuentaOrigen"></SfTextBox>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Fecha</label>                                                       
+                                                        <SfDatePicker @bind-Value="@avisoPago.Fecha" Placeholder="Seleccione una fecha" TValue="DateTime">
+                                                            @*<DatePickerEvents TValue="DateTime" ValueChange="@onChangeDataPikerDeposito"></DatePickerEvents>*@
+                                                        </SfDatePicker>
+                                                        
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <label class="form-label">Comentario</label>
+                                                        <SfTextBox @bind-Value="avisoPago.Comentarios" Enabled="true" Multiline="true"></SfTextBox>
+                                                    </div>
+                                                    
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </ContentTemplate>
+                    </TabItem>
+                    <TabItem>
+                        <ChildContent>
+                            <TabHeader Text="DEPÓSITO"></TabHeader>
+                        </ChildContent>
+                        <ContentTemplate>
+                            <br />
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <h5 class="card-header">Ingresar Información de Depósito</h5>
+                                        <div class="card-body">
+                                            <div class="col-md-12">
+                                                <form class="row g-4">
+                                                    
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Banco</label>
+                                                        <SfDropDownList TValue="int?" Placeholder="Seleccione un banco" Value="@avisoPago.IDBanco" TItem="BancoAndesModel" DataSource="@BancosAndes">
+                                                            @*<DropDownListEvents TValue="string" TItem="BancoModel" ValueChange="onChangeComboBoxBanco"></DropDownListEvents>*@
+                                                            <DropDownListTemplates TItem="BancoAndesModel">
+                                                                    <ItemTemplate>
+                                                                        @{
+                                                                            <label>@((context as BancoAndesModel).Descripcion) - Cta. cte. @((context as BancoAndesModel).CuentaCorriete)</label>
+                                                                        }
+                                                                    </ItemTemplate>
+                                                                </DropDownListTemplates>
+                                                            <DropDownListFieldSettings Text="Descripcion" Value="IDBanco"></DropDownListFieldSettings>
+                                                            <DropDownListEvents TValue="int?" TItem="BancoAndesModel" OnValueSelect="SelecionBanco"></DropDownListEvents>
+                                                        </SfDropDownList>
+                                                    </div>
+                                                   <div class="col-md-4">
+                                                        <label class="form-label">N° Cuenta</label>
+                                                        <SfTextBox @bind-Value="avisoPago.NroCuenta" Enabled="false"></SfTextBox>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Monto Depósito</label>
+                                                        <SfNumericTextBox TValue="int" @bind-Value="avisoPago.Valor" Format="n0" Min="0" ShowSpinButton="false"></SfNumericTextBox>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">N° Comprobante</label>
+                                                        <SfTextBox @bind-Value="avisoPago.NroComprobante" Type="Syncfusion.Blazor.Inputs.InputType.Number"></SfTextBox>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Fecha</label>
+                                                        <SfDatePicker @bind-Value="@avisoPago.Fecha" Placeholder="Seleccione una fecha" TValue="DateTime">
+                                                            @*<DatePickerEvents TValue="DateTime" ValueChange="@onChangeDataPikerDeposito"></DatePickerEvents>*@
+                                                        </SfDatePicker>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Usuario Depósito</label>
+                                                        <SfTextBox @bind-Value="avisoPago.UsuarioOrigen"></SfTextBox>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <label class="form-label">Comentario</label>
+                                                        <SfTextBox @bind-Value="avisoPago.Comentarios" Enabled="true" Multiline="true"></SfTextBox>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                           
+                        </ContentTemplate>
+                    </TabItem>
+                    
+                </TabItems>
+
+            </SfTab>
+            <SfUploader ID="UploadFiles" AllowMultiple="true" AutoUpload="false">
+                <UploaderEvents ValueChange="OnChangeAsync"></UploaderEvents>
+            </SfUploader>
+
+
+            <br />
+            <div class="text-center">
+                <SfButton Raised="true" Disabled="!isFileSelected" Icon="input" Type="submit" OnClick="EnvioAviso">Ingresar aviso</SfButton>
+                <SfButton Raised="true" Icon="input" OnClick="CerrarFAviso" >Cancelar</SfButton>
+            </div>
+            <br />
+        </Content>
+        <FooterTemplate>
+
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
+
+@*------------------ Dialogo de Ayuda*@
+<SfDialog  Height="50%" Width="50%" ShowCloseIcon="true" AllowDragging="true" IsModal="true" @bind-Visible="@dlgAyuda">
+    <DialogTemplates>
+        <Header>
+            <text class="font-weight-bold">Ayuda Cliente</text>
+        </Header>
+            <Content>
+                <div class="row" style="margin:auto">
+                    <div class="col-9">
+                        <SfTextBox @bind-Value="txNombreCliente" Placeholder="Texto"></SfTextBox>
+                    </div>
+                    <div class="col-3">
+                        <SfButton @onclick="ClkAyudaCliente">Buscar</SfButton>
+                    </div>
+
+
+                </div>
+                <hr />
+
+            <SfRadioButton Label="Que Contenga.." Name="options" Value="0" @bind-Checked="AyudaCheckC" ></SfRadioButton>
+            <SfRadioButton Label="Que comience con.." Name="options" Value="1" @bind-Checked="AyudaCheckC"></SfRadioButton>
+
+                <hr />
+
+                <SfGrid @ref="AyudaGrid" DataSource="@ClienteAyuda" Toolbar="@(new List<object>() { "Print" })" Height="200">
+                   @* <GridSelectionSettings Type="SelectionType.Single"></GridSelectionSettings>*@
+
+                    <GridColumns>
+                    <GridColumn Field=@nameof(ClienteModel.IDCliente) HeaderText="Rut" TextAlign="TextAlign.Left" Width="40"></GridColumn>
+                    <GridColumn Field=@nameof(ClienteModel.RazonSocial) HeaderText="Nombre" TextAlign="TextAlign.Left" Width="110"></GridColumn>
+                    </GridColumns>
+                <GridEvents RowSelected="RowSelectCliente" TValue="ClienteModel"></GridEvents>
+                </SfGrid>
+            </Content>
+        </DialogTemplates>
+    </SfDialog>
+
+@*------------------ Datos de cliente*@
+<SfDialog Height="80%" Width="50%" ShowCloseIcon="true" AllowDragging="false" IsModal="true" @bind-Visible="@dlgPorCliente">
+    <DialogTemplates>
+        <Header>
+            <text class="font-weight-bold">Cargas previas del cliente</text>
+        </Header>
+        <Content>
+            <SfGrid DataSource="@listadoPagosDetalle" AllowPaging="true" AllowSelection="true" AllowExcelExport="true" AllowGrouping="true" AllowFiltering="true" AllowSorting="true" Width="100%" Height="100%" GridLines="GridLine.Both">
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu" />
+                @*<GridEvents RowSelected="Click" RowDeselected="DesSeleccionar" TValue="PagoDTO" />*@
+                <GridPageSettings PageSize="10" />
+                <GridColumns>
+                    <GridColumn Field=@nameof(AvisoPagoModel.IDOperacion) HeaderText="IDOperacion" IsPrimaryKey="true" Visible="false" Width="50" Format="###.##" />
+                    <GridColumn Field=@nameof(AvisoPagoModel.IDCliente) HeaderText="Rut Cliente" Width="50" Format="###.##" />
+                    <GridColumn Field=@nameof(AvisoPagoModel.RazonSocial) HeaderText="Nombre" Width="50" />
+                    <GridColumn Field=@nameof(AvisoPagoModel.IDBanco) HeaderText="Banco" Width="50" Format="###.##" >
+                        <Template>
+                            @{
+                                var id = (context as AvisoPagoModel);
+                                <label>@Bancos.Find(x=>x.IDBanco == id.IDBanco).Descripcion</label>
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(AvisoPagoModel.IDTipoPago) HeaderText="Tipo Pago" Width="50" Format="###.##">
+                        <Template>
+                            @{
+                                var id = (context as AvisoPagoModel);
+                                if (id.IDTipoPago == 13)
+                                {
+                                    <label>Transferencia</label>
+                                }
+                                else
+                                {
+                                    <label>Deposito</label>
+                                }
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(AvisoPagoModel.Valor) HeaderText="Monto de Aviso" Width="50" Format="###.##" />
+                    <GridColumn Field=@nameof(AvisoPagoModel.Fecha) HeaderText="Fecha" Width="50" />
+                    <GridColumn Field=@nameof(AvisoPagoModel.IDVendedor) HeaderText="Vendedor" Width="50" Format="###.##" />
+
+                </GridColumns>
+            </SfGrid>
+
+        </Content>
+    </DialogTemplates>
+</SfDialog>

@@ -1,0 +1,128 @@
+﻿@using Newtonsoft.Json
+@using PortalAG_V2.Shared.Model.DispositivosModel
+@using PortalAG_V2.Shared.Services
+
+
+<MudDialog Class="w-50 h30">
+    <DialogContent>
+        <MudItem Class="mt-2">
+            <MudText Typo="Typo.subtitle1">
+                Dispositivo: @args.Identificador
+            </MudText>
+        </MudItem>
+
+        <MudItem>
+            <MudSelect T="Bodegas" @bind-Value="mostrarBodegasDesde" ToStringFunc="convertBodega" Placeholder="@args.IDBodegaEnPicking" Label="Bodega" Dense="true" Variant="Variant.Outlined">
+                @foreach (Bodegas item in _listBodega)
+                {
+                    <MudSelectItem Value="@item">@item.SiglaBodega</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+
+        <MudItem>
+            <MudItem xs="8">
+                <MudSwitch T="bool" @bind-Checked="_switched" @bind-Checked:after="ChangedSwitch" Color="Color.Secondary">Estado: @customstr</MudSwitch>
+            </MudItem>
+        </MudItem>
+    </DialogContent>    
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Cancel">Cerrar</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Editar">Confirmar</MudButton>
+    </DialogActions>
+</MudDialog>
+
+    @code{
+    [CascadingParameter] MudDialogInstance MudDialog {get;set;}
+    [Parameter]
+    public BuscarPorTipo args {get;set;}
+
+    public string customstr { get; set; }
+    bool _switched;
+
+    private ClientFactory conexion;
+    public List<Bodegas> _listBodega = new List<Bodegas>();
+    Bodegas mostrarBodegasDesde = new Bodegas();
+
+    private string urlEditar = "/api/v1/Dispositivos/EditarDispositivo";
+    private string urlBodega = "/api/v1/Dispositivos/Bodegas";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (args.IDEstado == 1)
+        {
+            customstr = "Activado";
+            _switched = true;
+        }
+        else 
+        {
+            customstr = "Desactivado";
+            _switched = false;
+        }
+
+        conexion = new MainServices().PermisosAPPPublic;
+        var auxBodega = await conexion.HttpClientInstance.GetAsync($"{urlBodega}");
+        if (auxBodega.IsSuccessStatusCode)
+        {
+            try
+            {
+                _listBodega = JsonConvert.DeserializeObject<List<Bodegas>>(await auxBodega.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                _snackBar.Add("Error al deserealizar Bodegas", Severity.Error);
+            }
+
+        }
+        else
+        {
+            _snackBar.Add("Error al consultar Bodegas", Severity.Error);
+        }
+    }
+
+
+    public async Task Editar()
+    {
+        if (mostrarBodegasDesde.SiglaBodega != "")
+        {
+            conexion = new MainServices().PermisosAPPPublic;
+            var auxDispo = await conexion.HttpClientInstance.GetAsync($"{urlEditar}/{args.Identificador}/{mostrarBodegasDesde.SiglaBodega}/{args.IDEstado}");
+            if (auxDispo.IsSuccessStatusCode)
+            {
+                _snackBar.Add("Dispositivo editado", Severity.Success);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                _snackBar.Add("Error al editar dispositivo", Severity.Error);
+            }
+        } else
+        {
+            _snackBar.Add("Por favor seleccionar una bodega!", Severity.Error);
+        }
+    }
+
+    public void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    public void ChangedSwitch()
+    {
+        if (_switched)
+        {
+            customstr = "Activado";
+            _switched = true;
+            args.IDEstado = 1;
+        }
+        else
+        {
+            customstr = "Desactivado";
+            _switched = false;
+            args.IDEstado = 0;
+        }
+        StateHasChanged();
+    }
+
+    Func<Bodegas, string> convertBodega = p => p.SiglaBodega;
+}

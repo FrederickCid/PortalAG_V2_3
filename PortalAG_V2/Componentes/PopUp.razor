@@ -1,0 +1,63 @@
+﻿@using PortalAG_V2.Shared.Model.VisualzadorFacturacion.VisualzadorFacturacionDTO;
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Popups
+
+<SfDialog Height="90%" Width="40%" ShowCloseIcon="true" AllowDragging="true" IsModal="true" Target="#MyGrid" @bind-Visible="@IsVisible">
+    <DialogTemplates>
+        <Header>Detalle del pedido</Header>
+        <Content>
+            <div style="display:inline-flex;padding-bottom:15px">
+                <div style="padding-top:20px">
+                    <text class="font-weight-bold">
+                        Pedido:
+                        @{
+                            @RowDetails.NroDocumento
+                        }
+                    </text>
+                    <SfGrid ID="MyGridDetalle" DataSource="DetalleVentaList" RowHeight="20" AllowPaging="true" AllowSelection="true" AllowExcelExport="true" AllowGrouping="true" AllowFiltering="true" AllowSorting="true" Width="100%" Height="40%" GridLines="GridLine.Both">
+                        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu" />
+                        <GridPageSettings PageSize="25" />
+                        <GridColumns>
+                            <GridColumn Field="@nameof(DetalleVentaDTO.Linea)" HeaderText="Linea" Width="100"></GridColumn>
+                            <GridColumn Field="@nameof(DetalleVentaDTO.IDArticulo)" HeaderText="IDArticulo" Width="100"></GridColumn>
+@*                            <GridColumn Field="@nameof(DetalleVentaDTO.NroDocumento)" HeaderText="Factura" Width="100"></GridColumn>
+                            <GridColumn Field="@nameof(DetalleVentaDTO.EstadoLinea)" HeaderText="Comentario" Width="250"></GridColumn>*@
+                        </GridColumns>
+                    </SfGrid>
+                </div>
+            </div>
+        </Content>
+    </DialogTemplates>
+    <DialogPositionData X="@Xvalue" Y="@Yvalue"></DialogPositionData>
+</SfDialog>
+
+@code {
+
+    private bool IsVisible = false;
+    private string? Xvalue = "center";
+    private string? Yvalue = "center";
+
+    private PorFacturarDTO RowDetails = new PorFacturarDTO();
+    public List<DetalleVentaDTO>? DetalleVentaList = new List<DetalleVentaDTO>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1);     
+    }
+
+    public void AbrirPopUp(bool paramVisible, List<DetalleVentaDTO> listParam, PorFacturarDTO objectParam)
+    {
+        IsVisible = paramVisible;
+        RowDetails = objectParam;
+        DetalleVentaList = listParam;
+        StateHasChanged();
+    }
+    public void CerrarPopUp()
+    {
+        IsVisible = false;
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,21 @@
+﻿@using ApexCharts
+@using static PortalAG_V2.Shared.Models.ClienteEvaluacion.ClienteAdicionalModel
+
+<MudItem xs="12" md="8">
+    <MudCard Style="background-color:rgb(0,0,0,.05);">
+        <CardContent>
+            <ApexChart TItem="Ventasporgama"
+                       Title="Compras por gama"
+                       @ref="@chart"
+                       Height="360">
+                <ApexPointSeries TItem="Ventasporgama"
+                                 Items="LisGama"
+                                 SeriesType="SeriesType.Donut"
+                                 Name="Lineas Pickeadas"
+                                 XValue="@(e => e.Gama)"
+                                 YValue="@(e => Convert.ToDecimal(e.suma))"
+                                 ShowDataLabels />
+            </ApexChart>
+        </CardContent>
+    </MudCard>
+</MudItem>

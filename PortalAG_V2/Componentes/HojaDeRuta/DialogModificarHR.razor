@@ -1,0 +1,32 @@
+﻿
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h5">
+            Modificar Hoja De ruta
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (showCallAlert)
+        {
+            <MudAlert Severity="Severity.Warning" ShowCloseIcon="false" Style="color:black; margin-bottom:20px" Dense="true" CloseIconClicked="@CerrarAlerta" Variant="Variant.Outlined">
+                <b style="color:black">NOTA: Para modificar la hoja de ruta tener en cuenta que el pedido no debe estar entragado o reangendado</b>
+            </MudAlert>
+        }
+
+        <MudGrid Spacing="2">
+            <MudItem xs="12" Style="display:flex;flex-direction:row; gap:10px">
+                <MudItem md="6" xs="12">
+                    <MudTextField @bind-Value="@HojaRuta" Variant="Variant.Outlined" Margin="Margin.Dense" T="string" Label="Nro. Hoja Ruta" Mask="@(new PatternMask("000000000000"))"></MudTextField>
+                </MudItem>
+                <MudItem md="6" xs="12">
+                    <MudTextField @bind-Value="@NroPedido" Variant="Variant.Outlined" Margin="Margin.Dense" T="string" Label="Nro. Pedido" Mask="@(new PatternMask("000000000000"))"></MudTextField>
+                </MudItem>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Success" OnClick="Submit">Modificar</MudButton>
+    </DialogActions>
+</MudDialog>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" />

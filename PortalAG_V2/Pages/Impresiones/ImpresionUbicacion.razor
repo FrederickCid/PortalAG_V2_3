@@ -1,0 +1,104 @@
+﻿@page "/ImpresionUbicacion"
+@using PortalAG_V2.Shared.Model.Impresion
+<SurveyPrompt Title="Impresion Ubicaciones " />
+<MudPaper Class="m-1 p-4" Style="width;:100%; display:flex; flex-direction:column;gap:10px">
+    <MudAlert Severity="Severity.Info" ShowCloseIcon="false" Style="color:black; margin-bottom:0px" Dense="true" Variant="Variant.Outlined">
+        <b style="color:black">NOTA: Ingresar la ubicacion que desea imprimir</b>
+    </MudAlert>
+    <MudItem Style="width:100%;">
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudItem Style="display:flex; flex-direction:row; gap:10px; margin-bottom:10px">
+                <MudItem md="6" xs="12">
+                    <MudSelect Margin="Margin.Dense" Dense Style="align-self:center" Label="Selecciones una bodega" Variant="Variant.Outlined" T="ConsultarBodegasModel" Value="SelectedconsultarBodegasModel" ValueChanged="OnChangeBodega" Required RequiredError="Bodega Requerido!"
+                               ToStringFunc="convertBodegas">
+                        @{
+                            foreach (var item in consultarBodegasModel)
+                            {
+                                <MudSelectItem T="ConsultarBodegasModel" Value="@(item)">@item.SiglaBodega</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem md="6" xs="12">
+                    <MudSelect Margin="Margin.Dense" Disabled="@(consultarSector.Count() == 0)" Dense Style="align-self:center" Label="Selecciones una Sector" Variant="Variant.Outlined" T="ConsultarSectorModel" Value="SelectedconsultarSector" ValueChanged="OnChangeSector" Required RequiredError="Sector Requerido!"
+                               ToStringFunc="convertSector">
+                        @{
+                            foreach (var item in consultarSector)
+                            {
+                                <MudSelectItem T="ConsultarSectorModel" Value="@(item)">@item.Sector</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudItem>
+            <MudItem Style="display:flex; flex-direction:row; gap:10px; margin-bottom:10px">
+                <MudItem md="6" xs="12">
+                    <MudSelect Margin="Margin.Dense" Disabled="@(consultarCalle.Count() == 0)" Dense Style="align-self:center" Label="Selecciones una Calle" Variant="Variant.Outlined" T="ConsultarCalleModel" @bind-Value="SelectedConsultarCalle" Required RequiredError="Calle Requerido!"
+                               ToStringFunc="convertCalle">
+                        @{
+                            foreach (var item in consultarCalle)
+                            {
+                                <MudSelectItem T="ConsultarCalleModel" Value="@(item)">@item.Calle</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem md="6" xs="12">
+                    <MudSelect Margin="Margin.Dense" Disabled="@(SelectedConsultarCalle.Calle == null || SelectedConsultarCalle.Calle  == "")" Dense Style="align-self:center" Label="Selecciones una Lado" Variant="Variant.Outlined" T="string" Required RequiredError="Bodega Requerido!" Value="SelectedOption" ValueChanged="OnChangeLado">
+                        <MudSelectItem T="string" Value="@("a")">A</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("b")">B</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+            </MudItem>
+            <MudItem Style="margin-bottom:10px; display:flex; flex-direction:row; gap:10px">
+                <MudItem md="4" xs="12">
+                    <MudSelect Margin="Margin.Dense" Dense Style="align-self:center" Label="Selecciones una Tramo" Variant="Variant.Outlined" T="ConsultarTramoModel" Value="SelectedConsultarTramoModel" ValueChanged="OnChangeTramo" Required RequiredError="Bodega Requerido!" ToStringFunc="convertTramo">
+                        @{
+                            foreach (var item in ConsultarTramoModel)
+                            {
+                                <MudSelectItem T="ConsultarTramoModel" Value="@(item)">@item.Tramo</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem md="4" xs="12">
+                    <MudSelect Margin="Margin.Dense" Dense Style="align-self:center" Label="Selecciones una Nivel" Variant="Variant.Outlined" T="ConsultarNivelModel" Required RequiredError="Bodega Requerido!" ToStringFunc="convertNivel" Value="SelectedConsultarNivelModel" ValueChanged="OnChangeNivel">
+                        @{
+                            foreach (var item in consultarNivelModel)
+                            {
+                                <MudSelectItem T="ConsultarNivelModel" Value="@(item)">@item.Nivel</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem md="4" xs="12">
+                    <MudSelect Margin="Margin.Dense" ToStringFunc="convertPosicion" Dense Style="align-self:center" Label="Selecciones una Posición" Variant="Variant.Outlined" T="ConsultarPosicionModel" @bind-Value="SelectedConsultarPosicionModel" Required RequiredError="Bodega Requerido!">
+                        @{
+                            foreach (var item in consultarPosicionModel)
+                            {
+                                <MudSelectItem T="ConsultarPosicionModel" Value="@(item)">@item.Posicion</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudItem>
+            <MudItem Style="margin-bottom:10px; display:flex; flex-direction:row; gap:10px">
+                <MudItem md="6" xs="12">
+                    <MudTextField T="int" @bind-Value="Copias" Mask="@(new PatternMask("000"))" Margin="Margin.Dense" FullWidth Variant="Variant.Outlined" Color="Color.Secondary" Label="Cantidad de copias" Required> MODIFICAR HOJA DE RUTA </MudTextField>
+                </MudItem>
+                <MudItem md="6" xs="12">
+                    <MudSelect Margin="Margin.Dense" Dense Style="align-self:center; margin-bottom:10px;" Label="Selecciones una Impresora" Variant="Variant.Outlined" T="string" @bind-Value="Impresora" Required RequiredError="Impresora Requerida!">
+                        <MudSelectItem T="string" Value="@("CDA_OficinaBodega")">OFICINA BODEGA</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("Logistica_Reimpresion")">IMPRESORA LOGISTICA</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("CDA_Recepcion_1")">RECEPCION 1</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("IMPRESORA_RECEPCION")">RECEPCION 2</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("Etiquetas_TI")">ETIQUETAS TI</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+            </MudItem>
+            <MudItem md="12" xs="12" Style="text-align:center">
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="@(() => Imprimir())"> IMPRIMIR </MudButton>
+            </MudItem>
+        </MudForm>
+    </MudItem>
+</MudPaper>

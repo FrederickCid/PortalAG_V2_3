@@ -1,0 +1,459 @@
+﻿@page "/nuevopago"
+@using PortalAG_V2.Shared.Model.Pagos;
+@using System.Globalization
+
+<MudGrid>
+    <MudItem xs="6">
+        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+            <MudItem>
+                <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary" aria-label="Regresar" OnClick="Regresar"></MudIconButton>
+            </MudItem>
+            <MudItem>
+                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowLeft" Color="Color.Primary" aria-label="Anterior"></MudIconButton>
+            </MudItem>
+            <MudItem>
+                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowRight" Color="Color.Primary" aria-label="Siguiente"></MudIconButton>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+
+    <MudItem xs="6">
+        <MudGrid Justify="Justify.FlexEnd">
+            <MudItem>
+                <MudButton Variant="Variant.Outlined" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Secondary" OnClick="IrAPagar">Ir a pagar</MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+
+</MudGrid>
+
+<MudGrid>
+    <MudItem xs="6">
+        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+            <MudItem xs="3">
+                <MudText Typo="Typo.subtitle1">Codigo cliente</MudText>
+                <MudTextField @bind-Value="idCliente" Margin="Margin.Dense" Variant="Variant.Outlined" OnBlur="BuscarCliente"></MudTextField>
+
+            </MudItem>
+            <MudItem xs="9">
+                <MudText Typo="Typo.subtitle1">Razon social</MudText>
+                <MudTextField @bind-Value="razonSocial" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled="true"></MudTextField>
+            </MudItem>
+            <MudItem xs="3">
+                <MudText Typo="Typo.subtitle1">Nro. cobranza</MudText>
+                <MudTextField @bind-Value="nroCobranza" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled=true></MudTextField>
+            </MudItem>
+            <MudItem xs="9">
+                <MudText Typo="Typo.subtitle1">Deuda cliente</MudText>
+                <MudTextField @bind-Value="deudaTotal" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled="true"></MudTextField>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+
+    <MudItem xs="6">
+        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+            <MudItem xs="4">
+                <MudText Typo="Typo.subtitle1">Fecha contabilizacion</MudText>
+                <MudDatePicker Margin="Margin.Dense" Editable="true" @bind-Date="dateContabilizacion" DateFormat="dd-MM-yyyy" />
+
+            </MudItem>
+            <MudItem xs="4">
+                <MudText Typo="Typo.subtitle1">Fecha vencimiento</MudText>
+                <MudDatePicker Margin="Margin.Dense" Editable="true" @bind-Date="dateVencimiento" DateFormat="dd-MM-yyyy" />
+            </MudItem>
+            <MudItem xs="4">
+                <MudText Typo="Typo.subtitle1">Fecha documento</MudText>
+                <MudDatePicker Margin="Margin.Dense" Editable="true" @bind-Date="dateDocumento" DateFormat="dd-MM-yyyy" />
+            </MudItem>
+            <MudItem xs="8">
+                <MudText Typo="Typo.subtitle1">Referencia de pago</MudText>
+                <MudTextField @bind-Value="referencia" Margin="Margin.Dense" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            <MudItem xs="4" Class="d-flex align-end justify-end flex-grow-1 gap-4" Elevation="0">
+                 
+                <MudButton Variant="Variant.Outlined" Size="Size.Large" Color="Color.Secondary" Disabled="@_procesarPago" OnClick="@AceptarPago">Procesar pago</MudButton>
+                    
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+
+</MudGrid>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudGrid Justify="Justify.FlexStart">
+            <MudItem>
+                <MudText Typo="Typo.subtitle1">Pedidos Pendientes - Selecione los pedidos a pagar</MudText>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+    @*RowClassFunc="rowSelected"*@
+    <MudItem xs="12">
+        <MudDataGrid T="PedidosDTO" Items="@pedidosPendientePago" Filterable="true" Dense="true" Striped="true" Bordered="true" SortMode="SortMode.None" ReadOnly="false"
+                     EditMode="DataGridEditMode.Cell" CommittedItemChanges="@CommittedItemChanges" MultiSelection="false">
+           
+            <Columns>
+                
+                <HierarchyColumn T="PedidosDTO" />
+                @*<SelectColumn T="PedidosDTO" ShowInFooter="false" /> SelectedItemsChanged="SelectedItemsChanged"*@
+                <TemplateColumn Title="Despacho" Sortable="false" IsEditable="false" Filterable="false" >
+                    <CellTemplate>
+                        <MudStack Row Justify="Justify.Center">
+                            <MudTooltip Text="Seleccione pedido para despacho">
+                                <MudCheckBox Checked="@(context.Item.Check)" Dense="true" Color="Color.Success" @onclick="@(()=>RowCellClicked(context.Item))"></MudCheckBox>
+                            </MudTooltip>
+                        </MudStack>
+                    </CellTemplate>
+                </TemplateColumn>
+                <PropertyColumn Property="x => x.IDOperacion" Title="ID" Sortable="false" IsEditable="false"/>
+                <PropertyColumn Property="x => x.NroDocumento" Title="N° Pedido" Sortable="false" IsEditable="false" />
+                <PropertyColumn Property="x => x.Fecha" Title="Fecha" Sortable="false" IsEditable="false"/>
+                 <PropertyColumn Property="x => x.Monto" Title="Monto" Format="C" Culture="@(new CultureInfo("es-CL"))" Sortable="false" IsEditable="false" />
+                 <PropertyColumn Property="x => x.PagadoAFecha" Title="Fehca pago" Sortable="false" IsEditable="false" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                <PropertyColumn Property="x => x.SaldoAFecha" Title="Saldo a fecha" Format="C" Culture="@(new CultureInfo("es-CL"))" Sortable="false" IsEditable="false"/>
+                 <PropertyColumn Property="x => x.ValorAPagar" Title="Pagar" Format="C" Culture="@(new CultureInfo("es-CL"))" Sortable="false" />
+                 <PropertyColumn Property="x => x.SaldoNuevo" Title="Saldo" Format="C" Culture="@(new CultureInfo("es-CL"))" Sortable="false" IsEditable="false" />
+                
+            </Columns>
+            <ChildRowContent>
+                <MudCard>
+                    <MudCardContent>
+                        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+                            <MudTabPanel Text="Informacion pedido">
+                                <MudGrid>
+                                    <MudItem xs="5">
+                                         <MudGrid Justify="Justify.FlexStart" Spacing="1">
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Nro Documento: @context.Item.NroDocumento</MudText>
+                                             </MudItem>
+                                             <MudItem xs="12" Class="ma-0 pa-0">
+                                                 <MudText Typo="Typo.subtitle1">@context.Item.IDOperacion</MudText>
+                                             </MudItem>
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Fecha: @context.Item.Fecha</MudText>
+                                            </MudItem>
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                 <MudText Typo="Typo.subtitle1">Vendedor: @context.Item.Vendedor</MudText>
+                                             </MudItem>
+                                             <MudItem xs="12" Class="ma-0 pa-0">
+                                                 <MudText Typo="Typo.subtitle1">Nro OC: @context.Item.NumeroOC</MudText>
+                                             </MudItem>
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Localidad: @context.Item.Localidad</MudText>
+                                            </MudItem>
+                                         </MudGrid>
+                                    </MudItem>
+                                     <MudItem xs="5">
+                                         <MudGrid Justify="Justify.FlexStart" Spacing="1">
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Bultos: @context.Item.Bultos</MudText>
+                                            </MudItem>
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Forma de pagos: @context.Item.FormaPago</MudText>
+                                            </MudItem>
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Condicion: @context.Item.CondicionPago</MudText>
+                                            </MudItem>
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">% Descuento: @context.Item.PorcentajeDescuento</MudText>
+                                            </MudItem>
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Comentario: @context.Item.Comentarios</MudText>
+                                            </MudItem>
+                                           
+                                         </MudGrid>
+                                    </MudItem>
+                                     <MudItem xs="2">
+                                        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+
+                                        </MudGrid>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudTabPanel>
+                            <MudTabPanel Text="Documentos">
+                                <MudGrid Justify="Justify.Center" Spacing="1">
+                                    <MudItem xs="12">
+                                        <MudDataGrid Items="@context.Item.Documetos">
+                                            <Columns>
+                                                <PropertyColumn Property="x => x.TipoOperacion" Title="Nr Documento" />
+                                                <PropertyColumn Property="x => x.FechaDocumento" Title="Fecha" />
+                                                 <PropertyColumn Property="x => x.MontoDocumento" Title="Total" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                                                 <PropertyColumn Property="x => x.Pagar" Title="Pagado" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                                                 <PropertyColumn Property="x => x.Saldo" Title="Saldo" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                                            </Columns>
+                                        </MudDataGrid>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudTabPanel>
+                            <MudTabPanel Text="Status entrega">
+                                <MudGrid>
+                                    <MudItem xs="5">
+                                        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                @{
+                                                    if(@context.Item.TipoEntrega == 2)
+                                                    {
+                                                        <MudText Typo="Typo.subtitle1">RETIRO EN TIENDA</MudText>
+                                                    }else
+                                                    {
+                                                        <MudText Typo="Typo.subtitle1">DESPACHO A CLIENTE</MudText>
+                                                    }
+                                                 }
+                                                
+                                            </MudItem>
+                                            @{
+                                                if (@context.Item.SiAutorizaDespacho == 1)
+                                                {
+                                                    <MudItem xs="12" Class="ma-0 pa-0">
+                                                        <MudText Typo="Typo.subtitle1">Desde OJO: @context.Item.SiAutorizaLiberacion</MudText>
+                                                    </MudItem>
+                                                    <MudItem xs="12" Class="ma-0 pa-0">
+                                                        <MudText Typo="Typo.subtitle1">Autorizado por: @context.Item.IDUsuarioAutorizaDespacho</MudText>
+                                                    </MudItem>
+                                                    <MudItem xs="12" Class="ma-0 pa-0">
+                                                        <MudText Typo="Typo.subtitle1">Nota: @context.Item.NotaAutorizacion</MudText>
+                                                    </MudItem>
+                                                }
+                                            }
+                                            
+                                        </MudGrid>
+                                    </MudItem>
+                                    <MudItem xs="5">
+                                        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Fecha inicio: 
+                                                    @{
+                                                        if (@context.Item.TipoEntrega == 2)
+                                                        {
+                                                            @context.Item.FechaInicioRetiroBodega
+                                                        }
+                                                        else
+                                                        {
+                                                            @context.Item.FechaInicioDespacho
+                                                        }
+                                                    }
+                                                
+                                                </MudText>
+                                            </MudItem>
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Fecha termino:
+                                                    @{
+                                                        if (@context.Item.TipoEntrega == 2)
+                                                        {
+                                                            @context.Item.FechaTerminoRetiroBodega
+                                                        }
+                                                        else
+                                                        {
+                                                            @context.Item.FechaTerminoDespacho
+                                                        }
+                                                    }
+
+                                                </MudText>
+                                            </MudItem>
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Transporte: @context.Item.Transporte</MudText>
+                                            </MudItem>
+
+                                        </MudGrid>
+                                    </MudItem>
+                                    <MudItem xs="2">
+                                        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+
+                                        </MudGrid>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudTabPanel>
+                            <MudTabPanel Text="Informacion entrega">
+                                <MudGrid>
+                                    <MudItem xs="5">
+                                        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Direccion: @context.Item.Direccion</MudText>
+                                            </MudItem>
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Comuna: @context.Item.Comuna</MudText>
+                                            </MudItem>
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Ciudad: @context.Item.Ciudad</MudText>
+                                            </MudItem>
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Region: @context.Item.Region</MudText>
+                                            </MudItem>
+                                            
+                                        </MudGrid>
+                                    </MudItem>
+                                    <MudItem xs="5">
+                                        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Referencia: @context.Item.Referencia</MudText>
+                                            </MudItem>
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Fono: @context.Item.Fono</MudText>
+                                            </MudItem>
+                                            <MudItem xs="12" Class="ma-0 pa-0">
+                                                <MudText Typo="Typo.subtitle1">Email: @context.Item.EMail</MudText>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </MudItem>
+                                    <MudItem xs="2">
+                                        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+
+                                        </MudGrid>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudTabPanel>
+                            <MudTabPanel Text="Adjuntos" Disabled="true">
+
+                            </MudTabPanel>
+                        </MudTabs>
+                    </MudCardContent>
+                </MudCard>
+            </ChildRowContent>
+            <PagerContent>
+                <MudDataGridPager T="PedidosDTO" PageSizeOptions=@(new int[] {10,20,30}) RowsPerPageString="Cantidad por pagina" />
+            </PagerContent>
+        </MudDataGrid>
+
+
+    </MudItem>
+</MudGrid>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudGrid Justify="Justify.FlexStart">
+            <MudItem>
+                <MudText Typo="Typo.subtitle1">Saldos</MudText>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+    <MudItem xs="12">
+        <MudDataGrid T="SaldosFavorDTO" Items="@saldoFavor" Filterable="true" Dense="true" Striped="true" Bordered="true" SortMode="SortMode.None" ReadOnly="false"
+                      EditMode="DataGridEditMode.Cell" CommittedItemChanges="@CommittedItemChangesFavor" MultiSelection="true">
+            
+            <Columns>
+                @*<SelectColumn T="SaldosFavorDTO" ShowInFooter="false" /> SelectedItemsChanged="SelectedItemsChangedFavor"*@
+                <TemplateColumn Title="" Sortable="false" IsEditable="false" Filterable="false">
+                    <CellTemplate>
+                        <MudStack Row Justify="Justify.Center">
+                            <MudTooltip Text="Seleccione para usar saldo">
+                                <MudCheckBox Checked="@(context.Item.check)" Dense="true" Color="Color.Success" @onclick="@(()=>RowCellClickedSaldoFavor(context.Item))"></MudCheckBox>
+                            </MudTooltip>
+                         </MudStack>
+                    </CellTemplate>
+                </TemplateColumn>
+                @*<PropertyColumn Property="x => x.linea" Title="Linea" Sortable="false" IsEditable="false" />*@
+               @*  <PropertyColumn Property="x => x.tipoOperacionSaldo" Title="Tipo" Sortable="false" IsEditable="false" /> *@
+                 <TemplateColumn Title="Tipo" Sortable="false" IsEditable="false">
+                     <CellTemplate>
+                         @{
+                            switch (@context.Item.tipoDocumento)
+                            {
+                                case 56:
+                                    <a>Nota Debito</a>
+                                    break;
+                                case 61:
+                                    <a>Nota Credito</a>
+                                    break;
+                                case 11:
+                                    <a>Saldo Favor</a>
+                                    break;
+                                case 14:
+                                    <a>Saldo Contra</a>
+                                    break;
+                                case 8:
+                                    <a>Pago Anticipado</a>
+                                    break;
+
+                            }
+                        }
+                     </CellTemplate>
+                 </TemplateColumn>
+                <PropertyColumn Property="x => x.fechaDocumentoSaldo" Title="Fecha" Sortable="false" IsEditable="false"/>
+                <PropertyColumn Property="x => x.debe" Title="Debe" Sortable="false" IsEditable="false" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                <PropertyColumn Property="x => x.haber" Title="Haber" Sortable="false" IsEditable="false" Format="C" Culture="@(new CultureInfo("es-CL"))"/>
+                @*<PropertyColumn Property="x => x.montoDocumentoSaldo" Title="Monto" Sortable="false" IsEditable="false" Format="N0"/>*@
+                <PropertyColumn Property="x => x.pagarSaldo" Title="Monto a Usar" Sortable="false" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                <PropertyColumn Property=" x=> x.saldo" Title="Saldo" Sortable="false" IsEditable="false" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="SaldosFavorDTO" PageSizeOptions=@(new int[] {10,20,30}) RowsPerPageString="Cantidad por pagina" />
+            </PagerContent>
+        </MudDataGrid>
+    </MudItem>
+</MudGrid>
+
+<MudGrid>
+    <MudItem xs="6">
+        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+            <MudItem xs="12">
+                <MudText Typo="Typo.subtitle1">Comentario</MudText>
+                <MudTextField @bind-Value="comentarios" Margin="Margin.Dense" Variant="Variant.Outlined"></MudTextField>
+            </MudItem>
+            
+        </MudGrid>
+    </MudItem>
+
+    <MudItem xs="6">
+        <MudGrid Justify="Justify.FlexStart">
+            <MudItem xs="4">
+                <MudText Typo="Typo.subtitle1">Importe vencido</MudText>
+                <MudTextField @bind-Value="sumaImporte" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled=true></MudTextField>
+            </MudItem> 
+            <MudItem xs="4">
+                <MudText Typo="Typo.subtitle1">Total pago</MudText>
+                <MudTextField @bind-Value="totalPago" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled=true></MudTextField>
+            </MudItem>
+            <MudItem xs="4">
+                <MudText Typo="Typo.subtitle1">Saldo pendiente</MudText>
+                <MudTextField @bind-Value="saldoPendiente" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled=true></MudTextField>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+</MudGrid>
+
+@*<MudPopover Open="@_isOpen" Fixed="true" Class="px-4 pt-4" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.CenterCenter">
+    <MudGrid Justify="Justify.FlexStart">
+        <MudItem xs="12">
+            <MudText Typo="Typo.subtitle1">Confirmacion de pago y liberacion</MudText>
+        </MudItem>
+        <MudItem xs="12">
+            <MudText Typo="Typo.subtitle1">Pedidos a liberar</MudText>
+            <MudDataGrid Items="@pedidosPendientePagoSelected">
+            <Columns>
+                <PropertyColumn Property="x => x.NroDocumento" Title="N° Pedido" />
+                <PropertyColumn Property="x => x.Fecha" Title="Fecha" />
+                <PropertyColumn Property="x => x.ValorAPagar" Title="Monot a pagar"  />
+                <PropertyColumn Property="x => x.SaldoNuevo" Title="Nuevo saldo"  />
+            </Columns>
+        </MudDataGrid>
+        </MudItem>
+    </MudGrid>
+    <MudGrid Justify="Justify.FlexEnd">
+        <MudButton Variant="Variant.Outlined" Size="Size.Small"  Color="Color.Primary">Small</MudButton>
+    </MudGrid>
+</MudPopover>*@
+
+ <style>
+    .selected {
+        background-color: #1E88E5 !important;
+    }
+
+ 
+
+        .selected > td {
+            color: white !important;
+        }
+
+ 
+
+            .selected > td .mud-input {
+                color: white !important;
+            }
+</style>
+
+ <style>
+    .my-custom-class {
+        backdrop-filter: blur(10px);
+    }
+</style>

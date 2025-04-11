@@ -1,0 +1,196 @@
+﻿@using Newtonsoft.Json
+@using PortalAG_V2.Shared.Model.SolicitudMovimiento
+@using PortalAG_V2.Shared.Services
+@using static PortalAG_V2.Pages.Movimientos.SolicitudDeMovimientos
+
+<MudDialog Class="dialog-movimiento" MaxWidth="MaxWidth.Medium">
+    <TitleContent>
+        <MudText Typo="Typo.h6" Class="ml-2">Mover Artículo</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudGrid>
+            <!-- ID Artículo -->
+            <MudItem xs="12" Class="mb-4">
+                <MudTextField Label="ID Artículo"
+                              T="string"
+                              @bind-Value="@args.IDArticulo"
+                              Disabled="true"
+                              Margin="Margin.Dense"
+                              Variant="Variant.Outlined"
+                              FullWidth="true" />
+            </MudItem>
+
+            <!-- Selección de bultos -->
+            <MudItem xs="12" sm="6" Class="mb-4">
+                <MudSelect T="ConsultaBultosDTO"
+                           Label="Unidades por bulto"
+                           Value="mostrarBultosHasta"
+                           Margin="Margin.Dense"
+                           Variant="Variant.Outlined"
+                           ToStringFunc="convertBultos"
+                           ValueChanged="((x) => BultoHasta(x))"
+                           Required="true"
+                           RequiredError="Seleccione un tipo de bulto"
+                           FullWidth="true">
+                    @foreach (ConsultaBultosDTO item in _listBultos)
+                    {
+                        <MudSelectItem Value="@item">@($"{item.CantidadPorBulto} unidades")</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+
+            <!-- Bultos disponibles -->
+            <MudItem xs="12" sm="6" Class="mb-4">
+                <MudTextField Label="Bultos disponibles"
+                              T="int?"
+                              @bind-Value="_bultosTotal"
+                              Disabled="true"
+                              Margin="Margin.Dense"
+                              Variant="Variant.Outlined"
+                              FullWidth="true" />
+            </MudItem>
+
+            <!-- Cantidad a mover -->
+            <MudItem xs="12" Class="mb-2">
+                <MudNumericField Label="Bultos a mover"
+                                 @bind-Value="_numero"
+                                 Min="1"
+                                 Max="_bultosTotal"
+                                 Variant="Variant.Outlined"
+                                 Immediate="true"
+                                 Required="true"
+                                 RequiredError="Ingrese la cantidad"
+                                 FullWidth="true" />
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions >
+        <MudButton Variant="Variant.Text"
+                   Color="Color.Error"
+                   OnClick="Cancel"
+                   Class="mr-2">
+            Cancelar
+        </MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="Submit"
+                   Disabled="@(_numero <= 0 || _bulto1 <= 0 || _bultosTotal <= 0)">
+            Confirmar
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public UbicacionDesde args { get; set; }
+    [Parameter] public Bodegas ubiHasta { get; set; }
+    [Parameter] public Bodegas ubiDesde { get; set; }
+
+    private List<DetalleRecepcion123> Detalle123 = new();
+    private List<Bodegas> _listBodegaDesde = new();
+    private List<ConsultaBultosDTO> _listBultos = new();
+    private ConsultaBultosDTO mostrarBultosHasta = new();
+
+    private int? _numero = 0;
+    private int _bulto1;
+    private int? _bultosTotal = 0;
+    private int _numeroBodega;
+
+    private ClientFactory conexion;
+
+    private const string urlConsultaBultos = "api/v2/MovimientoBodegas/ConsultaBultos";
+
+    // Mapeo de bodegas a números
+    private readonly Dictionary<string, int> _bodegaMapping = new()
+        {
+            ["BV_BPM"] = 21,
+            ["BV_BIT"] = 22,
+            ["BPM"] = 1,
+            ["BVN"] = 99,
+            ["BDV"] = 2,
+            ["BMT"] = 3,
+            ["BVE"] = 4,
+            ["BSR"] = 5,
+            ["BVM"] = 7,
+            ["BPR"] = 8,
+            ["BVT"] = 9,
+            ["BRV"] = 10,
+            ["BFI"] = 11
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+        conexion = new MainServices().SolMovimiento;
+
+        // Obtener número de bodega desde el mapeo o usar valor por defecto
+        _numeroBodega = _bodegaMapping.TryGetValue(ubiHasta.SiglaBodega, out var num) ? num : 299;
+
+        var auxConsultaBultos = await conexion.HttpClientInstance.GetAsync($"{urlConsultaBultos}/{args.IDArticulo}/{_numeroBodega}");
+
+        if (auxConsultaBultos.IsSuccessStatusCode)
+        {
+            try
+            {
+                var content = await auxConsultaBultos.Content.ReadAsStringAsync();
+                _listBultos = JsonConvert.DeserializeObject<List<ConsultaBultosDTO>>(content) ?? new();
+            }
+            catch (Exception ex)
+            {
+                // Considerar agregar logging aquí
+                _listBultos = new();
+            }
+        }
+    }
+
+    public void BultoHasta(ConsultaBultosDTO args2)
+    {
+        mostrarBultosHasta = args2;
+        _bulto1 = args2.CantidadPorBulto;
+
+        // Calcular bultos totales
+        _bultosTotal = (ubiDesde.SiglaBodega is "BV_BVN" or "BVN" or "BRV" or "BVM")
+            ? (args.Cantidad / _bulto1)
+            : args.Cantidad;
+    }
+
+    private void Submit()
+    {
+        if (_numero <= 0 || _bulto1 <= 0)
+        {
+            _snackBar.Add("Por favor seleccione bultos e ingrese una cantidad válida!", Severity.Warning);
+            return;
+        }
+
+        var data = new Datos
+            {
+                Unidades = _bulto1,
+                Cantidad = _numero
+            };
+
+        MudDialog.Close(DialogResult.Ok(data));
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    // Funciones de conversión para selects
+    private static string convertBultos(ConsultaBultosDTO p) => p.CantidadPorBulto.ToString();
+
+    // Clase de datos para el resultado
+    public class Datos
+    {
+        public int? Unidades { get; set; }
+        public int? Cantidad { get; set; }
+    }
+}
+
+<style>
+    .dialog-movimiento {
+        min-width: 450px;
+    }
+
+    @@media (max-width: 600px) {
+        .dialog-movimiento {
+            min-width: 90vw;
+        }
+    }
+</style>

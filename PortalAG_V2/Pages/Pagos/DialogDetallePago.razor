@@ -1,0 +1,275 @@
+﻿@using Newtonsoft.Json;
+@using PortalAG_V2.Services;
+@using PortalAG_V2.Shared.Helpers;
+@using PortalAG_V2.Shared.Model.Pagos;
+@using PortalAG_V2.Shared.Services;
+@using System.Globalization;
+
+@inject ExportService exportService
+@inject IJSRuntime js
+
+
+<MudDialog>
+    <DialogContent>
+        <MudGrid Justify="Justify.FlexStart">
+            <MudItem xs="12">
+                <MudText Typo="Typo.subtitle1"></MudText>
+            </MudItem>
+            <MudItem xs="12">
+                <MudGrid>
+                    <MudProgressLinear Color="Color.Primary" Indeterminate="@cargando" Class="my-7" />
+                    <MudItem xs="6">
+                        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+                            <MudItem xs="3">
+                                <MudText Typo="Typo.subtitle1">Codigo cliente</MudText>
+                                <MudTextField @bind-Value="idCliente" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+
+                            </MudItem>
+                            <MudItem xs="9">
+                                <MudText Typo="Typo.subtitle1">Razon social</MudText>
+                                <MudTextField @bind-Value="razonSocial" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+                            </MudItem>
+                            <MudItem xs="3">
+                                <MudText Typo="Typo.subtitle1">Nro. cobranza</MudText>
+                                <MudTextField @bind-Value="nroCobranza" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly=true></MudTextField>
+                            </MudItem>
+                            <MudItem xs="9">
+                                @* <MudText Typo="Typo.subtitle1">Deuda cliente</MudText>
+                                <MudTextField @bind-Value="deudaTotal" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField> *@
+                            </MudItem>
+                        </MudGrid>
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+                            <MudItem xs="4">
+                                <MudText Typo="Typo.subtitle1">Fecha contabilizacion</MudText>
+                                <MudDatePicker Margin="Margin.Dense" Editable="false" @bind-Date="dateContabilizacion" ReadOnly="true" DateFormat="dd-MM-yyyy" />
+
+                            </MudItem>
+                            <MudItem xs="4">
+                                <MudText Typo="Typo.subtitle1">Fecha vencimiento</MudText>
+                                <MudDatePicker Margin="Margin.Dense" Editable="false" @bind-Date="dateVencimiento" ReadOnly="true" DateFormat="dd-MM-yyyy" />
+                            </MudItem>
+                            <MudItem xs="4">
+                                <MudText Typo="Typo.subtitle1">Fecha documento</MudText>
+                                <MudDatePicker Margin="Margin.Dense" Editable="false" @bind-Date="dateDocumento" ReadOnly="true" DateFormat="dd-MM-yyyy" />
+                            </MudItem>
+                            <MudItem xs="8">
+                                <MudText Typo="Typo.subtitle1">Referencia de pago</MudText>
+                                <MudTextField @bind-Value="referencia" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+                            </MudItem>
+                            <MudItem xs="4" Class="d-flex align-end justify-end flex-grow-1 gap-4" Elevation="0">
+                                <MudButton Variant="Variant.Outlined" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Primary" OnClick="ImprimirComprobante">
+                                    @if (_processingDos)
+                                    {
+                                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                        <MudText Class="ms-2">Procesando..</MudText>
+                                    }
+                                    else
+                                    {
+                                        <MudText>Comprobante</MudText>
+                                    }
+                                </MudButton>
+                                @* <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Primary" OnClick="ImprimirComprobante">Comprobante</MudButton> *@
+
+                            </MudItem>
+                        </MudGrid>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+            <MudItem xs="12">
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudDataGrid T="PagoCancelacion" Items="@pagos" Filterable="false" Dense="true" Striped="true" Bordered="true"
+                                     SortMode="@SortMode.None" Groupable="false">
+                            <ToolBarContent>
+                                <MudText Typo="Typo.h6">Lista de pagos</MudText>
+                            </ToolBarContent>
+                            <Columns>
+                                <PropertyColumn Property="x => x.FormaPago" Title="Forma de pago" />
+                                <PropertyColumn Property="x => x.Banco" Title="Banco" />
+                                <PropertyColumn Property="x => x.NumeroSerie" Title="Serie" />
+                                <PropertyColumn Property="x => x.FechaCancelacion" Title="Fecha" />
+                                <PropertyColumn Property="x => x.Monto" Title="Importe" />
+                            
+                            </Columns>
+                        </MudDataGrid>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudDataGrid T="SaldosFavorDTO" Items="@saldofavor" Filterable="false" Dense="true" Striped="true" Bordered="true"
+                                     SortMode="@SortMode.None" Groupable="false">
+                            <ToolBarContent>
+                                <MudText Typo="Typo.h6">Lista de saldos</MudText>
+                            </ToolBarContent>
+                            <Columns>
+                                <PropertyColumn Property="x => x.nroDocumentoSaldo" Title="N° Documento" />
+                                <TemplateColumn Title="Tipo" Sortable="false" IsEditable="false">
+                                    <CellTemplate>
+                                        @{
+                                            switch (@context.Item.tipoDocumento)
+                                            {
+                                                case 56:
+                                                    <a>Nota Debito</a>
+                                                    break;
+                                                case 61:
+                                                    <a>Nota Credito</a>
+                                                    break;
+                                                case 11:
+                                                    <a>Saldo Favor</a>
+                                                    break;
+                                                case 14:
+                                                    <a>Saldo Contra</a>
+                                                    break;
+                                                case 8:
+                                                    <a>Pago Anticipado</a>
+                                                    break;
+
+                                            }
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <PropertyColumn Property="x => x.montoDocumentoSaldo" Title="Monto" />
+
+                            </Columns>
+                        </MudDataGrid>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudDataGrid T="PedidosDTO" Items="@pedidos" Filterable="true" Dense="true" Striped="true" Bordered="true" SortMode="SortMode.None" ReadOnly="false">
+                            <ToolBarContent>
+                                <MudText Typo="Typo.h6">Pedidos pagados</MudText>
+                            </ToolBarContent>
+                            <Columns>
+
+                                <HierarchyColumn T="PedidosDTO" />
+                                @*<SelectColumn T="PedidosDTO" ShowInFooter="false" /> SelectedItemsChanged="SelectedItemsChanged"*@
+                                <PropertyColumn Property="x => x.NroDocumento" Title="N° Pedido" Sortable="false" IsEditable="false" />
+                                <PropertyColumn Property="x => x.Fecha" Title="Fecha" Sortable="false" IsEditable="false" />
+                                <PropertyColumn Property="x => x.Monto" Title="Monto" Format="C" Culture="@(new CultureInfo("es-CL"))" Sortable="false" IsEditable="false" />
+                                <PropertyColumn Property="x => x.PagadoAFecha" Title="Pagado a fecha " Sortable="false" IsEditable="false" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                                <PropertyColumn Property="x => x.SaldoAFecha" Title="Saldo a fecha" Format="C" Culture="@(new CultureInfo("es-CL"))" Sortable="false" IsEditable="false" />
+                            </Columns>
+                            <ChildRowContent>
+                                
+                                <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+
+                                    <MudTabPanel Text="Documentos">
+                                        <MudGrid Justify="Justify.Center" Spacing="1">
+                                            <MudItem xs="12">
+                                                <MudDataGrid Items="@context.Item.Documetos">
+                                                    <Columns>
+                                                        <PropertyColumn Property="x => x.TipoOperacion" Title="Tipo" />
+                                                        <PropertyColumn Property="x => x.NroDocumento" Title="Nro Documento" />
+                                                        <PropertyColumn Property="x => x.FechaDocumento" Title="Fecha" />
+                                                        <PropertyColumn Property="x => x.MontoDocumento" Title="Total" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                                                        <PropertyColumn Property="x => x.Pagar" Title="Pagado" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                                                        <PropertyColumn Property="x => x.Saldo" Title="Saldo" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                                                    </Columns>
+                                                </MudDataGrid>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </MudTabPanel>
+                                </MudTabs>
+                            </ChildRowContent>
+                       
+                        </MudDataGrid>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public PagosDTO pagoSelect { get; set; }
+
+    private ClientFactory conexion;
+    private const string urlPago = "api/v2/Pagos/PagosIdCliente";
+
+    private List<PagosClienteDTO> _pagoRealizado = new List<PagosClienteDTO>();
+    private List<PedidosDTO> pedidos = new List<PedidosDTO>();
+    private List<Documeto> documetos = new List<Documeto>();
+    private List<SaldosFavorDTO> saldofavor = new List<SaldosFavorDTO>();
+    private List<PagoCancelacion> pagos = new List<PagoCancelacion>();
+
+    private string idCliente = "";
+    private string razonSocial = "";
+    private string nroCobranza = "";
+    private string deudaTotal = "";
+    private string referencia = "";
+    private bool _processingDos = false;
+    private bool cargando = true;
+
+    DateTime? dateContabilizacion = DateTime.Today;
+    DateTime? dateVencimiento = DateTime.Today;
+    DateTime? dateDocumento = DateTime.Today;
+    protected override async Task OnInitializedAsync()
+    {
+        conexion = new MainServices().Pagos;
+        await CargarDatosPago();
+    }
+
+    private async Task CargarDatosPago()
+    {
+        var auxListaPagos = await conexion.HttpClientInstance.PostAsJsonAsync<PagosDTO>($"{urlPago}", pagoSelect);
+        if (auxListaPagos.IsSuccessStatusCode)
+        {
+            try
+            {
+                _pagoRealizado = JsonConvert.DeserializeObject<List<PagosClienteDTO>>(await auxListaPagos.Content.ReadAsStringAsync());
+                idCliente = _pagoRealizado.FirstOrDefault().IDCliente;
+                razonSocial = _pagoRealizado.FirstOrDefault().RazonSocial;
+                nroCobranza = _pagoRealizado.FirstOrDefault().NumeroCobranza.ToString();
+                deudaTotal = _pagoRealizado.FirstOrDefault().DeudaCliente.ToString() + " CLP";
+                referencia = _pagoRealizado.FirstOrDefault().ReferenciaPago;
+
+                dateContabilizacion = DateTime.Parse(_pagoRealizado.FirstOrDefault().FechaContabilizacion);
+                dateVencimiento = DateTime.Parse(_pagoRealizado.FirstOrDefault().FechaVencimiento);
+                dateDocumento = DateTime.Parse(_pagoRealizado.FirstOrDefault().FechaDocumento);
+
+                pedidos = _pagoRealizado.FirstOrDefault().Pedidos;
+                pagos = _pagoRealizado.FirstOrDefault().Pagos;
+                saldofavor = _pagoRealizado.FirstOrDefault().Saldos_A_Favors;
+            }
+            catch (Exception ex)
+            {
+                _snackBar.Add("Error deserealizar el pago", Severity.Error);
+            }
+        }
+        else
+        {
+            _snackBar.Add("Error al consultar el pagos", Severity.Error);
+        }
+
+        cargando = false;
+        StateHasChanged();
+    }
+    private async Task ImprimirComprobante()
+    {
+        _processingDos = true;
+        using (MemoryStream memory = exportService.CreatePfdComprobanteDePago(_pagoRealizado.FirstOrDefault()))
+        {
+            await js.SaveAs($"ComprobantePago {_pagoRealizado.FirstOrDefault().NumeroCobranza}.pdf", memory.ToArray());
+        }
+        _processingDos = false;
+    }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+}

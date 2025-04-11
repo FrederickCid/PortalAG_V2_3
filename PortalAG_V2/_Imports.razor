@@ -1,0 +1,43 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Microsoft.JSInterop
+@using PortalAG_V2
+@using PortalAG_V2.Auth;
+@using PortalAG_V2.Shared
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using MudBlazor
+@using Blazored.LocalStorage
+@using PortalAG_V2.Client.Auth
+@using Blazored.FluentValidation
+@using PortalAG_V2.Shared.Preferences
+
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Popups;
+@using Syncfusion.Blazor.Charts
+@using Syncfusion.Blazor.Data;
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Cards;
+@using Syncfusion.Blazor.Inputs;
+@using Syncfusion.Blazor.DropDowns;
+@using Syncfusion.Blazor.Calendars;
+@using Syncfusion.Blazor.Layouts;
+@using Syncfusion.Blazor.Buttons;
+@using Syncfusion.Blazor.Navigations;
+@using Humanizer;
+
+@using MatBlazor
+
+@attribute [Authorize]
+@inject ClientPreferenceManager _clientPreferenceManager
+@inject ProveedorAutenticacionJWT _stateProvider
+@inject NavigationManager _navigationManager
+@inject ISnackbar _snackBar
+@inject AuthenticationManager _authenticationManager
+@inject IDialogService _dialogService
+@inject IJSRuntime javaScript

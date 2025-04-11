@@ -1,0 +1,58 @@
+﻿@page "/CheqesIngresados"
+@using PortalAG_V2.Shared.Models.Cheques
+@using System.Globalization
+<SurveyPrompt Title="Cheques Ingresados" />
+<MudGrid Style="display: flex;align-items:center; ">
+    <MudItem xs="12" md="4">
+        <MudDatePicker @bind-Text="@fInicio" AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))" 
+                       DateFormat="dd-MM-yyyy" DisableToolbar="true" Label="Fecha Desde" @bind-Date="dateToday" />
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudDatePicker @bind-Text="@fFin"  AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))"
+                       DateFormat="dd-MM-yyyy" DisableToolbar="true" Label="Fecha Hasta" @bind-Date="dateNull" />
+    </MudItem>
+    <MudItem xs="12" md="4" Style="display: flex">
+        <MudButton Disabled="@(dateToday.ToString() == "" || dateNull.ToString() == "")" OnClick="BuscarCheques" Variant="Variant.Outlined" Color="Color.Primary">
+            @if (_processing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Buscando...</MudText>
+            }
+            else
+            {
+                <MudText>Buscar</MudText>
+            }
+        </MudButton>
+        <MudButton Style="margin-left:15px" Variant="Variant.Outlined" Color="Color.Error" Disabled="@(ChequesList.Count() == 0)" OnClick="GenerarPDFCheques">export PDF</MudButton>
+        <MudButton Style="margin-left:15px" Variant="Variant.Outlined" Color="Color.Success" Disabled="@(ChequesList.Count() == 0)" OnClick="DownloadFileExcel">export Excel</MudButton>
+    </MudItem>
+</MudGrid>
+<MudPaper>
+    <MudItem xs="12">
+        <MudDataGrid T="ChequesModel" Items="ChequesList" MultiSelection="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true" SortMode="SortMode.None" Hover
+                     Striped QuickFilter="@QuickFilter">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudItem Style="display:flex;flex-direction:row;gap: 20px; width: 100%">
+                    <MudTextField @bind-Value="_searchString" Placeholder="Buscar..." Adornment="Adornment.Start" Immediate="true"
+                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                </MudItem>
+            </ToolBarContent>
+            <Columns>
+                <PropertyColumn Property="x => x.IDCliente" Title="Rut" w/>
+                <PropertyColumn Property="x => x.RazonSocial" Title="Razon Social" />
+                <PropertyColumn Property="x => x.Banco" Title="Banco" />
+                <PropertyColumn Property="x => x.NroCtaCteBanco" Title="Nro Cta Banco" />
+                <PropertyColumn Property="x => x.NumeroSerie" Title="Numero Serie" />
+                <PropertyColumn Property="x => x.NroComprobante" Title="Nro Comprobante" />
+                <PropertyColumn Property="@(x => x.FechaCancelacion)" Title="Fecha Ingreso" />
+                <PropertyColumn Property="@(x => x.FechaVencimiento)" Title="Fecha Vencimiento"  />
+                <PropertyColumn Property="@(x => x.Monto.ToString("$###,###,###"))" Title="Monto" />
+                <PropertyColumn Property="x => x.IDUsuario" Title="Usuario" />
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="ChequesModel" PageSizeOptions="new int[] {10,50}" />
+            </PagerContent>
+        </MudDataGrid>
+    </MudItem>
+</MudPaper>

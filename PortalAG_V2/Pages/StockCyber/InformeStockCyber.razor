@@ -1,0 +1,36 @@
+﻿@page "/StockCyber"
+@using PortalAG_V2.Shared.Model.SolicitudesInformes;
+@using PortalAG_V2.Shared.Model.StockCyber
+
+<SurveyPrompt Title="Stock Cyber" />
+<br />
+<br />
+<MudPaper Style="margin=0 auto; max-width:">
+    <MudItem Class="pa-4 m-1">
+        <MudGrid Style="display: flex;align-items:center; ">
+            <MudItem xs="12" md="12" Style="display: flex; padding-bottom:10px">
+             
+            </MudItem>
+        </MudGrid>
+        <MudItem>
+            <SfGrid ID="Grid" @ref="Grid" DataSource="@ResumenPedidos" AllowPaging="true" style="width:100%; " Toolbar="@ButtonsGrid" OnToolbarClick="ToolbarClick"
+                    AllowExcelExport="true" AllowSelection="true" AllowFiltering="true" AllowSorting="true" AllowResizing="true">
+                <GridEvents OnToolbarClick="ToolbarClick" TValue="StockCyberModel"></GridEvents>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                <GridSearchSettings  Fields="@SpecificCols" IgnoreCase="true" ></GridSearchSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(StockCyberModel.Codigo) HeaderText="Codigo" TextAlign="TextAlign.Right"></GridColumn>
+                    <GridColumn Field=@nameof(StockCyberModel.Nombre) HeaderText="Nombre" Width="180"></GridColumn>
+                    <GridColumn Field=@nameof(StockCyberModel.StockBV_BPM) HeaderText="StockBV BPM"></GridColumn>
+                    <GridColumn Field=@nameof(StockCyberModel.StockBV_BIT) HeaderText="StockBV BIT"></GridColumn>
+                    <GridColumn Field=@nameof(StockCyberModel.StockBV_BVN) HeaderText="StockBV BVN"> </GridColumn>
+                    <GridColumn Field=@nameof(StockCyberModel.StockSE_BPM) HeaderText="StockSE BPM"></GridColumn>
+                    <GridColumn Field=@nameof(StockCyberModel.StockSE_BVN) HeaderText="StockSE BVN"></GridColumn>
+                    <GridColumn Field=@nameof(StockCyberModel.Stock_Disponible) HeaderText="Stock Disponible"></GridColumn>
+                    <GridColumn Field=@nameof(StockCyberModel.Stock_EnPedido) HeaderText="Stock EnPedido"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </MudItem>
+    </MudItem>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading"/>

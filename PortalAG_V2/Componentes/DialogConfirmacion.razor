@@ -1,0 +1,22 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudItem Style="align-content:center; ">
+            <MudText Typo="Typo.h6" Style="align-items:center;">
+                @Titulo
+                <MudIcon Size="Size.Small" Icon="@Icons.Material.Filled.QuestionMark" />
+            </MudText>
+        </MudItem>
+    </TitleContent>
+    <DialogContent>
+        <MudText Typo="Typo.body1">
+            @TextDialog
+        </MudText>
+    </DialogContent>
+    <DialogActions>
+        @if (ocultarcancelar)
+        {
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+        }
+        <MudButton Color="Color.Success" OnClick="Confirmacion">@nombreBoton</MudButton>
+    </DialogActions>
+</MudDialog>

@@ -1,0 +1,70 @@
+﻿@page "/CargaMasivaArticulosPrecios"
+@using PortalAG_V2.Shared.Model.CargaMasiva.Articulos
+@inject IDialogService DialogService
+<SurveyPrompt Title="Carga Masiva Articulos Precio" />
+<br />
+<br />
+
+
+<MudPaper>
+    <MudGrid>
+        <MudItem md="12" xs="12">
+            <MudCard Style="margin-bottom:20px">
+                <MudCardHeader>
+                    <MudText Typo="Typo.subtitle1" Style="font-weight:bold;">
+                        Carga De Archivo
+                    </MudText>
+                </MudCardHeader>
+                <MudCardContent Style="margin:10px; padding:30px;display:flex; flex-direction:row; gap: 10px">
+                    <MudItem>
+                        <MudItem Style="border:1px solid rgba(0,0,0,0.5); max-width:500px; border-radius:25px; display:flex; flex-direction:row">
+                            <InputFile id="fileInput" OnChange="UploadFiles" hidden single itemtype=".xlsx" />
+                            <MudFab HtmlTag="label"
+                                    StartIcon="@Icons.Material.Filled.CloudUpload"
+                                    Size="Size.Small"
+                                    Color="Color.Success"
+                                    Label="Seleccionar Archivo"
+                                    for="fileInput"
+                                    Style="white-space: nowrap;">
+                                Seleccionar archivo
+                            </MudFab>
+                            <label style="overflow:hidden;white-space: nowrap; text-overflow:ellipsis; align-self:center; margin-left:10px; width:250px">@NameFile</label>
+                            @if (fileComplete != null)
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" Color="Color.Error" Size="Size.Small" OnClick="Delete"></MudIconButton>
+                            }
+                        </MudItem>
+                    </MudItem>
+                    <MudItem Style="gap:10px; display: flex; flex-direction:row; text-align:end">
+                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Success" OnClick=ProcesarFiles Size="Size.Small">
+                            Procesar archivo
+                        </MudButton>
+                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Secondary" OnClick=DownloadFile Size="Size.Small">
+                            Descargar Excel Ejemplo
+                        </MudButton>
+                    </MudItem>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12">
+            <MudDataGrid T="AticuloPrecioValidationModel" Items="dataTableValidada" MultiSelection="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true" SortMode="SortMode.None" Hover Striped>
+                <Columns>
+                    <PropertyColumn Property="x => x.Linea" Title="Linea" />
+                    <PropertyColumn Property="x => x.Codigo" Title="Codigo" />
+                    <PropertyColumn Property="x => x.Nombre" Title="Nombre" />
+                    <PropertyColumn Property="x => x.PrecioAnterior" Title="Precio Anterior" />
+                    <PropertyColumn Property="x => x.PrecioNuevo" Title="Precio Nuevo" />
+                    <PropertyColumn Property="x => x.Error" Title="Error" />                            
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="AticuloPrecioValidationModel" PageSizeOptions="new int[] {10,25,50}" />
+                </PagerContent>
+            </MudDataGrid>
+        </MudItem>
+        <MudItem Style="display:flex;display:flex; justify-content:end; margin-bottom:20px; width:100%" Class="pa-4 m-1">
+            <MudButton Variant="Variant.Filled" Color="Color.Info" Disabled="@EnviarBtn" DisableElevation="true" OnClick="EnviarSolicitud" Class="mx-2">Enviar</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" DisableElevation="true" OnClick="limpiar">Limpiar</MudButton>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="Loading"/>

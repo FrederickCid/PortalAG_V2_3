@@ -1,0 +1,126 @@
+﻿@page "/Lineas"
+@using PortalAG_V2.Shared.Model.SolicitudesInformes.ConsultaLineasPickingPacking;
+@using PortalAG_V2.Componentes.SolicitudesLineas
+@using agDataAccess.Models.ConsultaLineasPickingPacking;
+
+<SurveyPrompt Title=@($"Lineas") />
+<br />
+<br />
+
+<MudTabs>
+    <MudTabPanel Text="Lineas Pendientes">
+        <LineasPendientes  />
+    </MudTabPanel>
+    <MudTabPanel Text="Pedidos Con lineas">
+        <MudPaper Style="margin=0 auto; max-width:">
+            <MudItem Class="pa-4 m-1">
+                <MudDataGrid T="ConsultarLinesaPickingPackingModel" Bordered="true" Dense="true" ColumnResizeMode="ResizeMode.Column" Items="@Pedidos" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter">
+                    <ToolBarContent>
+                        <MudText Style="position:sticky" Typo="Typo.h6">Pedidos</MudText>
+                        <MudSpacer />
+                        <MudTextField Style="position:sticky" @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    </ToolBarContent>
+                    <Columns>
+                        <PropertyColumn Property="x => x.IDOperacion" />
+                        <PropertyColumn Property="x => x.NroDocumento" />
+                        @* <PropertyColumn Property="x => x.Correlativo" /> *@
+                        <PropertyColumn Property="x => x.IDCliente" />
+                        <PropertyColumn Property="x => x.RazonSocial" />
+                        @* <PropertyColumn Property="x => x.TipoEntrega" /> *@
+                        <PropertyColumn Property="x => x.Transporte" />
+                        <PropertyColumn Property="x => x.NroOrden" />
+                        <PropertyColumn Property="x => x.IDEtapa" />
+                        <PropertyColumn Property="x => x.IDEstado" />
+                        <PropertyColumn Property="x => x.SiUrgencia" />
+                        <PropertyColumn Property="x => x.AnnoProceso" />
+                        <PropertyColumn Property="x => x.FechaSolicitud" Title="año" />
+                        <PropertyColumn Property="x => x.FechaAutorizacion" />
+                        <PropertyColumn Property="x => x.FechaEntregaEstimada" />
+                        <PropertyColumn Property="x => x.FechaInicioSacado" />
+                        <PropertyColumn Property="x => x.Region" />
+                        <PropertyColumn Property="x => x.Comuna" />
+                        <PropertyColumn Property="x => x.Direccion" />
+                        <PropertyColumn Property="x => x.MontoTotal" />
+                        <PropertyColumn Property="x => x.LineasBU" />
+                        <PropertyColumn Property="x => x.LineasBC" />
+                        <PropertyColumn Property="x => x.LineasBV_BVN" />
+                        <PropertyColumn Property="x => x.LineasBV_BIT" />
+                        <PropertyColumn Property="x => x.LineasBV_BPM" />
+                        <PropertyColumn Property="x => x.YaPicking" />
+                        <PropertyColumn Property="x => x.YaPacking" />
+                        <PropertyColumn Property="x => x.YaPicking_BV" />
+                        <PropertyColumn Property="x => x.YaPacking_BV" />
+                        <PropertyColumn Property="x => x.Vendedor" />
+                    </Columns>
+                    <PagerContent>
+                        <MudDataGridPager T="ConsultarLinesaPickingPackingModel" />
+                    </PagerContent>
+                </MudDataGrid>
+            </MudItem>
+        </MudPaper>
+    </MudTabPanel>
+    <MudTabPanel Text="Lineas Pickeadas">
+        <LineasProcesadas />
+    </MudTabPanel>
+   @*  <MudTabPanel Text="Lineas Pickeades y Revisadas">
+        <MudPaper Style="margin=0 auto; max-width:">
+            <MudItem Class="pa-4 m-1">
+                <MudGrid Style="display: flex;align-items:center; ">
+                    <MudItem xs="12" md="4">
+                        <MudDatePicker @bind-Text="@fInicio" AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))" @ref="@_DatePickerInicio"
+                                       DateFormat="dd-MM-yyyy" DisableToolbar="true" Label="Fecha Desde" @bind-Date="dateToday" />
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudDatePicker @bind-Text="@fFin" @ref="@_DatePickerfin" AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))"
+                                       DateFormat="dd-MM-yyyy" DisableToolbar="true" Label="Fecha Hasta" @bind-Date="dateNull" />
+                    </MudItem>
+                    <MudItem xs="12" md="4" Style="display: flex">
+                        <MudButton Disabled="@(dateToday.ToString() == "" || dateNull.ToString() == "")" OnClick="Buscar" Variant="Variant.Outlined" Color="Color.Primary">
+                            @if (_processing)
+                            {
+                                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                <MudText Class="ms-2">Buscando...</MudText>
+                            }
+                            else
+                            {
+                                <MudText>Buscar</MudText>
+                            }
+                        </MudButton>
+
+                    </MudItem>
+                </MudGrid>
+                <MudItem xs="12" md="12" Style="display:flex;">
+                    <MudItem xs="12" md="6" Style="gap:25px">
+                        <MudDataGrid MultiSelection="true" Items="@Lineaspicking" Bordered="true" Dense="true">
+                            <ToolBarContent>
+                                <MudText Style="position:sticky" Typo="Typo.h6">Picking</MudText>
+                                <MudSpacer />
+                            </ToolBarContent>
+                            <Columns>
+                                <PropertyColumn Property="x => x.Revisador" />
+                                <PropertyColumn Property="x => x.Lineas" />
+                                <PropertyColumn Property="x => x.Bodega" />
+                            </Columns>
+                        </MudDataGrid>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudDataGrid MultiSelection="true" Items="@Lineaspacking" Bordered="true" Dense="true">
+                            <ToolBarContent>
+                                <MudText Style="position:sticky" Typo="Typo.h6">Packing</MudText>
+                                <MudSpacer />
+                            </ToolBarContent>
+                            <Columns>
+                                <PropertyColumn Property="x => x.Sacador" />
+                                <PropertyColumn Property="x => x.Lineas" />
+                                <PropertyColumn Property="x => x.Bodega" />
+                            </Columns>
+                        </MudDataGrid>
+                    </MudItem>
+                </MudItem>
+            </MudItem>
+        </MudPaper>
+    </MudTabPanel> *@
+</MudTabs>
+
+<PortalAG_V2.Componentes.Loading Visibility="@Loading"></PortalAG_V2.Componentes.Loading>

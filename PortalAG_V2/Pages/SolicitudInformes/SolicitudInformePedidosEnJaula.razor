@@ -1,0 +1,82 @@
+﻿@page "/SolicitudInformePedidosEnJaulaModel"
+@using PortalAG_V2.Shared.Model.SolicitudesInformes;
+@using static PortalAG_V2.Shared.Model.SolicitudesInformes.ConsultaPedidosEnJaulaModel;
+
+<SurveyPrompt Title="Pedidos en Jaula" />
+<br />
+<br />
+<MudPaper Style="margin=0 auto; max-width:">
+    <MudItem Class="pa-4 m-1">
+        <MudGrid Style="display: flex;align-items:center; margin-bottom:20px">
+            <MudItem xs="12" md="6">
+                <MudTextField @ref="@MudTextIDVendedor" Margin="Margin.Dense" @bind-Value="@IDVendedor" Label="ID Vendedor" Variant="Variant.Outlined"
+                              Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Required="true" RequiredError="IDvendedor Requerido!" />
+            </MudItem>
+            <MudItem xs="12" md="4" Style="display: flex">
+                <MudButton Disabled="@(IDVendedor == "")" OnClick="ProcessSomething" Variant="Variant.Outlined" Color="Color.Primary">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Buscando...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Buscar</MudText>
+                    }
+                </MudButton>
+            </MudItem>          
+
+        </MudGrid>
+        <MudItem>
+            <SfGrid ID="Grid" @ref="Grid" DataSource="@ListaJaula" AllowPaging="true" style="width:100%; " Toolbar="@ButtonsGrid" OnToolbarClick="ToolbarClick"
+                    AllowExcelExport="true" AllowSelection="true" AllowFiltering="true" AllowSorting="true" Width="auto" AllowResizing="true">
+                <GridEvents OnToolbarClick="ToolbarClick" TValue="ConsultaPedidosEnJaulaModel"></GridEvents>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.NroDocumento) HeaderText="NroDocumento" Width="80" TextAlign="TextAlign.Right"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.AnnoProceso) HeaderText="Año" Width="100"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.IDOperacion) HeaderText="IDOperacion" Width="100"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.RUT) HeaderText="RUT" Width="120"> </GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.Nombre) HeaderText="Nombre" Width="180"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.Telefono) HeaderText="Telefono" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.Celular) HeaderText="Celular" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.TipoEntrega) HeaderText="TipoEntrega" Width="80"></GridColumn>                    
+                     <GridColumn HeaderText="Grupo Contable" Width="180">
+                            <Template>                                
+                            @{
+                                var GrupoContable = (context as ConsultaPedidosEnJaulaModel);
+                                <p style="align-content: center; top:-5px; margin:0 auto">
+                                |
+                                @foreach(GrupocontableModel i in GrupoContable.GrupoContable)
+                                {
+                                    @i.GrupoContableAgrupa
+                                }
+                                |
+                                </p>
+                            }                                    
+                            </Template>
+                    </GridColumn> 
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.Transporte) HeaderText="Transporte" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.FechaPedido) HeaderText="FechaPedido" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.TerminoRevision) HeaderText="TerminoRevision" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.FechaPasoJaula) HeaderText="FechaPasoJaula" Width="180"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.FechaPasoJaula) HeaderText="FechaPasoJaula" Width="180"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.Bultos) HeaderText="Bultos" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.Ubicacion) HeaderText="Ubicacion" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.Revisador) HeaderText="Revisador" Width="180"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.Despachador) HeaderText="Despachador" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.Facturas) HeaderText="Facturas" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.TotalFacturas) HeaderText="TotalFacturas" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.SaldoxPagar) HeaderText="SaldoxPagar" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.NotasDeCreditos) HeaderText="NotasDeCreditos" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.MontoNC) HeaderText="MontoNC" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.Estado) HeaderText="Estado" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.ReceiptNum) HeaderText="ReceiptNum" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(ConsultaPedidosEnJaulaModel.Vendedor) HeaderText="Vendedor" Width="120"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </MudItem>
+    </MudItem>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" Tipo="1"/>
+

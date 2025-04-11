@@ -1,0 +1,186 @@
+﻿@page "/FacturaPorServicio"
+@using PortalAG_V2.Componentes
+@using PortalAG_V2.Shared.Model.FacturaPorServicio;
+@using PortalAG_V2.Shared.Model.NotaDeCredito;
+
+
+<SurveyPrompt Title="Factura Por Servicio" />
+<br />
+<br />
+<MudPaper Style="display:flex; flex-direction:column; max-width:1200px; margin:0 auto;">
+    <MudItem Class="pa-4 m-1">
+        <MudItem Style="display:flex;flex-direction:row; width:100%;align-items:center">
+            <MudGrid>
+                <MudItem Style="display:flex;flex-direction:row;" xs="12" md="12">
+                    <MudItem Style="justify-content:start" xs="12" md="8">
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowCircleLeft" Size="Size.Large" Variant="Variant.Text" Color="Color.Success" OnClick="BusquedaAtras" />
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowCircleRight" Size="Size.Large" Variant="Variant.Text" Color="Color.Success" OnClick="BusquedaAdelante" />
+                        <MudIconButton Icon="@Icons.Material.Filled.FiberNew" Size="Size.Large" Variant="Variant.Text" Color="Color.Success" OnClick="NuevaFactura" />
+                    </MudItem>
+                    <MudItem xs="12" md="4" Style="justify-content:flex-end;">
+                        <MudDatePicker @bind-Date="@Fecha" Label="Fecha" Variant="Variant.Outlined" Margin="Margin.Dense" Color="Color.Secondary" Disabled="busquedaNro" DateFormat="dd-MM-yyyy" />
+                    </MudItem>
+                </MudItem>
+                <MudItem Style="justify-content:start" xs="12" md="6">
+                    <MudRadioGroup @bind-SelectedOption="@OptionFacturaBoleta">
+                        <MudRadio @ref="Factura" Option="@("Factura")" Color="Color.Secondary">Factura</MudRadio>
+                        <MudRadio @ref="Boleta" Option="@("Boleta")" Color="Color.Secondary">Boleta</MudRadio>
+                    </MudRadioGroup>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudGrid>
+                <MudItem xs="12" md="4" Style="display:flex;flex-direction:row;align-items:center;">
+                    <MudTextField @bind-Value="@CodigoCliente" Label="Código Cliente" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                  Required="true" RequiredError="Debe Ingresar el Código de Cliente!" Disabled="busquedaNro" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Search" Variant="Variant.Text" Color="Color.Secondary" Size="Size.Large" OnClick="@ObtenerClienete" Disabled="busquedaNro" />
+                </MudItem>               
+                <MudItem xs="8" md="9">
+                    <MudTextField @bind-Value="@RazonSocial" Label="Razón Social" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="true" />
+                </MudItem>
+                <MudItem xs="4" md="3">
+                    <MudTextField @bind-Value="@NroFactura" Label="Número Factura" Variant="Variant.Outlined" Margin="Margin.Dense" OnBlur="BusquedaFactura" Disabled="busquedaNro" />
+                </MudItem>
+                <MudItem xs="12" md="4">
+                    <MudSelect T="string" Label="Condición de Pago" @bind-Value="@CondicionPagos.descripcion" Text="@CondicionPagos.descripcion" Margin="Margin.Dense" Variant="Variant.Outlined" AdornmentIcon="@Icons.Filled.AttachMoney"
+                               AdornmentColor="Color.Secondary" SelectedValuesChanged="()=>OnChangeCondicionDePago(CondicionPagos)" Disabled="busquedaNro">
+                        @foreach (CondicionPagoVentasModel item in listaCondicionPagos)
+                        {
+                            <MudSelectItem Value="@item.descripcion">@item.descripcion</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" md="4">
+                    <MudSelect T="string" Label="Forma de Pago" @bind-Value="@FormaPagos.descripcion" Text="@FormaPagos.descripcion" Margin="Margin.Dense" Variant="Variant.Outlined" AdornmentIcon="@Icons.Filled.CreditCard"
+                               AdornmentColor="Color.Secondary" SelectedValuesChanged="()=>OnChangeFormaDePago(FormaPagos)" Disabled="busquedaNro">
+                        @foreach (ConsultaFormaPagoModel item in listaFormaPagos)
+                        {
+                            <MudSelectItem Value="@item.descripcion">@item.descripcion</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem Style="padding-bottom:10px; font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end" xs="12" md="2">
+                </MudItem>
+                <MudItem Style="padding-bottom:10px; font-weight:bold; text-align:right; width:50%; display:flex;" xs="5" md="2">
+                    <MudTextField @bind-Value="@cantidadLetras" Label="Cantidad de Letras" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="busquedaNro" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="@Localidad" Label="Localidad" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="busquedaNro" />
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <MudTextField @bind-Value="@NroOC" Label="Número OC" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="busquedaNro" />
+                </MudItem>
+                <MudItem Style="padding-bottom:10px; font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end" xs="12" md="3">
+                    <MudDatePicker @bind-Date="@FechaVencimiento" Label="Fecha Vencimiento" Variant="Variant.Outlined" Margin="Margin.Dense" Color="Color.Secondary" Disabled="busquedaNro" DateFormat="dd-MM-yyyy" />
+                </MudItem>
+            </MudGrid>
+            <br />
+            <hr />
+            <MudGrid>
+                <MudItem xs="12" md="12">
+                    <MudTextField @bind-Value="@TextoUno" T="string" Label="Descripcion para SAP" Lines="2" Variant="Variant.Outlined" Text="@TextoUno" Disabled="busquedaNro" />
+                </MudItem>
+                <MudItem xs="12" md="12">
+                    <MudTextField @bind-Value="@TextoDos" T="string" Label="Descripcion Dos" Lines="2" Variant="Variant.Outlined" Text="@TextoDos" Disabled="busquedaNro" />
+                </MudItem>
+                <MudItem xs="12" md="12">
+                    <MudTextField @bind-Value="@TextoTres" T="string" Label="Descripcion Tres" Lines="2" Variant="Variant.Outlined" Text="@TextoTres" Disabled="busquedaNro" />
+                </MudItem>
+                <MudItem xs="8" md="4">
+                    <MudTextField @bind-Value="@CuentaContable" Label="Cuenta Contable" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="true" />
+                </MudItem>
+                <MudItem xs="1" md="1">
+                    <MudIconButton Icon="@Icons.Material.Filled.ModeEdit" Variant="Variant.Text" Color="Color.Secondary" Size="Size.Large" OnClick="@AbrirPopUp" Disabled="busquedaNro" />
+                </MudItem>
+            </MudGrid>
+            <hr />
+            <MudGrid>
+                <MudItem Style="font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end " xs="12" md="8">
+                    <MudText>SubTotal : </MudText>
+                </MudItem>
+
+                <MudItem Style="font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end " xs="12" md="4">
+                    <MudTextField @bind-Value="@SubTotal" Format="N0" Label="" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="busquedaNro" />
+                </MudItem>
+
+
+                <MudItem Style="font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end " xs="12" md="8">
+                    <MudText>Descuento @porcentaje %:  </MudText>
+                </MudItem>
+
+                <MudItem Style="font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end " xs="6" md="2">
+                    <MudTextField @bind-Value="@DCto" Format="N0" Label="" Variant="Variant.Outlined" Margin="Margin.Dense" OnBlur="CalculosPesos"
+                                  Adornment="Adornment.End" AdornmentColor="Color.Secondary" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Disabled="busquedaNro" />
+                </MudItem>
+
+                <MudItem Style="font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end " xs="6" md="2">
+                    <MudTextField @bind-Value="@valorPorcentaje" Format="N0" Label="" Variant="Variant.Outlined" Margin="Margin.Dense" OnBlur="CalculosPorcentual"
+                                  Adornment="Adornment.End" AdornmentColor="Color.Secondary" AdornmentIcon="@Icons.Material.Filled.Percent" Disabled="busquedaNro" />
+                </MudItem>
+
+                <MudItem Style="font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end " xs="12" md="8">
+                    <MudText>Neto : </MudText>
+                </MudItem>
+
+                <MudItem Style="font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end " xs="12" md="4">
+                    <MudTextField @bind-Value="@Neto" Format="N0" Label="" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="true" />
+                </MudItem>
+
+
+                <MudItem Style="font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end " xs="12" md="8">
+                    <MudText>Iva 19% : </MudText>
+                </MudItem>
+
+                <MudItem Style="font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end " xs="12" md="4">
+                    <MudTextField @bind-Value="@Iva" Format="N0" Label="" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="true" />
+                </MudItem>
+
+
+                <MudItem Style="font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end " xs="12" md="8">
+                    <MudText>Total : </MudText>
+                </MudItem>
+
+                <MudItem Style="font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end " xs="12" md="4">
+                    <MudTextField @bind-Value="@Total" Format="N0" Label="" Variant="Variant.Outlined" Margin="Margin.Dense" OnBlur="CalculoInverso" Disabled="busquedaNro" />
+                </MudItem>
+            </MudGrid>
+            <MudItem Style="font-weight:bold; margin-left: 750px; margin-top: 30px; text-align:right; width:100%; display:flex; justify-content:end " xs="6" md="4">
+                <MudButton OnClick="@ProcesarFacturaPorServicio" Variant="Variant.Outlined" Color="Color.Secondary" Disabled="busquedaNro">Procesar Factura</MudButton>
+            </MudItem>
+        </MudForm>
+    </MudItem>
+</MudPaper>
+
+
+<MudDialog @bind-IsVisible="Visibility" Options="dialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" /> Editando Cuenta Contable
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="@CuentaContableRemplazo" Label="Cuenta Contable" Variant="Variant.Outlined" Margin="Margin.Dense" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="CambiarCuentaContable" Class="px-10" Disabled="busquedaNro">Cambiar Cuenta</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+<MudDialog IsVisible="Termino" Options="dialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h5">
+            Documento creado con exito!
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText Typo="Typo.h6">
+            Numero documento: @nroDocPop
+        </MudText>
+    </DialogContent>
+</MudDialog>
+
+<Loading @ref="@loading" />
+
+

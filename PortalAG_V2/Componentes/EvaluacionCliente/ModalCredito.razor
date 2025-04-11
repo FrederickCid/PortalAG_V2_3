@@ -1,0 +1,13 @@
+﻿<MudDialog>
+    <TitleContent>
+        <h3>Credito</h3>
+    </TitleContent>
+    <DialogContent>
+        <MudItem Style="display:flex; flex-direction:row; gap:20px">
+            <CardPrecios opcion="2" Precio="creditoTotal" titulo="Credito Total" />
+            <CardPrecios opcion="2" Precio="creditoUtilizado" titulo="Credito Utilizado" />
+            <CardPrecios opcion="2" Precio="creditoDisponible" titulo="Credito Disp." />
+        </MudItem>
+    </DialogContent>
+</MudDialog>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" />

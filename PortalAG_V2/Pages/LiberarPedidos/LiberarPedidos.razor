@@ -1,0 +1,134 @@
+﻿@page "/LiberarPedidos"
+@using PortalAG_V2.Shared.Model.LiberarPedidos
+
+<SurveyPrompt Title="Liberacion de Pedidos" />
+<br />
+<br />
+<MudPaper Class="m-1 p-3" Style="margin: auto; max-width:100%; padding: inherit">
+    <MudGrid Spacing="2">
+        <MudItem xs="12" md="3" Style="display:flex;flex-direction:row;">
+            <MudTextField T="string" @bind-Value="_idCliente" Margin=" Margin.Dense" Dense="true" Variant="Variant.Outlined" Label="ID Cliente" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" OnAdornmentClick="BuscarDocumento" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTextField T="int" @bind-Value="_nroPedido" Margin="Margin.Dense" Dense="true" Variant="Variant.Outlined" Label="Nro Pedido" />
+        </MudItem>
+        <MudItem xs="12" md="3"> 
+            <MudDatePicker @bind-Text="@fInicio" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Fecha desde" DateFormat="dd-MM-yyyy" @bind-Date="dateNull" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudDatePicker @bind-Text="@fFin" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Fecha hasta" DateFormat="dd-MM-yyyy" @bind-Date="dateToday" />
+        </MudItem>
+    </MudGrid>
+
+    <MudItem Style="margin-top:25px">
+        <MudGrid>
+            <MudItem xs="12" Style="height:100%; max-height:600">
+                <MudDataGrid T="ResponseConsultaPedidos" Items="ConsultaList" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true"  RowsPerPage="5">
+                    <Columns>
+                        <PropertyColumn Property="x => x.nroDocumento" Title="Nro Pedido" />
+                        <PropertyColumn Property="x => x.idCliente" Title="ID Cliente" />
+                        <PropertyColumn Property="x => x.razonSocial" Title="Razon Social" />
+                        <PropertyColumn Property="x => x.nroFacturas" Title="Nro Facturas" />
+                        <PropertyColumn Property="x => x.CondicionPago" Title="Condicion De Pago" />
+                        <PropertyColumn Property="x => x.Vendedor" Title="Vendedor" />
+                        <PropertyColumn Property="x => x.TipoDespacho" Title="Tipo De Despacho" />
+                        <TemplateColumn Title="Tipo Documento">
+                            <CellTemplate>
+                                <MudStack Row>
+                                    @{
+                                        if (@context.Item.TipoDocumento == 39)
+                                        {
+                                            <div id="myBar" style="font-weight: bold;" class="barPro">
+                                                <div id="label" class="pagado">Boleta</div>
+                                            </div>
+                                        }
+                                        if (@context.Item.TipoDocumento == 33)
+                                        {
+                                            <div id="myBar" style="font-weight: bold;" class="barPro">
+                                                <div id="label" class="pagado">Factura</div>
+                                            </div>
+                                        }
+                                    }
+                                </MudStack>
+                            </CellTemplate>
+                        </TemplateColumn>
+                        <PropertyColumn Property="x => DateTime.Parse(x.FechaSolicitud)" Title="Fecha Pedido"  />
+                        <TemplateColumn Title="Estado">
+                            <CellTemplate>
+                                <MudStack Row>
+                                    @{
+                                        if (@context.Item.estado == 0)
+                                        {
+                                            <div id="myBar" style="font-weight: bold;" class="barPro">
+                                                <div id="label" class="sinPago">Sin Pago</div>
+                                            </div>
+                                        }
+                                        if (@context.Item.estado == 1)
+                                        {
+                                            <div id="myBar" style="font-weight: bold;" class="barPro">
+                                                <div id="label" class="pagadoParcial">Pago Parcial</div>
+                                            </div>
+                                        }
+                                        if (@context.Item.estado == 2)
+                                        {
+                                            <div id="myBar" style="font-weight: bold;" class="barPro">
+                                                <div id="label" class="pagado">Pagado</div>
+                                            </div>
+                                        }
+                                        if (@context.Item.estado == 3)
+                                        {
+                                            <div id="myBar" style="font-weight: bold;" class="barPro">
+                                                <div id="label" class="anulado">Anulado</div>
+                                            </div>
+                                        }
+                                    }
+                                </MudStack>
+                            </CellTemplate>
+                        </TemplateColumn>
+                        <TemplateColumn Title="Ver">
+                            <CellTemplate>
+                                <MudIconButton Size="@Size.Medium" Icon="@Icons.Material.Outlined.RemoveRedEye" OnClick="@(() => verDetalle(@context.Item))" />
+                            </CellTemplate>
+                        </TemplateColumn>
+                    </Columns>
+                    <PagerContent>
+                        <MudDataGridPager T="ResponseConsultaPedidos" PageSizeOptions="new int [] {5,10,100}" />
+                    </PagerContent>
+                </MudDataGrid>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" />
+
+<style>
+    .sinPago {
+        color: #c84300;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .pagadoParcial {
+        color: #dfe530;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .pagado {
+        color: #33b200;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .anulado {
+        color: #FF0000;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .barPro {
+        background-color: white;
+        padding: 3px;
+        border-radius: 8px;
+    }
+</style>

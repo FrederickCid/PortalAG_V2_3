@@ -1,0 +1,68 @@
+﻿@using PortalAG_V2.Shared.Model.Prepacking
+@inject IJSRuntime JSRuntime
+@inject SfDialogService DialogService
+
+<MudDialog @ref="myDialog">
+    <DialogContent>
+        <MudGrid>
+            <MudItem Class="p-3 m-1" Style="display:flex; flex-direction:column; gap:25px;">
+                <MudItem Style="display:flex; flex-direction:row; gap:15px">
+                    <MudNumericField Variant="Variant.Outlined" T="int" @bind-Value="bultos" Margin="Margin.Dense" Label="Bultos" />
+                    <MudNumericField Variant="Variant.Outlined" T="int" @bind-Value="uniXbultos" Margin="Margin.Dense" Label="Unidades x bulto" />
+                    <MudButton Variant="Variant.Outlined" OnClick="@(()=>AgregarBulto(bultos, uniXbultos, 2))">Agregar</MudButton>
+                    <MudButton Variant="Variant.Outlined" OnClick="@(()=>AgregarBulto(bultos, uniXbultos, 22))">Agregar por uno</MudButton>
+                </MudItem>
+                <MudItem Style="text-align:center;display:flex;flex-direction:row;width:100%; align-items:center; justify-content:center; gap:50px">
+                    <MudText>
+                        <b>Faltan:</b> @{
+                            {
+                                if (DetalleGuiaReBu.Count != 0)
+                                {
+                                    {
+                                        <MudText> @DetalleGuiaReBu.FirstOrDefault().Faltan </MudText>
+                                    }
+                                }
+                                else
+                                {
+                                    {
+                                        <MudText> @Detalle.CantidadEM </MudText>
+                                    }
+                                }
+
+                            }
+                        }
+                    </MudText>
+                </MudItem>
+                <MudItem>
+                    <MudDataGrid Virtualize="true" @ref="@GridHO" T="ShowGuiaPrePackingDetalleBulto"
+                                 MultiSelection="true" Items="@DetalleGuiaReBu" Hover="true" Striped="true"
+                                 Bordered="true" Dense="true" SortMode="SortMode.Multiple">
+                        <Columns>
+                            <PropertyColumn Property="x => x.Bultos" IsEditable="false" Style="width:50px" />
+                            <PropertyColumn Property="x => x.UnidadPorBulto" IsEditable="false" Style="width:auto" />
+                            @* <PropertyColumn Property="x => x.Faltan" IsEditable="false" Style="width:auto" /> *@
+                            <TemplateColumn>
+                                <CellTemplate>
+                                    <MudStack Row>
+                                        <MudTooltip Text="Borrar">
+                                            <MudIconButton Style="height:20px; width:20px" Color="Color.Error" Icon="@Icons.Material.Outlined.Delete" Size="Size.Medium" OnClick="@(() =>EliminarBulto(@context.Item))"></MudIconButton>
+                                        </MudTooltip>
+                                    </MudStack>
+                                </CellTemplate>
+                            </TemplateColumn>
+                        </Columns>
+                        <PagerContent>
+                            <MudDataGridPager T="ShowGuiaPrePackingDetalleBulto" PageSizeOptions="new int[] {5,10}" />
+                        </PagerContent>
+                    </MudDataGrid>
+                </MudItem>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Success" Variant="Variant.Outlined" OnClick="@listo">Listo</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" />
+

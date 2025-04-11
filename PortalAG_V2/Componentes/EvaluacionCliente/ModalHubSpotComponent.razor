@@ -1,0 +1,30 @@
+﻿@using PortalAG_V2.Shared.Models.HubSpotModels
+
+
+<MudDialog>
+    <TitleContent>
+        <MudImage Src="./sample-data/hubspotimg.png" alt="HubSpot" Width="120" Height="40" />
+    </TitleContent>
+    <DialogContent>
+        <MudDataGrid T="ResponseSearchModel.Result" Items="tickets.results" MultiSelection="true" Breakpoint="Breakpoint.Sm"
+                     Bordered="true" Dense="true" SortMode="SortMode.None" Hover Striped QuickFilter="@QuickFilter">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudItem Style="display:flex;flex-direction:row;gap: 20px; width: 100%">
+                    <MudTextField @bind-Value="_searchString" Placeholder="Buscar..." Adornment="Adornment.Start" Immediate="true"
+                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                </MudItem>
+            </ToolBarContent>
+            <Columns>
+                <PropertyColumn Property="x => x.id" HeaderStyle=" font-weight:bold" Title="ID Ticket" />
+                <PropertyColumn Property=@(x => DateTime.Parse(x.createdAt)) HeaderStyle=" font-weight:bold" Title="F. Creacion" Format="d" Sortable="true"/>
+                <PropertyColumn Property="x => x.properties.content" HeaderStyle=" font-weight:bold" Title="Descripcion" />
+                <PropertyColumn Property=@(x => OwnerLista.results.Exists(y => y.id == x.properties.hubspot_owner_id) ? OwnerLista.results.Find(y => y.id == x.properties.hubspot_owner_id).firstName: "Sin asignar o No existe") Title="Asignado a" HeaderStyle=" font-weight:bold" />
+                <PropertyColumn Property=@(x => x.properties.closed_date != null? DateTime.Parse(x.properties.closed_date).ToString("dd/MM/yyyy"): "Pendiente") HeaderStyle=" font-weight:bold" Title="F. Cierre" />
+                <PropertyColumn Property=@(x => StagesLista.results.Find(y => y.id == x.properties.hs_pipeline).stages.Exists(i=> i.id == x.properties.hs_pipeline_stage) ? StagesLista.results.Find(y => y.id == x.properties.hs_pipeline).stages.Find(i=> i.id == x.properties.hs_pipeline_stage).label : "NO TIENE") Title="Estado" HeaderStyle=" font-weight:bold" />
+            </Columns>
+        </MudDataGrid>
+    </DialogContent>
+</MudDialog>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" />
+

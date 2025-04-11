@@ -1,0 +1,61 @@
+﻿@page "/SolcitudInformeStock"
+@using PortalAG_V2.Shared.Model.SolicitudesInformes;
+@using agDataAccess.Models.Stock;
+@using agDataAccess.Models.Stock;
+
+
+<SurveyPrompt Title="Stock BV" />
+<br />
+<br />
+<MudPaper Style="margin=0 auto; max-width:">
+    <MudItem Class="pa-4 m-1">
+        <MudGrid Style="display: flex;align-items:center; ">
+            <MudItem xs="12" md="12" Style="display: flex; padding-bottom:10px">
+
+            </MudItem>
+        </MudGrid>
+        <MudItem>
+            <SfGrid ID="Grid" @ref="Grid" DataSource="@ResumenPedidos" AllowPaging="true" Width="auto" Toolbar="@ButtonsGrid" OnToolbarClick="ToolbarClick"
+                    AllowExcelExport="true" AllowSelection="true" AllowFiltering="true" AllowSorting="true" AllowResizing="true">
+                <GridEvents OnToolbarClick="ToolbarClick" TValue="StockBodegaBVModel"></GridEvents>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                <GridSearchSettings Fields="@SpecificCols"></GridSearchSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.ItemCode) HeaderText="ItemCode" Width="200px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.ItemName) HeaderText="ItemName" Width="300px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.PrecioVenta) HeaderText="PrecioVenta" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.UltimoPrecioCompraChar) HeaderText="UltimoPrecioCompraChar" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.UltimoPrecioCosto) HeaderText="UltimoPrecioCosto" Width="100px"> </GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.IDProveedor) HeaderText="IDProveedor" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.Proveedor) HeaderText="Proveedor" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockDisponible) HeaderText="StockDisponible" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBDV) HeaderText="StockBDV" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBFI) HeaderText="StockBFI" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBFP) HeaderText="StockBFP" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBMT) HeaderText="StockBMT" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBPM) HeaderText="StockBPM" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBPR) HeaderText="StockBPR" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBRV) HeaderText="StockBRV" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBSP) HeaderText="StockBSP" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBSR) HeaderText="StockBSR" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBVE) HeaderText="StockBVE" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBVM) HeaderText="StockBVM" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBVN) HeaderText="StockBVN" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBVT) HeaderText="StockBVT" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockOC) HeaderText="StockOC" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBV_BMT) HeaderText="StockBV_BMT" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBV_BPM) HeaderText="StockBV_BPM" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBV_BIT) HeaderText="StockBV_BIT" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBV_BVN) HeaderText="StockBV_BVN" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBV_BRE) HeaderText="StockBV_BRE" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.StockBV_BME) HeaderText="StockBV_BME" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.UbicacionBPM) HeaderText="UbicacionBPM" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.UbicacionBVN) HeaderText="UbicacionBVN" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.UltimaFechaCompra) HeaderText="UltimaFechaCompra" Width="100px"></GridColumn>
+                    <GridColumn Field=@nameof(StockBodegaBVModel.SiPremium) HeaderText="SiPremium" Width="100px" ></GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </MudItem>
+    </MudItem>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading"/>

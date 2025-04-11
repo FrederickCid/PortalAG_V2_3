@@ -1,0 +1,31 @@
+﻿@using PortalAG_V2.Shared.Model.EstadoPedidos;
+@using agDataAccess.Models;
+@inject IDialogService DialogService
+<div>
+    <div class="rz-shadow-4">
+        <SfGrid ID="Grid" @ref="Grid" DataSource="@listaPedidos" AllowPaging="true" style="width:100%;" Toolbar="@ButtonsGrid" OnToolbarClick="ToolbarClick"
+                AllowExcelExport="true" AllowSelection="true" AllowFiltering="true" AllowSorting="true" AllowResizing="true">
+            <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+            <GridEvents OnToolbarClick="ToolbarClick" TValue="EstadoPedidosNoMOD" RowSelected="DobleClick"></GridEvents>
+            <GridSearchSettings Fields="@SpecificCols"></GridSearchSettings>
+            <GridColumns>
+                <GridColumn Field=@nameof(EstadoPedidosNoMOD.NroDocumento) HeaderText="NroDocumento" Width="150px" TextAlign="TextAlign.Right"></GridColumn>
+                <GridColumn Field=@nameof(EstadoPedidosNoMOD.IDCliente) HeaderText="IDCliente" Width="150px"></GridColumn>
+                <GridColumn Field=@nameof(EstadoPedidosNoMOD.RazonSocial) HeaderText="RazonSocial"></GridColumn>
+                <GridColumn Field=@nameof(EstadoPedidosNoMOD.Vendedor) HeaderText="Nombres"></GridColumn>
+                <GridColumn Field=@nameof(EstadoPedidosNoMOD.FechaInicioCoticacion) HeaderText="FechaSolicitud"></GridColumn>
+                <GridColumn Field=@nameof(EstadoPedidosNoMOD.FechaTerminoAutorizacion) HeaderText="FechaAutorizacion"></GridColumn>
+                @* <GridColumn Field=@nameof(EstadoPedidosNoMOD.LineaPickingStaHelena) HeaderText="LineaPickingStaHelena"></GridColumn> *@
+                <GridColumn Field=@nameof(EstadoPedidosNoMOD.LineaPickingCDA) HeaderText="LineaPickingCDA" Width="150"></GridColumn>
+                <GridColumn Field=@nameof(EstadoPedidosNoMOD.MontoTotal) HeaderText="Monto Total" Format="$ ###,###,###,###" Width="150"></GridColumn>
+
+            </GridColumns>
+        </SfGrid>
+    </div>
+    <Loading Visibility="@Loading" />
+</div>
+
+
+
+
+

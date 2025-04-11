@@ -1,0 +1,41 @@
+﻿@page "/login"
+@layout MainLayout
+@attribute [AllowAnonymous]
+
+<EditForm Model="@_tokenModel" OnValidSubmit="SubmitAsync">
+    <FluentValidationValidator @ref="_fluentValidationValidator"/>
+    <MudGrid>
+         @*<MudItem xs="12">
+             <MudCardMedia Image="images/fullbikecl.jpg" Height="100" />
+        </MudItem>*@
+        <DataAnnotationsValidator />
+        <MudItem xs="12">
+            <div class="d-flex justify-center">
+                <MudText Typo="Typo.h4">Intranet CDA</MudText>
+            </div>
+        </MudItem>
+        <MudItem xs="12">
+            <div class="d-flex justify-center">
+                <MudText>Intranet CDA BackOffice</MudText>
+            </div>
+        </MudItem>
+        <MudItem xs="12">
+            <MudTextField T="string" Label="Usuario" Variant="Variant.Outlined"
+                          @bind-Value="_tokenModel.Email" For="@(() => _tokenModel.Email)" />
+        </MudItem>
+        <MudItem xs="12">
+            <MudTextField Label="Contraseña" Variant="Variant.Outlined"
+                          @bind-Value="_tokenModel.Password" For="@(() => _tokenModel.Password)"
+                          InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="TogglePasswordVisibility" />
+        </MudItem>
+        <MudItem xs="12" Class="d-flex justify-center">
+            <MudButton ButtonType="MudBlazor.ButtonType.Submit" Variant="Variant.Outlined" Disabled="@(!Validated)" Color="Color.Primary" Size="Size.Large" Style="width: 100%;">Iniciar sesión</MudButton>
+        </MudItem>
+        @*<MudItem xs="12">
+            <MudButton OnClick="FillAdministratorCredentials">Datos de administrador</MudButton>
+        </MudItem>
+        <MudItem xs="12">
+            <MudButton OnClick="FillBasicUserCredentials">Datos de usuario</MudButton>
+        </MudItem>*@
+    </MudGrid>
+</EditForm>

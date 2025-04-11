@@ -1,0 +1,90 @@
+﻿@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Popups
+
+@if (Tipo == 1)
+{
+    <SfDialog @bind-Visible="@Visibility" Width="500px" Height="240px" ShowCloseIcon="false" IsModal="true">
+        <DialogTemplates>
+            <Content>
+                <div class="justify-content-center text-center" style="z-index:9999">
+                    <div class="d-flex justify-content-center mb-2">
+                        <br />
+                        <div class="spinner-grow spinner-border mt-3 mb-3 text-primary" role="status">
+                            <span class="visually-hidden-focusable">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-border mt-3 mb-3 text-secondary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-border mt-3 mb-3 text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-border mt-3 mb-3 text-danger" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-border mt-3 mb-3 text-warning" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-border mt-3 mb-3 text-info" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow spinner-border mt-3 mb-3 text-dark" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <h2> @Titulo</h2>
+                    <h4>@Mensage</h4>
+                    @{
+                        if (ContadorVisible && Total > 0)
+                        {
+                            <p style="color:black; font-size:20px; text-align:center; margin-top:10px; right:5px">@MensageCount: <b>@Contador</b> de: <b>@Total</b></p>
+                        }
+                    }
+                </div>
+            </Content>
+        </DialogTemplates>
+    </SfDialog>
+}
+
+
+
+@code {
+    [Parameter]
+    public string Titulo { get; set; } = "Cargando...";
+
+    [Parameter]
+    public string Mensage { get; set; } = "Procesando solicitud";    
+    [Parameter]
+    public string MensageCount { get; set; } = "Artiuculos";
+
+    [Parameter]
+    public bool Visibility { get; set; } = false;
+
+    [Parameter]
+    public int Tipo { get; set; } = 1;
+
+    [Parameter]
+    public bool ContadorVisible { get; set; } = false;
+
+    [Parameter]
+    public int Contador { get; set; }
+
+    [Parameter]
+    public int Total { get; set; }
+
+
+    public void Cerrar()
+    {
+        Visibility = false;
+        StateHasChanged();
+    }
+
+
+    public void Abrir()
+    {
+        Visibility = true;
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,153 @@
+﻿@page "/indicadoresRanking"
+
+@if (loading)
+{
+    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+}
+else
+{
+    <MudContainer Class="mt-0 px-0" MaxWidth="MaxWidth.False" Style="height: 100vh; display: flex; flex-direction: column;">
+        <MudPaper Class="pa-0 ma-0" Elevation="3" Style=" background:linear-gradient(90deg, rgba(101,110,143,1) 0%, rgba(20,28,54,0.6671043417366946) 49%, rgba(9,82,126,1) 100%);">
+            <MudGrid Justify="Justify.Center">
+                <MudItem xs="12" md="6">
+                    <MudPaper Style="background-color:white; height:100%" >
+                        <MudPaper Elevation="2" Class="pa-4" Style="height:100%;">
+                            <MudText Typo="Typo.h4" Class="white-text" Align="Align.Center" Style=" background:linear-gradient(90deg, rgba(101,110,143,1) 0%, rgba(20,28,54,0.6671043417366946) 49%, rgba(9,82,126,1) 100%);">MES ACTUAL</MudText>
+                            <MudSimpleTable Class="black-text" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Style="overflow-x: auto;">
+                                <thead>
+                                    <tr>
+                                        @foreach (var h in headings)
+                                        {
+                                            <th style="font-size: 24px; font-weight: bold;">@h</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var row in actual)
+                                    {
+                                        <tr>
+
+                                            <td style="font-size: 24px; font-weight: bold;">@row.sacador</td>
+                                            <td style="font-size: 24px; font-weight: bold;">@row.bV_BVN</td>
+                                            <td style="font-size: 24px; font-weight: bold;">@row.bV_BIT</td>
+                                            <td style="font-size: 24px; font-weight: bold;">@row.bV_BPM</td>
+                                            <td style="font-size: 24px; font-weight: bold;">@row.packing</td>
+                                            <td style="font-size: 24px; font-weight: bold;">@row.devolucion</td>
+                                            <td style="font-size: 24px; font-weight: bold;">@row.reposicion</td>
+                                            @* @foreach (var x in row)
+                                    {
+                                        <td style="font-size: 24px; font-weight: bold;">@x</td>
+                                    } *@
+                                        </tr>
+                                    }
+                                </tbody>
+                            </MudSimpleTable>
+
+                        </MudPaper>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudPaper Elevation="2" Class="pa-4" Style="height: 100%">
+                        <MudCarousel Class="mud-width-full" Style="height: 740px;;" ShowArrows="false" ShowBullets="false" EnableSwipeGesture="true" AutoCycle="true" TData="object">
+                            <MudCarouselItem Transition="Transition.Slide" Color="@Color.Primary">
+                                <MudText Typo="Typo.h4" Align="Align.Center">@mesM3</MudText>
+                                <MudSimpleTable Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Style="overflow-x: auto;">
+                                    <thead>
+                                        <tr>
+                                            @foreach (var h in headings)
+                                            {
+                                                <th style="font-size: 24px; font-weight: bold;">@h</th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var row in m1)
+                                        {
+                                            <tr>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.sacador</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.bV_BVN</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.bV_BIT</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.bV_BPM</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.packing</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.devolucion</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.reposicion</td>
+                                                @* @foreach (var x in row)
+                                            {
+                                                <td style="font-size: 24px; font-weight: bold;">@x</td>
+                                            } *@
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </MudSimpleTable>
+                            </MudCarouselItem>
+                            <MudCarouselItem Transition="Transition.Slide" Color="@Color.Secondary">
+                                <MudText Typo="Typo.h4" Align="Align.Center">@mesM2</MudText>
+                                <MudSimpleTable Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Style="overflow-x: auto;">
+                                    <thead>
+                                        <tr>
+                                            @foreach (var h in headings)
+                                            {
+                                                <th style="font-size: 24px; font-weight: bold;">@h</th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var row in m2)
+                                        {
+                                            <tr>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.sacador</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.bV_BVN</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.bV_BIT</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.bV_BPM</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.packing</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.devolucion</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.reposicion</td>
+                                                @* @foreach (var x in row.Split())
+                                            {
+                                                <td style="font-size: 24px; font-weight: bold;">@x</td>
+                                            } *@
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </MudSimpleTable>
+                            </MudCarouselItem>
+                            <MudCarouselItem Transition="Transition.Slide" Color="@Color.Primary">
+                                <MudText Typo="Typo.h4" Align="Align.Center">@mesM1</MudText>
+                                <MudSimpleTable Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Style="overflow-x: auto;">
+                                    <thead>
+                                        <tr>
+                                            @foreach (var h in headings)
+                                            {
+                                                <th style="font-size: 24px; font-weight: bold;">@h</th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var row in m3)
+                                        {
+                                            <tr>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.sacador</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.bV_BVN</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.bV_BIT</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.bV_BPM</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.packing</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.devolucion</td>
+                                                <td style="font-size: 24px; font-weight: bold;">@row.reposicion</td>
+                                                @* @foreach (var x in row.Split())
+                                            {
+                                                <td style="font-size: 24px; font-weight: bold;">@x</td>
+                                            } *@
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </MudSimpleTable>
+                            </MudCarouselItem>
+                        </MudCarousel>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudContainer>
+}
+
+

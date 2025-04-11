@@ -1,0 +1,83 @@
+﻿@page "/CambioDireccion"
+@using PortalAG_V2.Shared.Model;
+@using PortalAG_V2.Shared.Model.Direcciones;
+
+<SurveyPrompt Title="Cambiar dirección del pedido" />
+<MudPaper Class="m-1 p-3">
+    <MudItem xs="12">
+        <MudGrid Justify="Justify.FlexStart" Spacing="1">
+            <MudItem xs="12">
+                <MudText Typo="Typo.subtitle1">Nro de pedido</MudText>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+    <MudGrid>
+        <MudItem xs="12">
+            <MudGrid Justify="Justify.Center">
+                <MudItem xs="4">
+                    <MudTextField @bind-Value="nroPedido" Margin="Margin.Dense" Variant="Variant.Outlined" OnBlur="BuscarNroPedido"></MudTextField>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+        <div style="border:solid 2px rgba(0,0,0,0.2); width:100%; height:2px"></div>
+        <MudItem xs="12">
+            <MudGrid Justify="Justify.Center" Spacing="1">
+                <MudItem md="4" xs="12">
+                    <MudTextField @bind-Value="@nombreCliente" Label="Razón Social" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+                </MudItem>
+                <MudItem md="4" xs="12">
+                    <MudTextField @bind-Value="@idCliente" Label="ID Cliente" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+                </MudItem>
+                <MudItem md="4" xs="12">
+                    <MudTextField @bind-Value="@estadoPedido" Label="Estado Pedido" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+
+        <MudItem xs="12">
+            <MudGrid Justify="Justify.Center" Spacing="1">
+                <MudItem xs="4">
+                    <MudSelect T="DireccionesDTO" Label="Direcciones" Value="@direccion" Margin="Margin.Dense" Variant="Variant.Outlined" AdornmentIcon="@Icons.Filled.Adjust"
+                               AdornmentColor="Color.Secondary" ValueChanged="((x) => CambioDireccion(x))" ToStringFunc="@converterDireccion">
+                        @foreach (DireccionesDTO item in listaDirecciones)
+                        {
+                            <MudSelectItem Value="@item">@item.idDireccion</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+        <MudItem xs="12">
+            <MudGrid Justify="Justify.FlexStart" Spacing="1">
+                <MudItem xs="12">
+                    <MudText Typo="Typo.subtitle1">Direccion de despacho</MudText>
+                </MudItem>
+
+            </MudGrid>
+        </MudItem>
+        <MudItem xs="12">
+            <MudGrid Justify="Justify.Center" Spacing="1">
+                <MudItem md="3" xs="12">
+                    <MudTextField @bind-Value="@direccionDes" Label="Direccion" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+                </MudItem>
+                <MudItem md="3" xs="12">
+                    <MudTextField @bind-Value="@region" Label="Region" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+                </MudItem>
+                <MudItem md="3" xs="12">
+                    <MudTextField @bind-Value="@ciudad" Label="Ciudad" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+                </MudItem>
+                <MudItem md="3" xs="12">
+                    <MudTextField @bind-Value="@comuna" Label="Comuna" Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+
+        <MudItem xs="12" Class="d-flex align-end">
+            <MudGrid Justify="Justify.FlexEnd" Spacing="1">
+                <MudItem>
+                    <MudButton Variant="Variant.Outlined" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Secondary" OnClick="ActualizarDireccion" Disabled="@hablitarBoton">Actualizar Direccion</MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+    </MudGrid>
+</MudPaper>

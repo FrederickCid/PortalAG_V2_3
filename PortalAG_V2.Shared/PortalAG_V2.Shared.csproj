@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Model\NotaDeCredito\PopUp.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Model\NotaDeCredito\PopUp.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.FluentValidation" Version="2.1.0" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="7.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="7.0.5" />
+    <PackageReference Include="MudBlazor" Version="6.9.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+</Project>

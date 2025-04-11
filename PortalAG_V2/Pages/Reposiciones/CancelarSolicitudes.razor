@@ -1,0 +1,43 @@
+﻿@page "/cancelarReposicion"
+@using PortalAG_V2.Shared.Model.Reposicones
+@inject IDialogService DialogService;
+<SurveyPrompt Title="Cancelar Reposiciones" />
+<br />
+
+<MudPaper Style="margin=0 auto; max-width:">
+    <MudGrid>
+        <MudItem xs="12" md="12">
+            <MudDataGrid T="EliminarReposicionesModel" Items="@eliminarReposiciones" SortMode="SortMode.None" Filterable="false" Groupable="false" QuickFilter="@_quickFilter" Localization="new() { RowsPerPage = Filas por página: }">
+                <ToolBarContent>
+                    
+                    <MudSpacer />
+                    <MudTextField @bind-Value="_searchString" Placeholder="Buscar" Adornment="Adornment.Start" Immediate="true"
+                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                </ToolBarContent>
+                <Columns>
+                    <PropertyColumn Property="x => x.idSolicitud" Title="IDsolicitud" />
+                    <PropertyColumn Property="x => x.nroPallet" Title="Pallet"/>
+                    <PropertyColumn Property="x => x.idArticulo" Title="Articulo"/>
+                    <PropertyColumn Property="x => x.unidadPorBulto" Title="UniPorBulto"/>
+                    <PropertyColumn Property="x => x.cantidad" Title="Cantidad"/>
+                    <PropertyColumn Property="x => x.fechaActualizacion" Title="Fecha"/>
+                    <TemplateColumn CellClass="d-flex justify-center">
+                        <CellTemplate>
+                            <MudStack Row>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete"  Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Error" OnClick="@(() => Cancelar(@context.Item))">Cancelar</MudIconButton>
+                            </MudStack>
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="EliminarReposicionesModel" RowsPerPageString="Filas por página:" />
+                </PagerContent>
+            </MudDataGrid>
+        </MudItem>
+    </MudGrid>
+    <MudItem>
+            
+    </MudItem>
+</MudPaper>
+
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" />

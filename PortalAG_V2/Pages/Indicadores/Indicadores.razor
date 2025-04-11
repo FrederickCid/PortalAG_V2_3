@@ -1,0 +1,261 @@
+﻿@page "/indicadores"
+
+
+<MudContainer Class="mt-0 px-1" MaxWidth="MaxWidth.False">
+    <MudGrid>
+
+        @*Primera fila*@
+        <MudItem xs="12" sm="12" md="4">
+            <MudPaper Class="pa-0 mb-1" Elevation="3" Style="background:linear-gradient(90deg, rgba(101,110,143,1) 0%, rgba(20,28,54,0.6671043417366946) 49%, rgba(9,82,126,1) 100%);">
+                <MudGrid Justify="Justify.Center">
+                    <MudItem xs="12" Class="my-0 py-0">
+                        <MudText Typo="Typo.h4" Class="white-text" Align="MudBlazor.Align.Center">POR APROBAR</MudText>
+                        <MudDivider />
+                    </MudItem>
+
+                    <MudItem xs="6" Class="my-0">
+                        <MudPaper Class="pa-2 mt-0 mx-2">
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.h4" Align="MudBlazor.Align.Center">LINEAS</MudText>
+                                <MudDivider />
+                                <MudText Typo="Typo.h3" Align="MudBlazor.Align.Center">@Lineas</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+
+                    <MudItem xs="6" Class="my-0">
+                        <MudPaper Class="pa-2 mt-0 mx-2">
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.h4" Align="MudBlazor.Align.Center">PEDIDOS</MudText>
+                                <MudDivider />
+                                <MudText Typo="Typo.h3" Align="MudBlazor.Align.Center">@Pedidos</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="12" md="4"  Class="my-0 py-0">
+            <MudPaper Class="pa-0 mb-0 align-content-center" Elevation="3" Style="height: 200px; background:linear-gradient(90deg, rgba(101,110,143,1) 0%, rgba(20,28,54,0.6671043417366946) 49%, rgba(9,82,126,1) 100%);">
+                <MudGrid Justify="Justify.Center">
+                    <MudItem xs="12" Class="my-0 py-0">
+                        <MudText Typo="Typo.h4" Class="white-text my-0 py-0" Align="Align.Center">@diaDeLaSemana</MudText>
+                        <MudText Typo="Typo.h3" Class="white-text my-0 py-0" Align="Align.Center">@hora</MudText>
+                        <MudText Typo="Typo.h4" Class="white-text my-0 py-0" Align="Align.Center">@diaMes</MudText>
+                        <MudText Typo="Typo.h4" Class="white-text my-0 py-0" Align="Align.Center">Total lineas: @LineasTodasBodegas</MudText>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="12" md="4">
+            <MudPaper Class="pa-0 mb-1" Elevation="3" Style="background:linear-gradient(90deg, rgba(101,110,143,1) 0%, rgba(20,28,54,0.6671043417366946) 49%, rgba(9,82,126,1) 100%);">
+                <MudGrid Justify="Justify.Center">
+                    <MudItem xs="12" Class="my-0 py-0">
+                        <MudText Typo="Typo.h4" Class="white-text" Align="MudBlazor.Align.Center">FACT X DIA</MudText>
+                        <MudDivider />
+                    </MudItem>
+
+                    <MudItem xs="6" Class="my-0">
+                        <MudPaper Class="pa-2 mt-0 mx-2">
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.h4" Align="MudBlazor.Align.Center">LINEAS</MudText>
+                                <MudDivider />
+                                <MudText Typo="Typo.h3" Align="MudBlazor.Align.Center">@LineasTerm</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+
+                    <MudItem xs="6" Class="my-0">
+                        <MudPaper Class="pa-2 mt-0 mx-2">
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.h4" Align="MudBlazor.Align.Center">PEDIDOS</MudText>
+                                <MudDivider />
+                                <MudText Typo="Typo.h3" Align="MudBlazor.Align.Center">@PedidosTerm</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+
+        @*Segunda fila*@
+        <MudItem xs="12" sm="6">
+            @*Por Pickear*@
+            <MudPaper Class="pa-0 ma-0" Elevation="3" Style=" background:linear-gradient(90deg, rgba(101,110,143,1) 0%, rgba(20,28,54,0.6671043417366946) 49%, rgba(9,82,126,1) 100%);">
+                <MudGrid Justify="Justify.Center">
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.h4" Class="white-text my-0 py-0" Align="Align.Center">POR PICKEAR</MudText>
+                        <MudDivider />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudPaper Class="pa-0 mt-0 mx-2">
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.h4" Align="Align.Center">LINEAS</MudText>
+                                <MudDivider />
+                                <MudText Typo="Typo.h3" Class="green-text" Align="Align.Center">@pikingVerde</MudText>
+                                <MudDivider />
+                                <MudText Typo="Typo.h3" Class="red-text" Align="Align.Center">@pikingRojo</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudPaper Class="pa-0 mt-0 mx-2">
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.h4" Align="Align.Center">PEDIDOS</MudText>
+                                <MudDivider />
+                                <MudText Typo="Typo.h3" Class="green-text" Align="Align.Center">@pickingPedidosVerde</MudText>
+                                <MudDivider />
+                                <MudText Typo="Typo.h3" Class="red-text" Align="Align.Center">@pickingPedidosRojo</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.h4" Class="white-text my-0 py-0" Align="Align.Center">DISTRIBUCION BODEGA</MudText>
+                        <MudDivider />
+                    </MudItem>
+
+                    <MudItem xs="12">
+                        <MudPaper Class="pa-2 mt-0 mx-2">
+                            <MudGrid Justify="Justify.Center">
+                                <MudItem xs="6">
+                                    <MudStack Spacing="2">
+                                        <MudText Typo="Typo.h4" Align="Align.Start">VENTAS</MudText>
+                                        
+                                        <MudText Typo="Typo.h4" Align="Align.Start">INTERMEDIA</MudText>
+                                        
+                                        <MudText Typo="Typo.h4" Align="Align.Start">MAYOR</MudText>
+                                        
+                                        <MudText Typo="Typo.h4" Align="Align.Start">FULLBIKE</MudText>
+                                    </MudStack>
+                                </MudItem>
+                                <MudItem xs="3">
+                                    <MudStack Spacing="2">
+                                        <MudText Typo="Typo.h4" Class="green-text" Align="Align.Start">@lineasVentasVerde</MudText>
+                                        
+                                        <MudText Typo="Typo.h4" Class="green-text" Align="Align.Start">@lineasInterVerde</MudText>
+                                       
+                                        <MudText Typo="Typo.h4" Class="green-text" Align="Align.Start">@lineasMayorVerde</MudText>
+                                        
+                                        <MudText Typo="Typo.h4" Class="green-text" Align="Align.Start">@lineasFBVerde</MudText>
+                                    </MudStack>
+                                </MudItem>
+                                <MudItem xs="3">
+                                    <MudStack Spacing="2">
+                                        <MudText Typo="Typo.h4" Class="red-text" Align="Align.Start">@lineasVentasRojo</MudText>
+                                       
+                                        <MudText Typo="Typo.h4" Class="red-text" Align="Align.Start">@lineasInterRojo</MudText>
+                                      
+                                        <MudText Typo="Typo.h4" Class="red-text" Align="Align.Start">@lineasMayorRojo</MudText>
+                                      
+                                        <MudText Typo="Typo.h4" Class="red-text" Align="Align.Start">@lineasFBRojo</MudText>
+                                    </MudStack>
+                                </MudItem>
+                            </MudGrid>
+                        </MudPaper>
+                    </MudItem>
+
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+        @*FIN Por Pickear*@
+
+        @*Por Revisar*@
+        <MudItem xs="12" sm="6">
+            <MudPaper Class="pa-0 ma-0" Elevation="3" Style=" background:linear-gradient(90deg, rgba(101,110,143,1) 0%, rgba(20,28,54,0.6671043417366946) 49%, rgba(9,82,126,1) 100%);">
+                <MudGrid Justify="Justify.Center">
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.h4" Class="white-text my-0 py-0" Align="Align.Center">POR REVISAR</MudText>
+                        <MudDivider />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudPaper Class="pa-0 mt-0 mx-2">
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.h4" Align="Align.Center">LINEAS</MudText>
+                                <MudDivider />
+                                <MudText Typo="Typo.h3" Class="green-text" Align="Align.Center">@lineasRevisionVerde</MudText>
+                                <MudDivider />
+                                <MudText Typo="Typo.h3" Class="red-text" Align="Align.Center">@lineasRevisionRojo</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudPaper Class="pa-0 mt-0 mx-2">
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.h4" Align="Align.Center">PEDIDOS</MudText>
+                                <MudDivider />
+                                <MudText Typo="Typo.h3" Class="green-text" Align="Align.Center">@pedidosRevisionVerde</MudText>
+                                <MudDivider />
+                                <MudText Typo="Typo.h3" Class="red-text" Align="Align.Center">@pedidosRevisionRojo</MudText>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.h4" Class="white-text my-0 py-0" Align="Align.Center">DISTRIBUCION BODEGA</MudText>
+                        <MudDivider />
+                    </MudItem>
+
+                    <MudItem xs="12">
+                        <MudPaper Class="pa-2 mt-0 mx-2">
+                            <MudGrid Justify="Justify.Center">
+                                <MudItem xs="6">
+                                    <MudStack Spacing="2">
+                                        <MudText Typo="Typo.h4" Align="Align.Start">VENTAS</MudText>
+                                        
+                                        <MudText Typo="Typo.h4" Align="Align.Start">INTERMEDIA</MudText>
+                                       
+                                        <MudText Typo="Typo.h4" Align="Align.Start">MAYOR</MudText>
+                                        
+                                        <MudText Typo="Typo.h4" Align="Align.Start">FULLBIKE</MudText>
+                                    </MudStack>
+                                </MudItem>
+                                <MudItem xs="3">
+                                    <MudStack Spacing="2">
+                                        <MudText Typo="Typo.h4" Class="green-text" Align="Align.Start">@revisionLineasVentasVerde</MudText>
+                                       
+                                        <MudText Typo="Typo.h4" Class="green-text" Align="Align.Start">@revisionLineasInterVerde</MudText>
+                                       
+                                        <MudText Typo="Typo.h4" Class="green-text" Align="Align.Start">@revisionLineasMayorVerde</MudText>
+                                       
+                                        <MudText Typo="Typo.h4" Class="green-text" Align="Align.Start">@revisionLineasFBVerde</MudText>
+                                    </MudStack>
+                                </MudItem>
+                                <MudItem xs="3">
+                                    <MudStack Spacing="2">
+                                        <MudText Typo="Typo.h4" Class="red-text" Align="Align.Start">@revisionLineasVentasRojo</MudText>
+                                       
+                                        <MudText Typo="Typo.h4" Class="red-text" Align="Align.Start">@revisionLineasInterRojo</MudText>
+                                        
+                                        <MudText Typo="Typo.h4" Class="red-text" Align="Align.Start">@revisionLineasMayorRojo</MudText>
+                                       
+                                        <MudText Typo="Typo.h4" Class="red-text" Align="Align.Start">@revisionLineasFBRojo</MudText>
+                                    </MudStack>
+                                </MudItem>
+                            </MudGrid>
+                        </MudPaper>
+                    </MudItem>
+
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+        @*FIN Por Revisar*@
+
+        @*Tercera fila
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="12" md="4">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        </MudItem>*@
+    </MudGrid>
+</MudContainer>

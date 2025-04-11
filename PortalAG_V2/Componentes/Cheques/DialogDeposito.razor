@@ -1,0 +1,18 @@
+﻿<MudDialog>
+    <TitleContent>
+        Deposito De Cheque
+    </TitleContent>
+    <DialogContent>
+        <MudItem Style="display:flex;flex-direction:column">
+            <MudText>
+                ¿Porque fue depositado el cheque?
+            </MudText>
+            <MudTextField @bind-Value="Respuesta" T="string" Label="Comentario" Variant="Variant.Outlined" Lines="3" />
+        </MudItem>
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Confirmacion">Ok</MudButton>
+    </DialogActions>
+</MudDialog>

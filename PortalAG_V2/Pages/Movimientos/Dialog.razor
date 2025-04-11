@@ -1,0 +1,49 @@
+﻿@using PortalAG_V2.Shared.Model.SolicitudMovimiento;
+@using static PortalAG_V2.Pages.Movimientos.SolicitudDeMovimientos;
+
+<MudDialog Class="w-50 h-30">
+    <DialogContent>
+        <MudItem Class="mt-2">
+            <MudText Typo="Typo.subtitle1">
+                IDArticulo: @args.IDArticulo
+            </MudText>
+            <MudText Typo="Typo.subtitle2">
+                Cantidad disponible: @args.Cantidad
+            </MudText>
+        </MudItem>
+        
+        <MudItem xs="3" Class="mt-4">
+            <MudNumericField @bind-Value="_numero" Min="1" Max="args.Cantidad" Variant="Variant.Outlined"/>
+        </MudItem>
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public UbicacionArticuloMayor args { get; set; }
+    private List<DetalleRecepcion> Detalle = new List<DetalleRecepcion>();
+
+    int _numero = 0;
+
+    private void Submit()
+    {
+        if (!_numero.Equals(0))
+        {
+            MudDialog.Close(DialogResult.Ok(_numero));
+        }
+        else
+        {
+            _snackBar.Add("Por favor seleccionar bultos a mover!",Severity.Warning);
+        }
+
+    }
+    
+    private void Cancel() => MudDialog.Cancel();
+}
+

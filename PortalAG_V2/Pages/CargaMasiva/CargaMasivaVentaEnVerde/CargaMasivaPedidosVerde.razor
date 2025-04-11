@@ -1,0 +1,86 @@
+﻿@page "/CargaMasivaPedidosVerde"
+@using PortalAG_V2.Shared.Models.CargaMasiva.Pedidos
+@inject IDialogService DialogService
+<SurveyPrompt Title="Carga Masiva Pedidos Falabella" />
+<br />
+<br />
+
+<MudPaper>
+	<MudGrid>
+		<MudItem md="12" xs="12">
+			<MudCard Style="margin-bottom:20px">
+				<MudCardHeader>
+					<MudText Typo="Typo.subtitle1" Style="font-weight:bold;">
+						Carga De Archivo
+					</MudText>
+				</MudCardHeader>
+				<MudCardContent Style="margin:10px; padding:30px;display:flex; flex-direction:row; gap: 10px">
+					<MudItem>
+						<MudItem Style="border:1px solid rgba(0,0,0,0.5); max-width:500px; border-radius:25px; display:flex; flex-direction:row">
+							<InputFile id="fileInput" OnChange="UploadFiles" hidden single itemtype=".xlsx" />
+							<MudFab HtmlTag="label"
+									StartIcon="@Icons.Material.Filled.CloudUpload"
+									Size="Size.Small"
+									Color="Color.Success"
+									Label="Seleccionar Archivo"
+									for="fileInput"
+									Style="white-space: nowrap;">
+								Seleccionar archivo
+							</MudFab>
+							<label style="overflow:hidden;white-space: nowrap; text-overflow:ellipsis; align-self:center; margin-left:10px; width:250px">@NameFile</label>
+							@if (fileComplete != null)
+							{
+								<MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" Color="Color.Error" Size="Size.Small" OnClick="Delete"></MudIconButton>
+							}
+						</MudItem>
+					</MudItem>
+					<MudItem Style="gap:10px; display: flex; flex-direction:row; text-align:end">
+						<MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Success" OnClick=ProcesarFiles Size="Size.Small">
+							Procesar archivo
+						</MudButton>
+						<MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Secondary" OnClick=DownloadFile Size="Size.Small">
+							Descargar Excel Ejemplo
+						</MudButton>
+					</MudItem>
+				</MudCardContent>
+			</MudCard>
+		<MudAlert Class=" mb-3" Style="width:100%" Severity="Severity.Warning" Variant="Variant.Filled" Dense ContentAlignment="HorizontalAlignment.Center">IMPORTANTE: Se recomienda que la cantidad de pedidos en el Excel no supere los 50 pedidos.</MudAlert>
+		</MudItem>
+
+		<MudItem xs="12" Style="width:100%;">
+			<MudDataGrid s T="CargaMasivaModelValidada"  Style="width:100%;" RowStyleFunc="@_rowStyleFunc" Items="dataTableValidada" 
+			Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true" SortMode="SortMode.None" Hover Striped >
+				<Columns>
+					<HierarchyColumn T="CargaMasivaModelValidada"  />
+					<PropertyColumn Property="x => x.Linea" Title="Linea"  CellStyle="width:150px"/>
+					<PropertyColumn Property="x => x.NroOrden" Title="Nro. Orden" CellStyle="width:150px" />
+					<PropertyColumn Property="x => x.NroF12" Title="Nro. F12" CellStyle="width:150px" />
+					<PropertyColumn Property="x => x.FechaEmision" Title="Fecha Emision" CellStyle="width:150px" />
+					<PropertyColumn Property="x => x.RutCliente" Title="Rut Cliente" CellStyle="width:150px" />
+					<PropertyColumn Property="x => x.Comentarios" Title="Comentarios" CellStyle="width:150px" />
+					<PropertyColumn Property="x => x.Error " Title="Error" CellStyle="width:150px" />
+				</Columns> 
+				<ChildRowContent>
+					<MudDataGrid T="CargaMasivaDetalleModelValidada" Items="@context.Item.DetallePedido" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true" SortMode="SortMode.None" Hover Striped>
+						<Columns>
+							<PropertyColumn Property="x => x.SKU" Title="SKU" />
+							<PropertyColumn Property="x => x.Descripcion" Title="Descripcion" />
+							<PropertyColumn Property="x => x.Cantidad" Title="Cantidad" />
+							<PropertyColumn Property="@(x => x.precio.ToString("$ ###,###,###,###"))" Title="Precio" />
+							<PropertyColumn Property="@(x => x.TotalProducto.ToString("$ ###,###,###,###"))" Title="TotalProducto" />
+							<PropertyColumn Property="x => x.Error" Title="Error" />
+						</Columns>
+					</MudDataGrid>
+				</ChildRowContent>
+				<PagerContent>
+					<MudDataGridPager T="CargaMasivaModelValidada" PageSizeOptions="new int[] {10,25,50}" />
+				</PagerContent>
+			</MudDataGrid>
+		</MudItem>
+		<MudItem Style="display:flex;display:flex; justify-content:end; margin-bottom:20px; width:100%" Class="pa-4 m-1">
+			<MudButton Variant="Variant.Filled" Color="Color.Info" Disabled="@EnviarBtn" DisableElevation="true" OnClick="EnviarSolicitud" Class="mx-2">Enviar</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Error" DisableElevation="true" OnClick="limpiar">Limpiar</MudButton>
+		</MudItem>
+	</MudGrid>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="Loading" Contador="Contador" ContadorVisible="true" Total="dataTableValidada.Count()" />

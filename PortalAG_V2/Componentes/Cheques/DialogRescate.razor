@@ -1,0 +1,20 @@
+﻿<MudDialog>
+    <TitleContent>
+        Seleccione un metodo de pago
+    </TitleContent>
+    <DialogContent>
+        <MudItem Style="display:flex;flex-direction:column">
+            <MudText>
+                ¿Por que fue rescatado?
+            </MudText>
+            <MudTextField @bind-Value="Respuesta" T="string" Label="Comentario" Variant="Variant.Outlined" Lines="3" />
+        </MudItem>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Confirmacion">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+
+}

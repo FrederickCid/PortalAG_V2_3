@@ -1,0 +1,100 @@
+﻿@page "/Bultos"
+@using PortalAG_V2.Componentes.ReposicionesPendientes
+@using agDataAccess.Models.Solicitudes
+<SurveyPrompt Title="Reimprimir bultos" />
+<MudPaper Style="display:flex; flex-direction:column; max-width:auto; margin:0 auto; height:100%">
+    <MudItem xs="12" Class="pa-4 m-1" Style="align-content: center">
+
+        
+        <MudGrid Justify="Justify.Center" Spacing="1">
+            <MudItem>
+                
+                <MudTextField Margin="Margin.Dense" @bind-Value="@NroPedido"
+                              Label="Nro. de Pedido" Variant="Variant.Outlined" 
+                              Mask="@(new PatternMask("000000000000"))" />
+            </MudItem>
+            <MudItem>
+                
+                <MudTextField Margin="Margin.Dense" @bind-Value="@NroBulto"
+                              Label="Nro. de bulto" Variant="Variant.Outlined"
+                              Mask="@(new PatternMask("000000000000"))" />
+            </MudItem>
+            <MudItem >
+                
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@Buscar" Size="Size.Medium">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Imprimiendo...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Imprimir</MudText>
+                    }
+                </MudButton>
+
+            </MudItem>
+        </MudGrid>
+        
+
+        @* <MudGrid Style="display: flex; align-items:center; ">
+            <MudItem xs="12" md="6">
+                <MudTextField Margin="Margin.Dense" @bind-Value="@NroBusqueda"
+                              Label="Nro. de Pedido" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"
+                              Mask="@(new PatternMask("000000000000"))" />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@Buscar">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Buscando...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Buscar</MudText>
+                    }
+                </MudButton>
+
+            </MudItem>
+        </MudGrid> *@
+    </MudItem>
+  
+    @* <MudItem md="12" xs="12">
+        <MudDataGrid T="object" Items="any" MultiSelection="true" Breakpoint="Breakpoint.Sm"
+                     Bordered="true" Dense="true" SortMode="SortMode.None" Hover Striped QuickFilter="@QuickFilter">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudItem Style="display:flex;flex-direction:row;gap: 20px; width: 100%">
+                    <MudTextField @bind-Value="_searchString" Placeholder="Buscar..." Adornment="Adornment.Start" Immediate="true"
+                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                </MudItem>
+            </ToolBarContent>
+            <Columns>
+                <PropertyColumn Property="x => x" HeaderStyle="font-size:20px; font-weight:bold" CellStyle="font-size:18px; font-weight:400" />
+              
+            </Columns>
+
+        </MudDataGrid>
+    </MudItem> *@
+</MudPaper>
+
+<MudItem xs="12" Class="pa-4 m-1" Style="align-content: center">
+    <MudGrid Justify="Justify.Center" Spacing="1">
+        <div class="card mt-2">
+            <div class="card-header bg-warning" style="--bs-bg-opacity: .5;">
+                Advertencia:
+            </div>
+            <div class="card-body">
+        <li>La reimpresion de bulto es responsibilidad del usuario autorizado</li>
+        <li>El proceso es irreversible, no se puede anular una reimpresion</li>
+        <li>Todas las reimpresiones saldran en el meson Nro. 6</li>
+        </div>
+        <div class="card-footer">
+            Toda reimpresion queda registra en sistema.
+        </div>
+        </div>
+    </MudGrid>
+
+</MudItem>
+

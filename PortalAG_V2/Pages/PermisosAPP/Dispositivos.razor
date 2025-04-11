@@ -1,0 +1,42 @@
+﻿@page "/dispositivos"
+@using PortalAG_V2.Shared.Model.PermisosAPPDTO;
+@using PortalAG_V2.Shared.Model.DispositivosModel;
+
+<SurveyPrompt Title="Administrar Dispositivos" />
+<br />
+<br />
+
+<MudPaper Class="m-1 p-3" Style="display:flex; flex-direction:row">
+    <MudGrid>
+        <MudItem md="4" xs="12" >
+            <MudSelect  T="MostrarDispositivos" Value="mostrarDispoDesde1"
+                       ToStringFunc="@convertDescripcion" Label="Picking/Packing" Dense="true" Variant="Variant.Outlined"
+                       ValueChanged="((x) => MostrarDispositivos(x))">
+                @foreach (MostrarDispositivos item in _listArea)
+                {
+                    <MudSelectItem Value="@item">@item.Descripcion</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+
+        <MudItem md="8" xs="12" >
+            <MudDataGrid  T="BuscarPorTipo" Items="@_listDispo1"
+                          Bordered="true" Dense="true" SortMode="SortMode.None" RowClick="@clickDesde" @bind-SelectedItems="dataDesde">
+                <Columns>
+                    <PropertyColumn Property="x => x.Identificador" Title="Descripcion Dispositivo" />
+                    <PropertyColumn Property="x => x.IDBodegaEnPicking" Title="Bodega" />
+                    <PropertyColumn Property="x => x.IDEstado" Title="Estado" />
+                    <PropertyColumn Property="x => x.IDUsuarioEnUso" Title="Usuario" />
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="BuscarPorTipo " />
+                </PagerContent>
+            </MudDataGrid>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="Loading"></PortalAG_V2.Componentes.Loading>
+
+@code {
+    private HashSet<BuscarPorTipo> dataDesde = new HashSet<BuscarPorTipo>();
+}

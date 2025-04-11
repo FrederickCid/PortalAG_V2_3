@@ -1,0 +1,60 @@
+﻿@using PortalAG_V2.Shared.Model.EstadoPedidos
+@inject IDialogService DialogService;
+
+<MudDialog>
+    <DialogContent>
+        <hr style="width:100%; border: 2px solid black" />
+
+        @if (Bultos == null)
+        {
+            <MudPaper Class="pa-4 m-1">
+                <MudText Typo="Typo.h5">Aun sin ubicar Bultos</MudText>
+            </MudPaper>
+        }
+        else
+        {
+
+            <MudItem md="12" Style="margin:0 auto; width:100%">
+                <MudPaper Class="pa-4 m-1" Style="display:flex; width: 100%; gap: 20px">
+                    <MudGrid Spacing="3" Justify="Justify.Center">
+                        @foreach (var Bulto in Bultos)
+                        {
+                            <MudItem md="3" sm="12" Style="">
+                                <MudButton Style="height:auto; width:250px display: none; align-items: none; justify-content: none;" OnClick="@(() => onClickBultosDetalle(Bulto))">
+                                    <MudPaper Class=" rounded-lg" Style="border: solid black 2px; background:#e2efda; display:flex; height:auto; width:250px;">
+                                        <table class="table table-sm table-borderless">
+                                            <tbody>
+                                                <tr>
+                                                    <th colspan="2"><MudText Style="font-weight:bold; text-align:center; align-items:center; font-size:15px;">BULTO N°@Bulto.NroBulto</MudText></th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th><MudText Style="font-weight:bold; font-size:12px; text-align:left; margin-bottom:-5px">BODEGA:</MudText></th>
+                                                        <td><MudText Style="font-size:12px; text-align:center; margin-bottom:-5px">@Bulto.IDBodega</MudText></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th><MudText Style="font-weight:bold; font-size:12px; text-align:left; margin-bottom:-5px">FECHA A JAULA:</MudText></th>
+                                                        <td style="border: 1px solid black;"><MudText Style="font-size:12px; text-align:center; margin-bottom:-5px">@Bulto.FechaPasoJaula</MudText></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th><MudText Style="font-weight:bold; font-size:12px; text-align:left; margin-bottom:-5px">RESPONSABLE:</MudText></th>
+                                                        <td><MudText Style="font-size:12px; text-align:center; margin-bottom:-5px">@(Bulto.IDUsuarioPasoJaula)</MudText></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th><MudText Style="font-weight:bold; font-size:12px; text-align:left">UBICACION:</MudText></th>
+                                                        <td><MudText Style="font-size:12px; text-align:center">@Bulto.UbicacionBultos</MudText></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </MudPaper>
+                                    </MudButton>
+                                </MudItem>
+                        }
+                    </MudGrid>
+                </MudPaper>
+            </MudItem>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="Cancel" Style="align-items:flex-end">Cerrar</MudButton>
+    </DialogActions>
+</MudDialog>

@@ -1,0 +1,123 @@
+﻿
+.e-card .e-card-header .e-card-header-caption .e-card-header-title {
+    font-size: 20px;
+    font-family: Helvetica, 'Segoe UI';
+    font-weight: bold;
+}
+
+.e-card .e-card-header {
+    padding: 2px;
+}
+
+.e-card .e-card-content {
+    padding: 2px;
+}
+
+.bar {
+    background-color: #7AFF98;
+    padding: 3px;
+    border-radius: 8px;
+}
+
+.barlabel {
+    color: #00B128;
+    font-weight: bold;
+    text-align: center;
+}
+/*-------------------------*/
+
+.barPro {
+    background-color: #FFFFB4;
+    padding: 3px;
+    border-radius: 8px;
+}
+
+.barlabelPro {
+    color: #D9DC00;
+    font-weight: bold;
+    text-align: center;
+}
+
+/*-------------------------*/
+.barNo {
+    background-color: #FF8989;
+    padding: 3px;
+    border-radius: 8px;
+}
+
+.barlabelNo {
+    color: #FF0000;
+    font-weight: bold;
+    text-align: center;
+}
+
+/*-------------------------*/
+.barErrorTraspaso {
+    background-color: #7FF9FF;
+    padding: 3px;
+    border-radius: 8px;
+}
+
+.barlabelErrorTraspaso {
+    color: #000000;
+    font-weight: bold;
+    text-align: center;
+}
+
+/*-------------------------*/
+.barErrorConsultaFact {
+    background-color: #F57FFF;
+    padding: 3px;
+    border-radius: 8px;
+}
+
+.barlabelErrorConsultaFact {
+    color: #000000;
+    font-weight: bold;
+    text-align: center;
+}
+
+/*-------------------------*/
+.barErrorDetalleFact {
+    background-color: #CE7FFF;
+    padding: 3px;
+    border-radius: 8px;
+}
+
+.barlabelErrorDetalleFact {
+    color: #000000;
+    font-weight: bold;
+    text-align: center;
+}
+
+/*-------------------------*/
+.barErrorUltimoDoc {
+    background-color: #FFCE7F;
+    padding: 3px;
+    border-radius: 8px;
+}
+
+.barlabelErrorUltimoDoc {
+    color: #000000;
+    font-weight: bold;
+    text-align: center;
+}
+
+/*-------------------------*/
+.barErrorActualizaDocEntry {
+    background-color: #C3FA57;
+    padding: 3px;
+    border-radius: 8px;
+}
+
+.barlabelErrorActualizaDocEntry {
+    color: #000000;
+    font-weight: bold;
+    text-align: center;
+}
+
+.barlabelPendienteProcesar {
+    color: #d8d8c0;
+    font-weight: bold;
+    text-align: center;
+}

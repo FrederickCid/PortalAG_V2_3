@@ -1,0 +1,94 @@
+﻿@page "/InformeInventario"
+@using PortalAG_V2.Shared.Model.Impresion
+@using PortalAG_V2.Shared.Model.SolicitudesInformes
+<SurveyPrompt Title="Informe Inventario" />
+<br />
+<br />
+<MudPaper Style="margin=0 auto; max-width:">
+    <MudItem Class="pa-4 m-1">
+        <MudGrid Style="display: flex;align-items:center; ">
+            <MudItem md="2" xs="12">
+                <MudSelect Margin="Margin.Dense" Dense Style="align-self:center" Label="Selecciones una bodega" Variant="Variant.Outlined" T="ConsultarBodegasModel" Value="SelectedconsultarBodegasModel" ValueChanged="OnChangeBodega" Required RequiredError="Bodega Requerido!"
+                           ToStringFunc="convertBodegas">
+                    @{
+                        foreach (var item in consultarBodegasModel)
+                        {
+                            <MudSelectItem T="ConsultarBodegasModel" Value="@(item)">@item.SiglaBodega</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem md="2" xs="12">
+                <MudSelect Margin="Margin.Dense" Disabled="@(consultarSector.Count() == 0)" Dense Style="align-self:center" Label="Selecciones una Sector" Variant="Variant.Outlined" T="ConsultarSectorModel" Value="SelectedconsultarSector" ValueChanged="OnChangeSector" Required RequiredError="Sector Requerido!"
+                           ToStringFunc="convertSector">
+                    @{
+                        foreach (var item in consultarSector)
+                        {
+                            <MudSelectItem T="ConsultarSectorModel" Value="@(item)">@item.Sector</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" md="2">
+                <MudDatePicker @bind-Text="@fInicio" AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))" @ref="@_DatePickerInicio" Variant="Variant.Outlined" Margin="Margin.Dense"
+                               DateFormat="dd-MM-yyyy" DisableToolbar="true" Label="Fecha Desde" @bind-Date="dateToday" />
+            </MudItem>
+            <MudItem xs="12" md="2">
+                <MudDatePicker @bind-Text="@fFin" @ref="@_DatePickerfin" AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))" Variant="Variant.Outlined" Margin="Margin.Dense"
+                               DateFormat="dd-MM-yyyy" DisableToolbar="true" Label="Fecha Hasta" @bind-Date="dateNull" />
+            </MudItem>
+            <MudItem xs="12" md="2" Style="display: flex">
+                <MudButton Disabled="@(dateToday.ToString() == "" || dateNull.ToString() == "")" OnClick="ProcessSomething"  Variant="Variant.Outlined" Color="Color.Primary">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Buscando...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Buscar</MudText>
+                    }
+                </MudButton>
+
+            </MudItem>
+            <MudItem xs="12" md="12">
+                @if (showCallAlert)
+                {
+                    <MudAlert Severity="Severity.Info" ShowCloseIcon="true" Dense="true" CloseIconClicked="@CerrarAlerta" Variant="Variant.Outlined"><b>IMPORTANTE: Llenar ambas fechas</b></MudAlert>
+                }
+            </MudItem>
+        </MudGrid>
+        <MudItem>
+            <MudDataGrid T="inventarioModel" Items="data" MultiSelection="true" Breakpoint="Breakpoint.Sm"
+                         Bordered="true" Dense="true" SortMode="SortMode.Multiple" Hover Striped QuickFilter="@QuickFilter">
+                <ToolBarContent>
+                    <MudSpacer />
+                    <MudItem Style="display:flex;flex-direction:row;gap: 20px; width: 100%">
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@GenerarExcel">export</MudButton>
+                        <MudTextField @bind-Value="_searchString" Placeholder="Buscar..." Adornment="Adornment.Start" Immediate="true"
+                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                    </MudItem>
+                </ToolBarContent>
+                <Columns>
+                    <PropertyColumn Property="x => x.IDUbicacion" Title="ID Ubicacion" />
+                    <PropertyColumn Property="x => x.Ubicacion" Title="Ubicacion" />
+                    <PropertyColumn Property="x => x.IDArticulo" Title="ID Articulo" />
+                    <PropertyColumn Property="x => x.UnidadxBulto" Title="Unidad x Bulto" />
+                    <PropertyColumn Property="x => x.StockAG" Title="Stock AG" />
+                    <PropertyColumn Property="x => x.StockSap" Title="Stock Sap" />
+                    <PropertyColumn Property="x => x.ConteoUno" Title="Conteo Uno" />
+                    <PropertyColumn Property="x => x.ConteoDos" Title="Conteo Dos" />
+                    <PropertyColumn Property="x => x.ConteoTres" Title="Conteo Tres" />
+                    <PropertyColumn Property="x => x.TotalInventario" Title="Total Inventario" />
+                    <PropertyColumn Property="x => x.Observacion" Title="Observacion" />
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="inventarioModel" PageSizeOptions="new int[] {10,15,20}" />
+                </PagerContent>
+            </MudDataGrid>
+        </MudItem>
+    </MudItem>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" />
+
+

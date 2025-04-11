@@ -1,0 +1,61 @@
+﻿@page "/historicos"
+@inject IDialogService DialogService
+@using PortalAG_V2.Shared.Model.EstadoPedidos;
+@using agDataAccess.Models;
+
+
+
+<SurveyPrompt Title="Historicos" />
+<MudPaper Style="margin=0 auto; max-width:">
+    <MudItem Class="pa-4 m-1">
+        <MudGrid Style="display: flex;align-items:center; ">
+            <MudItem xs="12" md="4">
+                <MudDatePicker @bind-Text="@fInicio"  AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))" @ref="@_DatePickerInicio"
+                               DateFormat="dd-MM-yyyy" DisableToolbar="true" Label="Fecha Desde" @bind-Date="dateToday"  />
+            </MudItem>
+            <MudItem xs="12" md="4">
+                <MudDatePicker @bind-Text="@fFin" @ref="@_DatePickerfin"  AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))"
+                               DateFormat="dd-MM-yyyy" DisableToolbar="true" Label="Fecha Hasta" @bind-Date="dateNull" />
+            </MudItem>
+            <MudItem xs="12" md="4" Style="display: flex">
+                <MudButton Disabled="@(dateToday.ToString() == "" || dateNull.ToString() == "")" OnClick="ProcessSomething" Variant="Variant.Outlined" Color="Color.Primary">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Buscando...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Buscar</MudText>
+                    }
+                </MudButton>
+
+            </MudItem>
+            <MudItem xs="12" md="12">
+                @if (showCallAlert)
+                {
+                    <MudAlert Severity="Severity.Info" ShowCloseIcon="true" Dense="true" CloseIconClicked="@CerrarAlerta" Variant="Variant.Outlined"><b>IMPORTANTE: Llenar ambas fechas</b></MudAlert>
+                }
+            </MudItem>
+
+        </MudGrid>
+        <MudItem>
+            <SfGrid ID="Grid" @ref="Grid" DataSource="@ListaHistoricos" AllowPaging="true" style="width:100%; " Toolbar="@ButtonsGrid" OnToolbarClick="ToolbarClick"
+                    AllowExcelExport="true" AllowSelection="true" AllowFiltering="true" AllowSorting="true" AllowResizing="true">
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                <GridEvents OnToolbarClick="ToolbarClick" TValue="EstadoPedidosNoMOD" RowSelected="DobleClick"></GridEvents>
+                <GridColumns>
+                    <GridColumn Field=@nameof(EstadoPedidosNoMOD.NroDocumento) HeaderText="NroDocumento" TextAlign="TextAlign.Right"></GridColumn>
+                    <GridColumn Field=@nameof(EstadoPedidosNoMOD.IDCliente) HeaderText="IDCliente"></GridColumn>
+                    <GridColumn Field=@nameof(EstadoPedidosNoMOD.RazonSocial) HeaderText="RazonSocial"></GridColumn>
+                    <GridColumn Field=@nameof(EstadoPedidosNoMOD.Vendedor) HeaderText="Nombres"> </GridColumn>
+                    <GridColumn Field=@nameof(EstadoPedidosNoMOD.FechaInicioCoticacion) HeaderText="FechaSolicitud"></GridColumn>
+                    <GridColumn Field=@nameof(EstadoPedidosNoMOD.FechaTerminoAutorizacion) HeaderText="FechaAutorizacion" ></GridColumn>
+                    <GridColumn Field=@nameof(EstadoPedidosNoMOD.LineaPickingStaHelena) HeaderText="LineaPickingStaHelena"></GridColumn>
+                    <GridColumn Field=@nameof(EstadoPedidosNoMOD.LineaPickingCDA) HeaderText="LineaPickingCDA" Width="150"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </MudItem>
+    </MudItem>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading"/>

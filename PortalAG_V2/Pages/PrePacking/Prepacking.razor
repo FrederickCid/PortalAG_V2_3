@@ -1,0 +1,121 @@
+﻿@page "/PrePacking"
+@using PortalAG_V2.Shared.Model.HojaDeRuta;
+@using PortalAG_V2.Shared.Model.Prepacking
+@inject IDialogService DialogService
+
+<SurveyPrompt Title="PrePacking" />
+
+<MudPaper Class="m-1 p-4" Style="width;:100%; display:flex; flex-direction:column;gap:10px; margin:0 auto;">
+    @{
+        if (Click && ClickPendiente)
+        {
+            <MudItem Style="justify-item: center; margin:0 auto; align-content:center; align-items: center">
+                <MudButton Variant="Variant.Outlined" Color="Color.Success" StartIcon="@Icons.Material.Filled.AddCircleOutline" OnClick="@onClickCrear"> CREAR GUIA </MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Success" StartIcon="@Icons.Material.Filled.PendingActions" OnClick="@onClickCrearPendientes">CREADAS/PENDIENTES </MudButton>
+            </MudItem>
+        
+        }
+        if (!Click)
+        {
+            <MudDivider DividerType="DividerType.Inset" />
+            <MudText Typo="Typo.h4" Style="text-align:center">Crear Guias </MudText>
+            <MudItem Class="pa-4 m-1">
+                <MudGrid Style="display:flex; flex-direction:column; gap: 10px">
+                    <MudItem md="12" xs="12">
+                        <MudText Style="padding-bottom:10px; font-weight:bold; width:100%">
+                            Datos:
+                        </MudText>
+                        <MudItem Style="display:flex; flex-direction:row; align-items:center; ">
+                            <MudItem xs="12" md="4">
+                                <MudTextField Margin="Margin.Dense" @bind-Value="@NroBusqueda"
+                                              Label="Nro. de Guia" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
+                            </MudItem>
+                            <MudItem xs="12" md="2" Style="margin-left:15px; gap:5px; display:flex; flex-direction:row">
+                                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@Actualizar">Buscar</MudButton>
+                                <MudButton Variant="Variant.Outlined" Color="Color.Primary" Style="width:100%;max-width:100px" OnClick="@Actualizar">Actualizar</MudButton>
+                            </MudItem>
+                        </MudItem>
+                        <MudSpacer />
+                        <MudDataGrid @ref="@GridHO" T="ShowGuiaPrePacking"
+                                     MultiSelection="true" Items="@GuiasPrePackingDisponibles" Hover="true" Striped="true"
+                                     Bordered="true" Dense="true" SortMode="SortMode.Multiple" RowClick="@clickDesde" QuickFilter="@QuickFilter">
+                            <ToolBarContent>
+
+                            </ToolBarContent>
+                            <Columns>
+                                <PropertyColumn Property="x => x.DocNumEM" IsEditable="false" Style="width:50px" />
+                                <PropertyColumn Property="x => x.ReferenciaEM" IsEditable="false" Style="width:50px" />
+                                <PropertyColumn Property="x => x.FechaEM" IsEditable="false" Style="width:auto" />
+                                <PropertyColumn Property="x => x.IDProveedor" IsEditable="false" Style="width:auto" />
+                                <PropertyColumn Property="x => x.Proveedor" IsEditable="false" Style="width:auto" />
+                                <PropertyColumn Property="x => x.NumeroGuia" IsEditable="false" />
+                                @*<PropertyColumn Property="x => x.Observaciones" IsEditable="false" Style="width:auto" />*@
+                            </Columns>
+                            <PagerContent>
+                                <MudDataGridPager T="ShowGuiaPrePacking" PageSizeOptions="new int[] {10,20}" />
+                            </PagerContent>
+                        </MudDataGrid>
+                    </MudItem>
+                </MudGrid>
+                <MudItem Style="display:flex; " Class="pa-4 m-1">
+                    <MudItem xs="12" Style="display:flex; justify-content:start;">
+                        @*<MudButton Variant="Variant.Outlined" Disabled="@(!fileComplete.Any() || _Comentarios == "" || _NroFactura == "" || _Observaciones == "" )" Color="Color.Primary" DisableElevation="true" OnClick="@(()=>form.Validate())">Liberar</MudButton>*@
+                    </MudItem>
+                    <MudItem xs="12" Style="display:flex; justify-content:end;">
+                        @* <MudButton Variant="Variant.Outlined" Color="Color.Error" DisableElevation="true" OnClick="@onClickCancelar">Cancelar</MudButton>*@
+                        <MudButton Variant="Variant.Outlined" Color="Color.Info" DisableElevation="true" Class="mx-2" Disabled="@(UrlObtenerGuiaPrePacking.Count() == 0)" OnClick="@onClickCancelar"> Terminar</MudButton>
+                    </MudItem>
+                </MudItem>
+            </MudItem>
+        }
+        if (!ClickPendiente)
+        {
+            <MudDivider DividerType="DividerType.Inset" />
+            <MudText Typo="Typo.h4" Style="text-align:center">Guias Creadas / Pendientes</MudText>
+            <MudItem Class="pa-4 m-1">
+                <MudGrid Style="display:flex; flex-direction:column; gap: 10px">
+                    <MudItem Style="display:flex; flex-direction:row; align-items:center; ">
+                        <MudItem xs="12" md="4">
+                            <MudTextField Margin="Margin.Dense" @bind-Value="@NroBusquedaPendietes"
+                                          Label="Nro. de Guia" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
+                        </MudItem>
+                        <MudItem xs="12" md="2" Style="margin-left:15px; gap:5px; display:flex; flex-direction:row">
+                            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@ActualizarPendiente">Buscar</MudButton>
+                            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Style="width:100%;max-width:100px" OnClick="@ActualizarPendiente">Actualizar</MudButton>
+                        </MudItem>
+                    </MudItem>
+                    <MudDataGrid @ref="@GridHO" T="ShowGuiaPrePacking"
+                                 MultiSelection="true" Items="@GuiasPrePackingDisponiblesPendientes" Hover="true" Striped="true"
+                                 Bordered="true" Dense="true" SortMode="SortMode.Multiple" RowClick="@clickDesdePendientes" QuickFilter="@QuickFilter">
+                        <ToolBarContent>
+
+                        </ToolBarContent>
+                        <Columns>
+                            <PropertyColumn Property="x => x.DocNumEM" IsEditable="false" Style="width:50px" />
+                            <PropertyColumn Property="x => x.ReferenciaEM" IsEditable="false" Style="width:50px" />
+                            <PropertyColumn Property="x => x.FechaEM" IsEditable="false" Style="width:auto" />
+                            <PropertyColumn Property="x => x.IDProveedor" IsEditable="false" Style="width:auto" />
+                            <PropertyColumn Property="x => x.Proveedor" IsEditable="false" Style="width:auto" />
+                            <PropertyColumn Property="x => x.NumeroGuia" IsEditable="false" />
+                            @*<PropertyColumn Property="x => x.Observaciones" IsEditable="false" Style="width:auto" />*@
+                        </Columns>
+                        <PagerContent>
+                            <MudDataGridPager T="ShowGuiaPrePacking" PageSizeOptions="new int[] {10,20}" />
+                        </PagerContent>
+                    </MudDataGrid>
+                </MudGrid>
+                <MudItem Style="display:flex; " Class="pa-4 m-1">
+                    <MudItem xs="12" Style="display:flex; justify-content:start;">
+                        @*<MudButton Variant="Variant.Outlined" Disabled="@(!fileComplete.Any() || _Comentarios == "" || _NroFactura == "" || _Observaciones == "" )" Color="Color.Primary" DisableElevation="true" OnClick="@(()=>form.Validate())">Liberar</MudButton>*@
+                    </MudItem>
+                    <MudItem xs="12" Style="display:flex; justify-content:end;">
+                        @*<MudButton Variant="Variant.Outlined" Color="Color.Error" DisableElevation="true" OnClick="@onClickCancelar">Cancelar</MudButton>*@
+                        <MudButton Variant="Variant.Outlined" Color="Color.Info" DisableElevation="true" Class="mx-2" Disabled="@(UrlObtenerGuiaPrePacking.Count() == 0)" OnClick="@onClickCancelarPendientes"> Terminar</MudButton>
+                    </MudItem>
+                </MudItem>
+            </MudItem>
+        }
+    }
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" />
+

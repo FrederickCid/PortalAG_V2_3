@@ -1,0 +1,69 @@
+﻿@page "/permisosApp"
+@using PortalAG_V2.Shared.Model.PermisosAPPDTO;
+
+<SurveyPrompt Title="Administrar Permisos de Aplicaciones" />
+<br />
+<br />
+
+<MudPaper Class="m-3 p-1" Style="display:flex;flex-direction:row; ">
+    <MudGrid Spacing="3">
+        <MudItem md="6" xs="12" Style="display:flex;flex-direction:column;">
+            <MudGrid Spacing="3">
+                <MudItem xs="12" md="6">
+                    <MudTextField FullWidth T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Usuario" @bind-Value="_usuario"
+                                  Adornment="Adornment.End" AdornmentIcon="@Icons.Filled.Search" AdornmentColor="Color.Secondary" OnAdornmentClick="@ConsultarUsuario" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudSelect FullWidth T="MostrarNombresModel" Value="MostrarNombresDesde" Label="Selecciona un Nombre" Disabled="@mostrarnombres" Margin="Margin.Dense" Dense="true"
+                               Variant="Variant.Outlined" ToStringFunc="@convertNombres" ValueChanged="((x) => MostrarAccesos(x))">
+                        @foreach (MostrarNombresModel item in _listNombres)
+                        {
+                            <MudSelectItem Value="@item">@item.Nombres @item.ApellidoPaterno</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                @*     <MudItem md="6">
+                @if (_buscando == true)
+                {
+                <MudProgressCircular Class="ml-5 mt-2" Color="Color.Primary" Indeterminate="true" />
+                }
+                </MudItem> *@
+                <MudItem xs="12" md="6">
+                    <MudSelect FullWidth T="ConsultarIDAPPModel" Value="dataAppprincipal" Label="Seleccione Aplicacion" Margin="Margin.Dense" Dense="true"
+                               Variant="Variant.Outlined" ToStringFunc="@convertApp" ValueChanged="((x) => mostrarSubApp(x))">
+                        @foreach (ConsultarIDAPPModel item in _listApp)
+                        {
+                            <MudSelectItem Value="@item">@item.Nombre</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12"  md="6">
+                    <MudSelect FullWidth T="ConsultarIDAPPModel" Value="dataAppSub" Label="Seleccione Modulo" Margin="Margin.Dense" Dense="true"
+                               Variant="Variant.Outlined" ToStringFunc="@convertSubApp" ValueChanged="((x) => SeleccionarSubApp(x))">
+                        @foreach (ConsultarIDAPPModel item in _listSubApp)
+                        {
+                            <MudSelectItem Value="@item">@item.Nombre</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+            <MudItem Class="mt-3" xs="12"> 
+                <MudButton Variant="Variant.Outlined" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Secondary" OnClick="ActivarPermiso">Activar Permiso</MudButton>
+                <MudButton Variant="Variant.Outlined" Size="Size.Small" Margin="Margin.Dense" Dense="true" Color="Color.Error" OnClick="QuitarPermiso">Eliminar Permiso</MudButton>
+            </MudItem>
+        </MudItem>
+        <MudItem   md="6" xs="12">
+            <MudDataGrid T="ConsultarPermisosUsuario" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true" SortMode="SortMode.None" Items="@listPermisos">
+                <Columns>
+                    <PropertyColumn Property="x => x.NombreAPP" Title="Aplicacion" />
+                    <PropertyColumn Property="x => x.NombreSubAPP" Title="Modulo" />
+                    <PropertyColumn Property="x => x.IDEstado" Title="Estado" />
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="ConsultarPermisosUsuario" PageSizeOptions="new int[] {10,20}" />
+                </PagerContent>
+            </MudDataGrid>
+        </MudItem>
+    </MudGrid>
+</MudPaper>

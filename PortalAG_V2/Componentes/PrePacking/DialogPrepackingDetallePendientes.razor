@@ -1,0 +1,55 @@
+﻿@using PortalAG_V2.Shared.Model.Prepacking
+@inject IDialogService DialogService
+@inject SfDialogService DialogServicesf
+
+<MudDialog>
+    <DialogContent>
+        @if (DetalleGuiaRe.Count == DetalleGuiaReDTO.Count)
+        {
+            <MudPaper Class="m-1 p-4" Style="width;:100%; display:flex; flex-direction:column;gap:10px; margin:0 auto;">
+                <MudItem>
+                    <MudDataGrid @ref="@GridHO" T="ShowGuiaPrePackingDetalleDTO"
+                                 MultiSelection="true" Items="@DetalleGuiaReDTO" Hover="true" Striped="true"
+                                 Bordered="true" Dense="true" SortMode="SortMode.Multiple" RowClick="@clickDesde" QuickFilter="@QuickFilter">
+                        <ToolBarContent>
+                            <MudSpacer />
+                            <MudTextField @bind-Value="_searchString" Placeholder="Buscar..." Adornment="Adornment.Start" Immediate="true"
+                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" bor Class="mt-0" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                        </ToolBarContent>
+                        <Columns>
+                            <PropertyColumn Property="x => x.Linea" IsEditable="false" Style="width:50px" />
+                            <PropertyColumn Property="x => x.IDArticulo" IsEditable="false" Style="width:auto" />
+                            <PropertyColumn Property="x => x.Nombre" IsEditable="false" Style="width:auto" />
+                            <PropertyColumn Property="x => x.Fecha" IsEditable="false" Style="width:auto" />
+                            <PropertyColumn Property="x => x.CantidadEM" IsEditable="false" />
+                            <PropertyColumn Property="x => x.Faltan" IsEditable="false" />
+
+                        </Columns>
+                        <PagerContent>
+                            <MudDataGridPager T="ShowGuiaPrePackingDetalleDTO" PageSizeOptions="new int[] {5,10}" />
+                        </PagerContent>
+                    </MudDataGrid>
+                </MudItem>
+            </MudPaper>
+        }
+        @if (DetalleGuiaRe.Count != DetalleGuiaReDTO.Count)
+        {
+            <MudItem Style="text-align:center">
+                <MudProgressCircular Color="Color.Primary" Style="height:70px;width:70px;" Indeterminate="true" />
+            </MudItem>
+        }
+    </DialogContent>
+    <DialogActions>
+        @{
+            if (DetalleGuiaRe.Count == DetalleGuiaReDTO.Count)
+            {
+
+                <MudButton Color="Color.Default" Variant="Variant.Outlined" OnClick="@GenerarPDFPrePacking" Disabled="@(guia.IDEtapa >1 && guia.IDEstado > 0)">EXPORTAR PDF</MudButton>
+                <MudButton Color="Color.Success" Variant="Variant.Outlined" OnClick="@ListoGuia">Listo</MudButton>
+             <MudButton Color="Color.Error" Variant="Variant.Outlined" OnClick="@ACtualizar">Cancelar</MudButton>
+           }
+        }
+    </DialogActions>
+</MudDialog>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" />
+

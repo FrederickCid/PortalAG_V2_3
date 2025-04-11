@@ -1,0 +1,106 @@
+﻿@using PortalAG_V2.Shared.Model.LiberarPedidos
+@using PortalAG_V2.Shared.Services
+@using System.Globalization;
+
+@inject SfDialogService DialogService
+<MudDialog Class="w-50 h-30">
+    <DialogContent>
+        <MudGrid Style="margin-left:0px" Justify="Justify.SpaceBetween" Spacing="2">
+            <MudText Typo="Typo.h6">Nro Pedido: @Detalle.nroDocumento</MudText>
+            <MudButton Color="Color.Primary" Variant="Variant.Outlined" OnClick="Submit">Liberar Pedido</MudButton>
+        </MudGrid>
+        
+        <MudText Typo="Typo.h6">ID Cliente: @Detalle.idCliente</MudText>
+        <MudText Class="mt2" Typo="Typo.h6">Razon Social: @Detalle.razonSocial</MudText>
+        <MudItem xs="12" Class="mt-5">
+                <MudDataGrid T="ResponseListFacturas" Items="Detalle.documentos" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true">
+                    <Columns>
+                        <PropertyColumn Property="x => x.nroDocumeto" Title="Nro Factura" />
+                        <PropertyColumn Property="x => x.total" Title="Total" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                        <PropertyColumn Property="x => x.pagadoAfecha" Title="Total Pagado" Format="C" Culture="@(new CultureInfo("es-CL"))" />
+                    </Columns>
+                </MudDataGrid>
+        </MudItem>
+       
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cerrar</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+    @code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public ResponseConsultaPedidos Detalle {get;set;}
+    [Parameter] public int tipoDocumentoNumero { get; set; }
+    private bool LoadingImpresion = false;
+    private ClientFactory Baliza;
+    int _idoperacion;
+    MainServices service;
+    System.DateTime moment = new System.DateTime(DateTime.Now.Year);
+
+
+
+
+
+    private const string urlLiberarPedido = "api/v2/Despacho/LiberarPedido";
+    private string urlImpresionAutomatica = "Despacho/GenerarImpresionDTE/";
+
+
+    public async Task MandarImpresionAutomatica(int AnnoProceso, int IDOperacion, int tipoDocumento)
+    {
+        try
+        {
+            LoadingImpresion = true;
+            await Task.Delay(2000);
+            service = new MainServices();
+            var lista = await service.Formulario.HttpClientInstance.GetAsync($"api/v2/{urlImpresionAutomatica}{AnnoProceso}/{IDOperacion}/0/{tipoDocumento}/0/0/SOLEDAD/0");
+            if (lista.IsSuccessStatusCode)
+            {
+                LoadingImpresion = false;
+            }
+            else
+            {
+                LoadingImpresion = false;
+            }
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            string mensaje = e.Message;
+        }
+    }
+
+    private async void Submit()
+    {
+        bool prompt = await DialogService.ConfirmAsync("Está seguro de liberar este pedido?");
+        if (prompt)
+        {
+            Baliza = new MainServices().Baliza;
+            var user = await _authenticationManager.CurrentUser();
+
+            RequestLiberarPedido data = new RequestLiberarPedido()
+                {
+                    IDOperacion = Detalle.idOperacion,
+                    idUsuario = user.GetUserId()
+                };
+
+            var auxLiberacion = await Baliza.HttpClientInstance.PostAsJsonAsync<RequestLiberarPedido>(urlLiberarPedido, data);
+            if (auxLiberacion.IsSuccessStatusCode)
+            {
+
+                MudDialog.Close();
+                await MandarImpresionAutomatica(DateTime.Parse(Detalle.FechaSolicitud).Year, Detalle.idOperacion, tipoDocumentoNumero);
+
+            }
+            else
+            {
+                _snackBar.Add("Error al liberar pedido", Severity.Error);
+            }
+        }
+
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}

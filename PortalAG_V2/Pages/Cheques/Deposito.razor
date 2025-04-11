@@ -1,0 +1,47 @@
+﻿@page "/Deposito"
+@using PortalAG_V2.Componentes
+@using PortalAG_V2.Componentes.Cheques
+@inject IDialogService DialogService
+@inject SfDialogService DialogServicesf
+<SurveyPrompt Title="Deposito De Cheques" />
+<MudPaper>
+    <MudGrid>
+        <MudItem md="4" xs="12">
+            <MudCard Class="p-3 m-1" Elevation="3" Style="border-radius:15px; height:100%;">
+                <MudCardHeader>
+                    <MudItem Style="width:100%;">
+                        <MudText Typo="Typo.subtitle1">Buscar Cheque</MudText>
+                    </MudItem>
+                </MudCardHeader>
+                <MudCardContent Style="display:flex; flex-direction: column; gap: 20px">
+                    <MudItem Style="display:flex; flex-direction:row; align-items:center; gap:5px; margin-top:25px">
+                        <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Serial Cheque" Placeholder="999999999"
+                                      Mask="@(new PatternMask("000000000000000000"))" @bind-Value="SerieCheque"></MudTextField>
+                        <MudButton Variant="Variant.Outlined" OnClick="@(() => GetCheque())">
+
+                            @if (_processingProtesto)
+                            {
+                                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                <MudText Class="ms-2"></MudText>
+                            }
+                            else
+                            {
+                                <MudText>Buscar</MudText>
+                            }
+                        </MudButton>
+                    </MudItem>
+                    <MudCardActions>
+                        <MudAlert Severity="Severity.Warning" Icon="False" CloseIcon="False" Dense>Documentos Depositados en Portal Custodia con envío a SAP .</MudAlert>
+                    </MudCardActions>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudItem md="8" xs="12">
+            @if (Show)
+            {
+                <ChequeComponent Cheque="Cheques" dia="@Dia" mes="@Mes" anno="@annoProceso" Tipo="@(4)" ShowChage="@(Limpiar)" />
+            }
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+<Loading Visibility="Loading" />

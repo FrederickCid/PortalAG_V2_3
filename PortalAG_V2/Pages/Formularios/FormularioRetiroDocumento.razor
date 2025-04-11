@@ -1,0 +1,75 @@
+﻿@page "/FormularioDocumento"
+@using PortalAG_V2.Shared.Model.Formularios;
+@inject SfDialogService DialogService
+
+
+<SurveyPrompt Title="Formulario Retiro de Documento" />
+<br />
+<br />
+@if (showCallAlert)
+{
+    <MudAlert Style="max-width:1000px; margin:0 auto; " Severity="Severity.Info" ShowCloseIcon="true" Dense="true" CloseIconClicked="@CerrarAlerta" Variant="Variant.Outlined"><b>IMPORTANTE: ¡Recuerde coordinar con el cliente antes de hacer el formulario!</b></MudAlert>
+}
+<MudPaper Style="display:flex; flex-direction:column; max-width:1000px; margin:0 auto;">
+    <MudItem Class="pa-4 m-1">
+        <MudItem Style="display:flex; width:100%;">
+            <MudText Style="padding-bottom:10px; font-weight:bold; width:100%">
+                Datos Del Documento:
+            </MudText>
+            <MudText Style="padding-bottom:10px; font-weight:bold; text-align:right; width:100%; display:flex; justify-content:end ">
+                Solicitud NRO:  <MudText Style=""> @solicitud </MudText>
+            </MudText>
+        </MudItem>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudGrid>
+                <MudItem xs="12" md="6">
+                    <MudTextField @ref="@MudTextNroCliente" Margin="Margin.Dense" @bind-Value="@_NroCliente"
+                                  Label="Rut Cliente" Variant="Variant.Outlined"
+                                  Required="true" RequiredError="Rut del Cliente requerido!" OnKeyUp="@onEnterPress" HelperText="Presione Enter Para Buscar" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField T="string" Margin="Margin.Dense" @bind-Value="@_NombreCliente" Label="Nombre Cliente" Disabled="true" Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField T="string" Margin="Margin.Dense" @bind-Value="@_Celular" Label="Celular" Disabled="true" Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField T="string" Margin="Margin.Dense" @bind-Value="@_Correo" Label="Correo" Disabled="true" Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudSelect @ref="@Direcciones" @bind-Value="@_Direccion" T="string" Required="true" Margin="Margin.Dense" Label="Direcciones" Placeholder="Por favor Selecione una Dirección" Disabled="@(_NroCliente == "" )" Variant="Variant.Outlined">
+                        @foreach (DireccionesModel item in Direccion)
+                        {
+                            string ID = item.IDDireccion;
+                            string nombre = item.Direccion.ToUpper();
+                            string numeracion = item.NroDireccion.ToString();
+                            string comuna = item.Comuna.ToUpper();
+                            <MudSelectItem Style="font-size: 15px;" Value="@ID">@nombre @numeracion, @comuna</MudSelectItem>
+                        }
+
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudNumericField @bind-Value="@CantidadCheques" T="int" Margin="Margin.Dense" Label="Total De Cheques" Required="true" RequiredError="Ingresé    la cantidad de cheques!!" Disabled="@(_NroCliente == "")" Variant="Variant.Outlined" />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </MudItem>
+    <MudItem Class="pa-4 m-1">
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudText Style="padding-bottom:10px; font-weight:bold; width:100%">
+                Observaciones:
+            </MudText>
+            <MudTextField @bind-Value="@_Observaciones" T="string" Label="Observaciones" Variant="Variant.Outlined" Lines="5" />
+        </MudForm>
+    </MudItem>
+    <MudItem Style="display:flex" Class="pa-4 m-1">
+        <MudItem xs="12" Style="display:flex; justify-content:start; margin-bottom:20px">
+@*             <MudButton Variant="Variant.Outlined" Disabled="@(_NroCliente == "" || _Direccion == "" || _Observaciones == "")" Color="Color.Primary" DisableElevation="true" OnClick="@(()=>form.Validate())">Liberar</MudButton>
+ *@        </MudItem>
+        <MudItem xs="12" Style="display:flex; justify-content:end; margin-bottom:20px">
+            <MudButton Variant="Variant.Outlined" Disabled="@(_NroCliente == "" || _Direccion == "" || _Observaciones == "")" Color="Color.Info" DisableElevation="true" Class="mx-2" OnClick="@EnviarSolicitud">Enviar</MudButton>
+            <MudButton @ref="@limpiarButton" Variant="Variant.Outlined" Color="Color.Error" DisableElevation="true" OnClick="@limpiar">Limpiar</MudButton>
+        </MudItem>
+    </MudItem>
+</MudPaper>

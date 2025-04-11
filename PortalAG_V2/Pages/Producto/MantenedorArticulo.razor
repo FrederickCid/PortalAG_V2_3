@@ -1,0 +1,31 @@
+﻿@page "/mantenedorArticulo"
+<SurveyPrompt Title="Amtenedor Articulos" />
+<br />
+<br />
+<MudPaper Class="p-3 m-1">
+    <MudGrid>
+        <MudItem xs="12" md="6" Style="display:flex; flex-direction:column; gap:25px">
+            <MudItem md="12" xs="12" Style="display:flex; flex-direction:row; gap:25px">
+                <MudItem md="10" xs="12">
+                    <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="ID Articulo" Placeholder="S56987"></MudTextField>
+                </MudItem>
+                <MudItem md="2" xs="12" Style="gap;10px">
+                    <MudFab Size="Size.Small" StartIcon="@Icons.Material.Filled.Search" />
+                    <MudFab Size="Size.Small" StartIcon="@Icons.Material.Filled.Search" />
+                    <MudFab Size="Size.Small" StartIcon="@Icons.Material.Filled.Search" />
+                </MudItem>
+            </MudItem>
+            <MudItem md="12" xs="12">
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Codigo Referencial"></MudTextField>
+            </MudItem>
+            <MudItem md="12" xs="12">
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Codigo Referencial"></MudTextField>
+            </MudItem>
+            <MudItem md="12" xs="12">
+                <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Codigo Referencial"></MudTextField>
+            </MudItem>
+        </MudItem>
+        <MudItem xs="12" md="6">
+        </MudItem>
+    </MudGrid>
+</MudPaper>

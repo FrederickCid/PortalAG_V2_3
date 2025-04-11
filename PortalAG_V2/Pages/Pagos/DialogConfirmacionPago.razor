@@ -1,0 +1,59 @@
+﻿@using PortalAG_V2.Shared.Model.Pagos;
+
+<MudDialog>
+    <DialogContent>
+        <MudGrid Justify="Justify.FlexStart">
+            <MudItem xs="12">
+                <MudText Typo="Typo.subtitle1">¿Seguro que desea realizar pago y/o liberacion de pedidos?</MudText>
+            </MudItem>
+            <MudItem xs="12">
+                <MudDataGrid T="PedidosDTO" Items="@pedidosPendientePagoSelected" Dense="true" Striped="true" Bordered="true" Filterable="false" SortMode="SortMode.None">
+                    <Columns>
+                        <PropertyColumn Property="x => x.NroDocumento" Title="N° Pedido" />
+                        <PropertyColumn Property="x => x.Fecha" Title="Fecha" />
+                        <PropertyColumn Property="x => x.Monto" Title="Monto" Format="N0" />
+                        <PropertyColumn Property="x => x.ValorAPagar" Format="N0" Title="Monto a pagar" />
+                        <PropertyColumn Property="x => x.SaldoNuevo" Format="N0" Title="Nuevo saldo" />
+                        
+                        <TemplateColumn CellClass="d-flex justify-center" Title="Liberacion despacho">
+                            <CellTemplate>
+                                <MudStack Row>
+                                    @{
+                                        if (@context.Item.Check)
+                                        {
+                                            <MudText Typo="Typo.body1">Si</MudText>
+                                        }else
+                                        {
+                                            <MudText Typo="Typo.body1">No</MudText>
+                                        }
+                                    }
+                                    
+                                </MudStack>
+                            </CellTemplate>
+                        </TemplateColumn>
+                    </Columns>
+                </MudDataGrid>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public List<PedidosDTO> pedidosPendientePagoSelected { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+    }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+}

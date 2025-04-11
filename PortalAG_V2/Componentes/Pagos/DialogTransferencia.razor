@@ -1,0 +1,109 @@
+@using PortalAG_V2.Shared.Model.AvisoDePago
+
+@inject IDialogService DialogService
+@inject SfDialogService DialogServicesf
+
+<MudDialog>
+    <DialogContent>
+        <div class="row p-3 m-1">
+            <div class="col-12">
+                <div class="card">
+                    <h5 class="card-header">Datos</h5>
+                    <div class="card-body">
+                        <div class="col-md-12">
+                            <form class="row g-4">
+                                <div class="col-md-4">
+                                    <label class="form-label">Banco</label>
+                                    <MudTextField T="string" Variant="Variant.Outlined" Disabled Margin="Margin.Dense" Value="@($"Banco {BancosAndes.Find(x => x.IDBanco == Detalle.IDBanco).Descripcion}")"></MudTextField>
+                                 </div>
+                                 <div class="col-md-4">
+                                     <label class="form-label">N° Cuenta</label>
+                                     <MudTextField T="string" Variant="Variant.Outlined" Disabled Margin="Margin.Dense" Value="@Detalle.NroCuenta.ToString()"></MudTextField>
+                                 </div>
+                                 <div class="col-md-4">
+                                     <label class="form-label">Monto Trasferencia</label>
+                                     <MudTextField T="string" Variant="Variant.Outlined" Disabled Margin="Margin.Dense" Value="@Detalle.Valor.ToString("$ ###,###,###")"></MudTextField>
+                                 </div>
+                                 @{
+                                    if (Detalle.IDTipoPago == 13)
+                                    {
+                                        <div class="col-md-4">
+                                            <label class="form-label">N° Comprobante</label>
+                                            <MudTextField T="string" Variant="Variant.Outlined" Disabled Margin="Margin.Dense" Value="@Detalle.NroComprobante.ToString()"></MudTextField>
+                                         </div>
+
+                                        if (Detalle.IDBancoOrigen == 0)
+                                        {
+                                            <div class="col-md-4">
+                                                <label class="form-label">Banco Cliente</label>
+                                                <MudTextField T="string" Variant="Variant.Outlined"
+                                                                                                    Disabled Margin="Margin.Dense" Value="@("Deposito")"></MudTextField>
+                                             </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-md-4">
+                                                <label class="form-label">Banco Cliente</label>
+                                                <MudTextField T="string" Variant="Variant.Outlined" Disabled Margin="Margin.Dense" Value="@($"Banco {Bancos.Find(x => x.IDBanco == Detalle.IDBancoOrigen).Descripcion}")"></MudTextField>
+                                             </div>
+                                        }
+                                        <div class="col-md-4">
+                                            <label class="form-label">N° Cuenta Cliente</label>
+                                            <MudTextField T="string" Variant="Variant.Outlined" Disabled Margin="Margin.Dense" Value="@(Detalle?.NroCuentaOrigen is not null ? Detalle?.NroCuentaOrigen.ToString() :"NO AGREGADA")"></MudTextField>
+                                         </div>
+
+                                    }
+
+                                }
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Fecha</label>
+                                    <MudTextField T="string" Variant="Variant.Outlined" Disabled Margin="Margin.Dense" Value="@Detalle.FechaDocumento.ToString()"></MudTextField>
+                                 </div>
+                                 <div class="col-md-8">
+                                     <label class="form-label">Comentario</label>
+                                     <MudTextField T="string" Variant="Variant.Outlined" Disabled Margin="Margin.Dense" Value="@Detalle.Comentarios.ToString()"></MudTextField>
+                                 </div>
+
+                             </form>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="card">
+                     <h5 class="card-header">Imagenes</h5>
+                     <div class="card-body p-3 m-1">
+                         <MudItem Style="text-align:center;">
+
+                             @{
+                                if (imagenes != null)
+                                {
+
+                                    foreach (Archivo item in imagenes)
+                                    {                                      
+                                            string imagen = string.Concat("data:image/jpg;base64,", item.Stream);
+                                            <MudButton OnClick="@(() => Abrir(imagen ,item.FileInfo))"><img style="border-radius:20px;" width="150" height="150" src="@imagen" /></MudButton>
+                                        
+                                    }
+                                }
+                                else
+                                {
+                                    <p>dato invalido</p>
+                                }
+
+                            }
+
+                        </MudItem>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Warning" Variant="Variant.Outlined" OnClick="@Rechazar">Rechazar</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Outlined" OnClick="@Pagado">Pago Procesado</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Outlined" OnClick="Cancel">Cerrar</MudButton>
+    </DialogActions>
+</MudDialog>

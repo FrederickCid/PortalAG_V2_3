@@ -1,0 +1,27 @@
+﻿<MudItem xs="12" md="6">
+    <MudCard Elevation="2" Style="width:100%; background:#0086D2; border: solid 1px #0d0699; justify-items:center; justify-content:center; text-align:center; border-radius:25px">
+        <MudCardHeader>
+            <h4 style="color:white; width:100%; font-weight:bold">@(Nombre.Length < 40 ? Nombre : Nombre.Substring(0,40))</h4>
+        </MudCardHeader>
+        <MudCardContent Class="p-3 m-1 w-100">
+            <MudItem Style="display:inline-flex; align-items:center; width:100%; justify-content:space-between ">
+                <MudItem Style="display:flex; flex-direction:column; gap: 5px; text-align:center">
+                    <MudText Style="color:white;font-size:20px">ID ARTICULO</MudText>
+                    <MudText Style="color:white;font-size:20px; font-weight:bold">@IDArticulo</MudText>
+                </MudItem>
+                <MudItem Style="display:flex ; gap: 5px; flex-direction:column;">
+                    <MudText Style="color:white;font-size:20px">ESTADO</MudText>
+                    <MudText Style="width:100%; text-align:center; color:white;font-size:20px; font-weight:bold ">@Estado</MudText>
+                </MudItem>
+                <MudItem Style="display:flex ; flex-direction:column; gap: 5px; text-align:center;">
+                    <MudText Style="color:white;font-size:20px">HASTA</MudText>
+                    <MudText Style="color:white;font-size:20px; font-weight:bold ">@Hasta</MudText>
+                </MudItem>
+                <MudItem Style="display:flex ; flex-direction:column; gap: 5px; text-align:center;">
+                    <MudText Style="color:white;font-size:20px">CANTIDAD</MudText>
+                    <MudText Style="color:white;font-size:20px; font-weight:bold ">@Cantidad</MudText>
+                </MudItem>
+            </MudItem>
+        </MudCardContent>
+    </MudCard>
+</MudItem>

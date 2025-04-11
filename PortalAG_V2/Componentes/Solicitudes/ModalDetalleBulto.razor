@@ -1,0 +1,18 @@
+﻿@using static agDataAccess.Models.Solicitudes.AuditoriaPedidosModel
+
+<MudItem>
+    <SfGrid ID="Grid" @ref="Grid" DataSource="@Detalle" AllowPaging="true" style="width:100%; " Toolbar="@ButtonsGrid" OnToolbarClick="ToolbarClick"
+            AllowExcelExport="true" AllowSelection="true" AllowFiltering="true" AllowSorting="true" Width="auto" AllowResizing="true">
+        <GridEvents TValue="Detalleauditoria" OnToolbarClick="ToolbarClick"></GridEvents>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn Field=@nameof(Detalleauditoria.NroBulto) HeaderText="Linea" TextAlign="TextAlign.Right"></GridColumn>
+            <GridColumn Field=@nameof(Detalleauditoria.IDArticulo) HeaderText="IDArticulo"></GridColumn>
+            <GridColumn Field=@nameof(Detalleauditoria.Nombre) HeaderText="Nombre" ></GridColumn>
+            <GridColumn Field=@nameof(Detalleauditoria.UnidadxBulto) HeaderText="Uni x Bul"> </GridColumn>
+            <GridColumn Field=@nameof(Detalleauditoria.Cantidad) HeaderText="cantidad"></GridColumn>
+            <GridColumn Field=@nameof(Detalleauditoria.FechaActualizacion) HeaderText="FechaActualizacion"></GridColumn>            
+            <GridColumn Field=@nameof(Detalleauditoria.IDUsuario) HeaderText="Revisor"></GridColumn>            
+        </GridColumns>
+    </SfGrid>
+</MudItem>

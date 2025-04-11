@@ -1,0 +1,48 @@
+﻿@using PortalAG_V2.Pages.Autenticacion
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.WebAssembly.Services
+@using Microsoft.Extensions.Logging
+@inject LazyAssemblyLoader AssemblyLoader
+@inject ILogger<App> Logger
+
+<Router AppAssembly="@typeof(Program).Assembly" OnNavigateAsync="OnNavigateAsync">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" >
+            <NotAuthorized>
+                <Login/>
+            </NotAuthorized>
+        </AuthorizeRouteView>   
+    </Found>
+    <NotFound>
+        <CascadingAuthenticationState>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p>Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </CascadingAuthenticationState>
+    </NotFound>
+</Router>
+@code {
+    private async Task OnNavigateAsync(NavigationContext args)
+    {
+        //crea solo con dll de blazor class library , sirve para cargar recursos solo consuntando el path 
+        //para no tener tanto consumo al iniciar el app de blazor,
+        //funcionalidad LAZYLOAD en testing
+        try
+        {
+            //tomo path y pregunto si la path actual es la que obtengo en args
+            //Console.WriteLine($"args.Path: {args.Path}");
+            if (args.Path == "evaluacion")
+            {
+                //se crea un Assemblyloader , para definir que dll's se van a agregar y cargar al consultar el path
+                //se debe hacer uno cada uno por path consultad 
+                //TODO: buscar forma mas eficiente para comparar paths
+                var assemblies = await AssemblyLoader.LoadAssembliesAsync(
+                    new[] { "PortalAG_V2.LazyLoad.dll" });
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: {Message}", ex.Message);
+        }
+    }
+}

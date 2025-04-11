@@ -1,0 +1,49 @@
+﻿<MudItem >
+    <MudPaper Class="m-1 p-2 rounded-lg" Style="border: solid black 2px; background:#e2efda; display:flex; height:140px; width:230px;box-shadow: 5px 5px 5px 2.5px rgba(0,0,0,0.2)">
+        <table class="table table-sm table-borderless">
+            <tbody>
+                <tr>
+                    <th colspan="2"><MudText Style="font-weight:bold; text-align:center; align-items:center; font-size:13px;">@titulo</MudText></th>
+                    </tr>
+                    <tr>
+                        <th><MudText Style="font-weight:bold; font-size:10px; text-align:left; margin-bottom:-5px"> INICIO:</MudText></th>
+                        <td style="border: 1px solid black; width: 100%;"><MudText Style="font-size:10px; text-align:center; margin-bottom:-5px">@inicio</MudText></td>
+                    </tr>
+                    <tr>
+                        <th><MudText Style="font-weight:bold; font-size:10px; text-align:left; margin-bottom:-5px"> TERMINO:</MudText></th>
+                        <td style="border: 1px solid black; width: 100%;"><MudText Style="font-size:10px; text-align:center; margin-bottom:-5px">@termino</MudText></td>
+                    </tr>
+                    <tr>
+                        <th><MudText Style="font-weight:bold; font-size:10px; text-align:left;">SLA:</MudText></th>
+                        @{
+                        if (sla < 100)
+                        {
+                            <td style="width:100%; background-color:rgb(0, 255, 0); border: 1px solid black"></td>
+                        }
+                        if (sla > 100 && sla <= 125)
+                        {
+                            <td style="width:100%;background-color:rgb(181, 255, 0); border: 1px solid black"></td>
+                        }
+                        if (sla > 125 && sla <= 150)
+                        {
+                            <td style="width:100%;background-color:rgb(255, 165, 0); border: 1px solid black"></td>
+                        }
+                        if (sla > 150 && sla <= 200)
+                        {
+                            <td style="width:100%;background-color:rgb(255, 131, 0); border: 1px solid black"></td>
+                        }
+                        if (sla > 200)
+                        {
+                            <td style="width:100%; background-color:rgb(255, 0, 0); border: 1px solid black"></td>
+                        }
+                        else
+                        {
+                            <td style="width:100%;"></td>
+                        }
+                    }
+                </tr>
+            </tbody>
+        </table>
+    </MudPaper>
+</MudItem>
+

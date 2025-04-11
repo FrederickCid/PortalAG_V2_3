@@ -1,0 +1,33 @@
+﻿@page "/ImpresionArticuloFoto"
+<SurveyPrompt Title="Impresion Articulo Con Foto" />
+<MudPaper Class="m-1 p-4" Style="width;:100%; displ ay:flex; flex-direction:column;gap:10px">
+
+    <MudAlert Severity="Severity.Info" ShowCloseIcon="false" Style="color:black; margin-bottom:0px" Dense="true" Variant="Variant.Outlined">
+        <b style="color:black">NOTA: Las etiquetas de Articulos con foto son de tamaño (10X10)</b>
+    </MudAlert>
+    <MudItem Style="width:100%;">
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudItem Style="display:flex; flex-direction:row; gap:10px">
+                <MudTextField T="string" @bind-Value="IDArtiuclo" FullWidth Variant="Variant.Outlined" Margin="Margin.Dense" HelperText="Ingrese codigo de articulo" Label="ID Articulo" Required RequiredError="IDArticulo Requerido!">  </MudTextField>
+                <MudTextField T="int" @bind-Value="Copias" Mask="@(new PatternMask("000"))" FullWidth Variant="Variant.Outlined" Margin="Margin.Dense" Label="Cantidad de copias" Required> MODIFICAR HOJA DE RUTA </MudTextField>
+            </MudItem>
+            <MudItem md="12" xs="12">
+                <MudSelect Dense Style="align-self:center" Margin="Margin.Dense" FullWidth Label="Selecciones una Impresora" Variant="Variant.Outlined" T="string" @bind-Value="Impresora" Required RequiredError="Impresora Requerida!">
+                    <MudSelectItem T="string" Value="@("CDA_OficinaBodega")">OFICINA BODEGA</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("Logistica_Reimpresion")">IMPRESORA LOGISTICA</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("CDA_Recepcion_1")">RECEPCION 1</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("IMPRESORA_RECEPCION")">RECEPCION 2</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+            <MudItem Dense Style="align-items:center; justify-items:center;">
+                <MudRadioGroup Style="align-self:center" T="string" @bind-SelectedOption="SelectedOption">
+                    <MudRadio T="string" Option="@("Con QR")" Color="Color.Primary">Con QR</MudRadio>
+                    <MudRadio T="string" Option="@("Sin QR")" Color="Color.Primary">Sin QR</MudRadio>
+                </MudRadioGroup>
+            </MudItem>
+            <MudItem md="12" xs="12" Style="text-align:center">
+                <MudButton Style="text-align:Center" Variant="Variant.Outlined" Color="Color.Secondary" OnClick="@(() => Imprimir())"> IMPRIMIR </MudButton>
+            </MudItem>
+        </MudForm>
+    </MudItem>
+</MudPaper>

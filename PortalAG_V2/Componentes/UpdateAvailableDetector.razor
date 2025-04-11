@@ -1,0 +1,8 @@
+﻿@inject IJSRuntime _jsRuntime
+
+@if (_newVersionAvailable)
+{
+    <span style="z-index:99;" class="ButtonUpdate btn btn-info floating-update-button shadow" onclick="@(() => Reload())">
+        Una nueva versión de la aplicación está disponible.  <b> Haga clic aquí para recargar.</b>
+    </span>
+}

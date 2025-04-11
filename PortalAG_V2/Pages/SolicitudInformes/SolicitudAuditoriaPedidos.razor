@@ -1,0 +1,28 @@
+﻿@page "/AuditoriaPedidos"
+@using agDataAccess.Models.Solicitudes
+
+<SurveyPrompt Title="Solicitudes Auditoria" />
+<br />
+<br />
+<MudPaper Style="margin=0 auto; max-width:">
+    <MudItem Class="pa-4 m-1">        
+        <MudItem>
+            <SfGrid ID="Grid" @ref="Grid" DataSource="@ListaAuditoria" AllowPaging="true" style="width:100%; " Toolbar="@ButtonsGrid" OnToolbarClick="ToolbarClick"
+                    AllowExcelExport="true" AllowSelection="true" AllowFiltering="true" AllowSorting="true" Width="auto" AllowResizing="true">
+                <GridEvents OnToolbarClick="ToolbarClick" TValue="AuditoriaPedidosModel" RowSelected="DobleClick"></GridEvents>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(AuditoriaPedidosModel.NroPedido) HeaderText="Nro. PEdido" Width="80" TextAlign="TextAlign.Right"></GridColumn>
+                    <GridColumn Field=@nameof(AuditoriaPedidosModel.RazonSocial) HeaderText="Razon Social" Width="150"></GridColumn>
+                    <GridColumn Field=@nameof(AuditoriaPedidosModel.NroBulto) HeaderText="Nro. Bultos" Width="80"></GridColumn>
+                    <GridColumn Field=@nameof(AuditoriaPedidosModel.FechaIngreso) HeaderText="Fecha Ingreso" Width="120"> </GridColumn>
+                    <GridColumn Field=@nameof(AuditoriaPedidosModel.FechaInicioRevision) HeaderText="Fecha Revision" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(AuditoriaPedidosModel.FechaTerminoRevision) HeaderText="Fecha Termino" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(AuditoriaPedidosModel.IDUsuario) HeaderText="Usuario" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(AuditoriaPedidosModel.Estado ) HeaderText="Estado" Width="120"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </MudItem>
+    </MudItem>
+</MudPaper>
+<PortalAG_V2.Componentes.Loading Visibility="@Loading" />

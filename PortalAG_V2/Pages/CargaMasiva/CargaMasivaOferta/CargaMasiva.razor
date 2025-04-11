@@ -1,0 +1,218 @@
+﻿@page "/CargaOfertaasMasiva"
+@using PortalAG_V2.Componentes
+@using PortalAG_V2.Shared.Model.CargaMAsivaOfertas
+@using PortalAG_V2.Shared.Models.Cheques
+@inject IDialogService DialogService
+
+
+<SurveyPrompt Title="Carga Masiva Ofertas" />
+<br />
+<br />
+<MudPaper>
+    <MudGrid>
+        <MudItem md="12" xs="12">
+            <MudCard Style="margin-bottom:20px">
+                <MudCardHeader>
+                    <MudText Typo="Typo.subtitle1" Style="font-weight:bold;">
+                        Carga De Archivo
+                    </MudText>
+                </MudCardHeader>
+                <MudCardContent Style="margin:10px; padding:30px;display:flex; flex-direction:row; gap: 10px">
+                    <MudGrid>
+                        <MudItem md="4" xs="12">
+                            <MudItem Style="border:1px solid rgba(0,0,0,0.5); max-width:500px; border-radius:25px; display:flex; flex-direction:row">
+                                <InputFile id="fileInput" OnChange="UploadFiles" hidden single itemtype=".xlsx" />
+                                <MudFab HtmlTag="label"
+                                        StartIcon="@Icons.Material.Filled.CloudUpload"
+                                        Size="Size.Small"
+                                        Color="Color.Success"
+                                        Label="Seleccionar Archivo"
+                                        for="fileInput"
+                                        Style="white-space: nowrap;">
+                                    Seleccionar archivo
+                                </MudFab>
+                                <label style="overflow:hidden;white-space: nowrap; text-overflow:ellipsis; align-self:center; margin-left:10px; width:250px">@NameFile</label>
+                                @if (fileComplete != null)
+                                {
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" Color="Color.Error" Size="Size.Small" OnClick="Delete"></MudIconButton>
+                                }
+                            </MudItem>
+                        </MudItem>
+                        <MudItem md="4" xs="12" Style="gap:10px; display: flex; flex-direction:row; text-align:end">
+                            <MudGrid>
+                                <MudItem md="4" xs="12" Style="align-content:center;">
+                                    <MudButton HtmlTag="label" FullWidth Style="text-overflow: ellipsis; max-height:30px; overflow:hidden;white-space: nowrap;" Variant="Variant.Outlined" Color="Color.Success" OnClick=ProcesarFiles Size="Size.Small">
+                                        Procesar archivo
+                                    </MudButton>
+                                </MudItem>
+
+                                @{
+                                    if (Opcion == 1)
+                                    {
+                                        <MudItem md="4" xs="12" Style="align-content:center;">
+                                            <MudButton HtmlTag="label" Style="  text-overflow: ellipsis; max-height:30px; overflow:hidden;white-space: nowrap;" FullWidth Variant="Variant.Outlined" Color="Color.Secondary" OnClick=DownloadFileOfertaBulto Size="Size.Small">                                                
+                                            Ejemplo Bulto
+                                            </MudButton>
+                                        </MudItem>
+
+                                        <MudItem md="4" xs="12" Style="align-content:center;">
+                                            <MudButton HtmlTag="label" Style=" text-overflow: ellipsis; max-height:30px; overflow:hidden;white-space: nowrap;" FullWidth Variant="Variant.Outlined" Color="Color.Secondary" OnClick="onclickDownloadFileOfertaBulto" Size="Size.Small">Excel Articulos</MudButton>
+                                        </MudItem>
+                                    }
+                                    if (Opcion == 2)
+                                    {
+                                        <MudItem md="4" xs="12" Style="align-content:center;">
+                                            <MudButton HtmlTag="label" Style="text-overflow: ellipsis; max-height:30px; overflow:hidden;white-space: nowrap;" FullWidth Variant="Variant.Outlined" Color="Color.Secondary" OnClick=DownloadFileOferta Size="Size.Small">                                                
+                                            Ejemplo Oferta
+                                            </MudButton>
+                                        </MudItem>
+                                        <MudItem md="4" xs="12" Style="align-content:center;">
+                                            <MudButton HtmlTag="label" Style="text-overflow: ellipsis; max-height:30px; overflow:hidden;white-space: nowrap;" FullWidth Variant="Variant.Outlined" Color="Color.Secondary" OnClick="onclickDownloadFileOferta" Size="Size.Small">Excel Articulos</MudButton>
+                                        </MudItem>
+                                    }
+                                    if (Opcion == 3)
+                                    {
+                                        <MudItem md="4" xs="12" Style="align-content:center;">
+                                            <MudButton HtmlTag="label" Style="text-overflow: ellipsis; max-height:30px; overflow:hidden;white-space: nowrap;" FullWidth Variant="Variant.Outlined" Color="Color.Secondary" OnClick=DownloadFileOfertaOutlet Size="Size.Small">
+                                                Ejemplo Outlet
+                                            </MudButton>
+                                        </MudItem>
+                                        <MudItem md="4" xs="12" Style="align-content:center;">
+                                            <MudButton HtmlTag="label" Style="text-overflow: ellipsis; max-height:30px; overflow:hidden;white-space: nowrap;" FullWidth Variant="Variant.Outlined" Color="Color.Secondary" OnClick="onclickDownloadFileOfertaOutlet" Size="Size.Small">Excel Articulos</MudButton>
+                                        </MudItem>
+
+                                    }
+                                    if (Opcion == 4)
+                                    {
+                                        <MudItem md="4" xs="12" Style="align-content:center;">
+                                            <MudButton HtmlTag="label" Style="text-overflow: ellipsis; max-height:30px; overflow:hidden;white-space: nowrap;" FullWidth Variant="Variant.Outlined" Color="Color.Secondary" OnClick=DownloadFileWeb Size="Size.Small">
+                                                Ejemplo Web
+                                            </MudButton>
+                                        </MudItem>
+                                        <MudItem md="4" xs="12" Style="align-content:center;">
+                                            <MudButton HtmlTag="label" Style="text-overflow: ellipsis; max-height:30px; overflow:hidden;white-space: nowrap;" FullWidth Variant="Variant.Outlined" Color="Color.Secondary" OnClick="onclickDownloadFileWeb" Size="Size.Small">Excel Articulos</MudButton>
+                                        </MudItem>
+                                    }
+                                    if (Opcion == 5)
+                                    {
+                                        <MudItem md="4" xs="12" Style="align-content:center;">
+                                            <MudButton HtmlTag="label" Style="align-content:center;  text-overflow: ellipsis; max-height:30px; overflow:hidden;white-space: nowrap;" FullWidth Variant="Variant.Outlined" Color="Color.Secondary" OnClick=DownloadFileFullbike Size="Size.Small">
+                                                Ejemplo FB
+                                            </MudButton>
+                                        </MudItem>
+
+                                        <MudItem md="4" xs="12" Style="align-content:center;">
+
+                                            <MudButton HtmlTag="label" Style="align-content:center;text-overflow: ellipsis; max-height:30px; overflow:hidden;white-space: nowrap;" FullWidth Variant="Variant.Outlined" Color="Color.Secondary" OnClick="onclickDownloadFileFB" Size="Size.Small">Excel FB</MudButton>
+                                        </MudItem>
+                                    }
+                                }
+                            </MudGrid>
+                        </MudItem>
+                        <MudItem xl="4" xs="12" Style="justify-self:center">
+                            <MudSelect T="int" @bind-value="Opcion" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                <MudSelectItem T="int" Value="1">Bulto</MudSelectItem>
+                                <MudSelectItem T="int" Value="2">Oferta Internas</MudSelectItem>
+                                <MudSelectItem T="int" Value="3">Outlet</MudSelectItem>
+                                <MudSelectItem T="int" Value="4">Ofertas Web</MudSelectItem>
+                                <MudSelectItem T="int" Value="5">Ofertas FullBike</MudSelectItem>
+                            </MudSelect>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12">
+            @{
+                if (Opcion == 1)
+                {
+
+                    <MudDataGrid T="OfertaBultoModelExecelModel" Items="dataTableBultosValidadas" MultiSelection="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true" SortMode="SortMode.None" Hover Striped>
+                        <Columns>
+                            <PropertyColumn Property="x => x.IDArticulo" Title="ID Articulo" />
+                            <PropertyColumn Property="x => x.Nombre" Title="Nombre" />
+                            <PropertyColumn Property="x => x.CantidadOfeta" Title="CantidadOfeta" />
+                            <PropertyColumn Property="@(x => x.PrecioOferta.ToString("$ ###,###,###,###"))" Title="PrecioOferta" />
+                            <PropertyColumn Property="@(x => x.SiActivo == 0 ? "Crear" : "Eliminar")" Title="Acción" />
+                            <PropertyColumn Property="x => x.Alerta" Title="Alerta" />
+                        </Columns>
+                        <PagerContent>
+                            <MudDataGridPager T="OfertaBultoModelExecelModel" PageSizeOptions="new int[] {10,25,50}" />
+                        </PagerContent>
+                    </MudDataGrid>
+                }
+                if (Opcion == 2)
+                {
+                    <MudDataGrid T="OfertasListadoModelExcel" Items="dataTableOfertasValidadas" MultiSelection="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true" SortMode="SortMode.None" Hover Striped>
+                        <Columns>
+                            <PropertyColumn Property="x => x.IDArticulo" Title="ID Articulo" />
+                            <PropertyColumn Property="x => x.Nombre" Title="Nombre" />
+                            <PropertyColumn Property="x => x.ListaDescuneto" Title="Lista Descuento" />
+                            <PropertyColumn Property="x => x.FechaInicio" Title="Fecha Inicio" />
+                            <PropertyColumn Property="x => x.FechaTermino" Title="Fecha Termino" />
+                            <PropertyColumn Property="@(x => x.SiActivo == 0 ? "Crear" : "Eliminar")" Title="Acción" />
+                            <PropertyColumn Property="x => x.Alerta" Title="Alerta" />
+                        </Columns>
+                        <PagerContent>
+                            <MudDataGridPager T="OfertasListadoModelExcel" PageSizeOptions="new int[] {10,25,50}" />
+                        </PagerContent>
+                    </MudDataGrid>
+                }
+                if (Opcion == 3)
+                {
+                    <MudDataGrid T="OfertasListadoModelExcel" Items="dataTableOfertasValidadas" MultiSelection="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true" SortMode="SortMode.None" Hover Striped>
+                        <Columns>
+                            <PropertyColumn Property="x => x.IDArticulo" Title="ID Articulo" />
+                            <PropertyColumn Property="x => x.Nombre" Title="Nombre" />
+                            <PropertyColumn Property="x => x.ListaDescuneto" Title="Lista Descuento Outlet" />
+                            <PropertyColumn Property="@(x => x.SiActivo == 0 ? "Crear" : "Eliminar")" Title="Acción" />
+                            <PropertyColumn Property="x => x.Alerta" Title="Alerta" />
+                        </Columns>
+                        <PagerContent>
+                            <MudDataGridPager T="OfertasListadoModelExcel" PageSizeOptions="new int[] {10,25,50}" />
+                        </PagerContent>
+
+                    </MudDataGrid>
+                }
+                if (Opcion == 4)
+                {
+                    <MudDataGrid T="OfertasListadoModelExcel" Items="dataTableOfertasValidadas" MultiSelection="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true" SortMode="SortMode.None" Hover Striped>
+                        <Columns>
+                            <PropertyColumn Property="x => x.IDArticulo" Title="ID Articulo" />
+                            <PropertyColumn Property="x => x.Nombre" Title="Nombre" />
+                            <PropertyColumn Property="x => x.Porcentaje" Title="Porcentaje" />
+                            <PropertyColumn Property="x => x.FechaInicio" Title="Fecha Inicio" />
+                            <PropertyColumn Property="x => x.FechaTermino" Title="Fecha Termino" />
+                            <PropertyColumn Property="@(x => x.SiActivo == 0 ? "Crear" : "Eliminar")" Title="Acción" />
+                            <PropertyColumn Property="x => x.Alerta" Title="Alerta" />
+                        </Columns>
+                        <PagerContent>
+                            <MudDataGridPager T="OfertasListadoModelExcel" PageSizeOptions="new int[] {10,25,50}" />
+                        </PagerContent>
+                    </MudDataGrid>
+                }
+                if (Opcion == 5)
+                {
+                    <MudDataGrid T="OfertaFBModelExcel" Items="dataTableOfertasValidadasFB" MultiSelection="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true" SortMode="SortMode.None" Hover Striped>
+                        <Columns>
+                            <PropertyColumn Property="x => x.IDArticulo" Title="ID Articulo" />
+                            <PropertyColumn Property="x => x.PrecioNormal" Title="PrecioNormal" />
+                            <PropertyColumn Property="x => x.Nombre" Title="Nombre" />
+                            <PropertyColumn Property="x => x.PrecioCliente" Title="PrecioCliente" />
+                            <PropertyColumn Property="@(x => x.IDEstado == 0 ? "Crear" : "Eliminar")" Title="Acción" />
+                            <PropertyColumn Property="x => x.Alerta" Title="Alerta" />
+                        </Columns>
+                        <PagerContent>
+                            <MudDataGridPager T="OfertaFBModelExcel" PageSizeOptions="new int[] {10,25,50}" />
+                        </PagerContent>
+                    </MudDataGrid>
+                }
+            }
+        </MudItem>
+        <MudItem Style="display:flex;display:flex; justify-content:end; margin-bottom:20px; width:100%" Class="pa-4 m-1">
+            <MudButton Variant="Variant.Outlined" Color="Color.Info" Disabled="@EnviarBtn" DisableElevation="true" Class="mx-2" OnClick="@EnviarSolicitud">Enviar</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" DisableElevation="true" OnClick="@limpiar">Limpiar</MudButton>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+<Loading Visibility="Loading" />

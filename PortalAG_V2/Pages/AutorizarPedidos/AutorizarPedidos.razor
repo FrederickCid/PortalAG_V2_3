@@ -1,0 +1,115 @@
+﻿@page "/autorizarpedidos"
+@using PortalAG_V2.Shared.Model.AutorizarPedidos;
+
+<MudItem xs="12">
+    <MudIconButton Color="Color.Info" Icon="@Icons.Material.Outlined.Refresh" Size="Size.Small" OnClick="@Refrescar"></MudIconButton>
+    <p>Tiempo recarga: @Count</p>
+    <MudTabs>
+
+        <MudTabPanel Text="Pedidos a Autorizar">
+            <MudDataGrid Items="@Elements" style="max-width=100%" QuickFilter="@QuickFilter">
+                <ToolBarContent>
+                    <MudSpacer />
+                    <MudTextField @bind-Value="_searchString" Placeholder="Buscar..." Adornment="Adornment.Start" Immediate="true"
+                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" bor Class="mt-0" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                </ToolBarContent>
+                <Columns>
+                    <PropertyColumn Property="x => x.NroDocumento" Title="Pedido" />
+                    <PropertyColumn Property="x => x.RazonSocial" Title="Cliente"/>
+                    <PropertyColumn Property="x => x.Fecha" Title="F/Pedido"/>
+                    <PropertyColumn Property="x => x.Vendedor" />
+                    <PropertyColumn Property="x => x.FechaHoraEntrega" Title="F/H Entrega" Resizable="true" />
+                    <PropertyColumn Property="x => x.LineasPedido" Title="Lineas"/>
+                    <PropertyColumn Property="x => String.Concat(x.PorcentajeDescuento,porcentaje,x.CondicionPago)" Title="Cond. Pago" />
+                    <PropertyColumn Property="x => x.FormaPago" Title="F/Pago" />
+                    <PropertyColumn Property="x => x.Comentarios" Title="Comentarios" />
+                    <TemplateColumn Title="Acciones" StickyRight="true">
+                        <CellTemplate>
+                            <MudStack Row>
+                                <MudTooltip Text="Autorizar normal">
+                                    <MudButton Disabled="@_processing" OnClick="@(() => Normal(@context.Item))" Variant="Variant.Outlined" Color="Color.Primary">
+                                        @if (_processing)
+                                        {
+                                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                            <MudText Class="ms-2"></MudText>
+                                        }
+                                        else
+                                        {
+                                            <MudText>Normal</MudText>
+                                        }
+                                    </MudButton>
+                                </MudTooltip>
+                                <MudTooltip Text="Autorizar por urgencia">
+                                    <MudButton Disabled="@_processing" OnClick="@(() => Urgencias(@context.Item))" Variant="Variant.Outlined" Color="Color.Primary">
+                                        @if (_processing)
+                                        {
+                                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                            <MudText Class="ms-2"></MudText>
+                                        }
+                                        else
+                                        {
+                                            <MudText>Urgencia</MudText>
+                                        }
+                                    </MudButton>                                  
+                                </MudTooltip>
+                                <MudTooltip Text="Anular Pedido">
+                                    <MudButton Disabled="@_processing" OnClick="@(() => Anular(@context.Item))" Variant="Variant.Outlined" Color="Color.Primary">
+                                        @if (_processing)
+                                        {
+                                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                            <MudText Class="ms-2"></MudText>
+                                        }
+                                        else
+                                        {
+                                            <MudText>Anular</MudText>
+                                        }
+                                    </MudButton>
+                                </MudTooltip>
+                            </MudStack>
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="PedidoModel" />
+                </PagerContent>
+            </MudDataGrid>
+        </MudTabPanel>
+
+        <MudTabPanel Text="Asignaciones Diarias">
+            <MudDataGrid Items="@ElementsAutorizado" QuickFilter="@QuickFilter">
+                <ToolBarContent>
+                    <MudSpacer />
+                    <MudTextField @bind-Value="_searchString" Placeholder="Buscar..." Adornment="Adornment.Start" Immediate="true"
+                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                </ToolBarContent>
+                <Columns>
+                    <PropertyColumn Property="x => x.NroDocumento" />
+                    <PropertyColumn Property="x => x.RazonSocial" />
+                    <PropertyColumn Property="x => x.Fecha" Title="F/Pedido"/>
+                    <PropertyColumn Property="x => x.FechaSolicitud" Title="F/envio BVN"/>
+                    <PropertyColumn Property="x => x.Vendedor" />
+                    <PropertyColumn Property="x => x.FechaHoraEntrega" Title="F/H Entrega"/>
+                    <PropertyColumn Property="x => x.Estado" />
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="PedidoModel" />
+                </PagerContent>
+            </MudDataGrid>
+        </MudTabPanel>
+
+        <MudTabPanel Text="Listado Urgencias">
+            <MudDataGrid Items="@ElementsUrgencia">
+                <Columns>
+                    <PropertyColumn Property="x => x.Vendedor" />
+                    <PropertyColumn Property="x => x.Cliente" />
+                    <PropertyColumn Property="x => x.Pedido" />
+                    <PropertyColumn Property="x => x.Lineas" />
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="Urgencia" />
+                </PagerContent>
+            </MudDataGrid>
+        </MudTabPanel>
+
+    </MudTabs>
+</MudItem>

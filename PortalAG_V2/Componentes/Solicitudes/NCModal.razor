@@ -1,0 +1,22 @@
+﻿@using PortalAG_V2.Shared.Model.SolicitudesInformes;
+
+
+<MudItem>
+    <SfGrid ID="Grid" @ref="Grid" DataSource="@Detalle" AllowPaging="true" style="width:100%; " Toolbar="@ButtonsGrid" OnToolbarClick="ToolbarClick"
+            AllowExcelExport="true" AllowSelection="true" AllowFiltering="true" AllowSorting="true" Width="auto" AllowResizing="true">
+        <GridEvents TValue="NCDetalleModel" OnToolbarClick="ToolbarClick"></GridEvents>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn Field=@nameof(NCDetalleModel.Linea) HeaderText="Linea" Width="80" TextAlign="TextAlign.Right"></GridColumn>
+            <GridColumn Field=@nameof(NCDetalleModel.IDArticulo) HeaderText="IDArticulo" Width="150"></GridColumn>
+            <GridColumn Field=@nameof(NCDetalleModel.Descripcion) HeaderText="Descripcion" Width="80"></GridColumn>
+            <GridColumn Field=@nameof(NCDetalleModel.CantidadRef) HeaderText="Cantidad de Referencia" Width="120"> </GridColumn>
+          @*   <GridColumn Field=@nameof(ConsultaNCModel.Usuario) HeaderText="FechaSolicitud" Width="120"></GridColumn> *@
+            <GridColumn Field=@nameof(NCDetalleModel.CantDevolver) HeaderText="Cantidad a Devolver" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(NCDetalleModel.PrecioUnidad) HeaderText="PrecioxUnidad" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(NCDetalleModel.Total) HeaderText="Total" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(NCDetalleModel.IDUsuario) HeaderText="IDUsuario" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(NCDetalleModel.FechaActualizacion) HeaderText="Fecha Actualizacion" Width="120"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+</MudItem>

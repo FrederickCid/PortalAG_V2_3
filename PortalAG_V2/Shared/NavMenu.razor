@@ -1,0 +1,470 @@
+@using System.Security.Claims
+@using MudBlazor
+@using PortalAG_V2.Services
+
+
+<MudNavMenu>
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home">Home</MudNavLink>
+    <MudNavLink Href="/StockCyber" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.ViewCompact">Stock Cyber</MudNavLink>
+
+    @if (usuarioTraspaso || usuarioHR || UsuarioReposicionesPendientes || usuarioAdmin)
+    {
+        <MudNavGroup Title="Oper. y Logistica" Icon="@Icons.Material.Outlined.CorporateFare">
+            @if (usuarioTraspaso || usuarioAdmin)
+            {
+                @* <MudNavGroup Title="Movimiento de Bodega"> *@
+                <MudNavLink Href="/SolicitudMovimientos">
+                    <span>&#9679</span> Movimiento de Inventario
+                </MudNavLink>
+                @* </MudNavGroup> *@
+            }
+
+            @if (usuarioTraspaso || usuarioAdmin)
+            {
+                
+                <MudNavLink Href="/cancelarReposicion">
+                    <span>&#9679</span> Cancelar reposiciones
+                </MudNavLink>
+               
+            }
+            @if (usuarioTraspaso || usuarioAdmin || UsuarioReposicionesPendientes)
+            {
+                @* <MudNavGroup Title="Movimiento de Bodega"> *@
+                <MudNavLink Href="/Pallet">
+                    <span>&#9679</span> Separar Pallet
+                </MudNavLink>
+
+                @* </MudNavGroup> *@
+            }
+            @if (usuarioAdmin || usuarioHR)
+            {
+                @* <MudNavGroup Title="Hoja de ruta"> *@
+                <MudNavLink Href="/HojaDeRuta">
+                    <span>&#9679</span> Hoja de Ruta
+                </MudNavLink>
+                @* </MudNavGroup> *@
+            }
+            @if (usuarioAdmin || UsuarioReposicionesPendientes)
+            {
+                @* <MudNavGroup Title="Reposiciones"> *@
+                <MudNavLink Href="/Reposiciones">
+                    <span>&#9679</span> Pendientes
+                </MudNavLink>
+                @* </MudNavGroup> *@
+            }
+            @if (usuarioPermisos)
+            {
+                @*  <MudNavGroup Title="Configuracion Dispositivos"> *@
+                <MudNavLink Href="/permisosApp">
+                    <span>&#9679</span> Permisos APP
+                </MudNavLink>
+                <MudNavLink Href="/dispositivos">
+                    <span>&#9679</span> Dispositivos
+                </MudNavLink>
+                @* </MudNavGroup> *@
+            }
+            @if (usuarioAdmin || UsuarioImp)
+            {
+                <MudNavGroup Title="Impresión" Icon="@Icons.Material.Filled.Print">
+
+                <MudNavLink Href="/ImprimirPallet">
+                    <span>&#9679</span> Imprimir Pallet
+                </MudNavLink>
+                <MudNavLink Href="/ImpresionArticulo">
+                    <span>&#9679</span> Impresion Articulo
+                </MudNavLink>
+                <MudNavLink Href="/ImpresionBultos">
+                    <span>&#9679</span> Impresion Bultos
+                </MudNavLink>
+                <MudNavLink Href="/ImpresionArticuloFoto">
+                    <span>&#9679</span> Impresion Art. Foto
+                </MudNavLink>
+                <MudNavLink Href="/Bultos">
+                    <span>&#9679</span>Reimpresion Bultos
+                </MudNavLink>
+                </MudNavGroup>
+
+            }
+        
+        </MudNavGroup>
+    }
+    @if (usuarioAdmin || usuariosCobranza || usuarioFacturaxServicio || UsuarioCheques || Usuariofullbike)
+    {
+        <MudNavGroup Title="Admi. y finanzas" Icon="@Icons.Material.Outlined.Source">
+            @if (usuariosCobranza || usuarioAdmin || usuarioFacturaxServicio || UsuarioCheques || Usuariofullbike)
+            {
+                @* <MudNavGroup Title="Cobranza"> *@
+                @if (usuarioAdmin || usuariosCobranza || usuarioFacturaxServicio || Usuariofullbike)
+                {
+                    <MudNavLink Href="/notasCredito">
+                        <span>&#9679</span> Notas de Credito
+                    </MudNavLink>
+                }
+                @if (usuarioAdmin || usuarioFacturaxServicio)
+                {
+                    <MudNavLink Href="/FacturaPorServicio">
+                        <span>&#9679</span> Factura Por Servico
+                    </MudNavLink>
+                }
+                @if (usuarioAdmin || UsuarioAsientoContable || usuariosCobranza || usuarioFacturaxServicio)
+                {
+                    <MudNavLink Href="/AsientoContable">
+                        <span>&#9679</span> Asiento Contable
+                    </MudNavLink>
+                }
+                @* </MudNavGroup> *@
+            }
+            @if (usuarioAdmin || UsuarioCheques)
+            {
+                <MudNavGroup Title="Cheques">
+                    <MudNavLink Href="/Rescate">
+                        <span>&#9679</span> Rescate
+                    </MudNavLink>
+                    <MudNavLink Href="/Prorroga">
+                        <span>&#9679</span> Prorroga
+                    </MudNavLink>
+                    <MudNavLink Href="/Protesto">
+                        <span>&#9679</span> Protesta
+                    </MudNavLink>
+                    <MudNavLink Href="/Deposito">
+                        <span>&#9679</span> Depositar
+                    </MudNavLink>
+                    <MudNavLink Href="/CargaChequesMasivo">
+                        <span>&#9679</span> Depositar Masivo
+                    </MudNavLink>
+                    <MudNavLink Href="/CheqesIngresados">
+                        <span>&#9679</span> Ingresados
+                    </MudNavLink>
+                </MudNavGroup>
+            }
+        </MudNavGroup>
+    }
+    @if (usuarioAvisoPago || usuariosLiberar || usuarioAdmin || usuarioConfirmacionPago)
+    {
+        <MudNavGroup Title="Cobranzas" Icon="@Icons.Material.Outlined.AccountBalance">
+            @if (usuarioAvisoPago || usuariosLiberar || usuarioAdmin || usuarioConfirmacionPago)
+            {
+                @* <MudNavGroup Title="Pagos"> *@
+                @if (usuarioAdmin || usuarioAvisoPago)
+                {
+
+                    <MudNavLink Href="/avisodepago">
+                        <span>&#9679</span> Aviso de Pago
+                    </MudNavLink>
+                }
+                @if (usuariosLiberar || usuarioAdmin)
+                {
+                    <MudNavLink Href="/LiberarPedidos">
+                        <span>&#9679</span> Liberar Pedido
+                    </MudNavLink>
+                }
+
+                @if (usuarioAdmin || usuarioConfirmacionPago)
+                {
+                    <MudNavLink Href="/NotificacionAvisoDePago">
+                        <span>&#9679</span> Confirmacion de Pago
+                    </MudNavLink>
+                }
+                @* </MudNavGroup> *@
+            }
+        </MudNavGroup>
+    }
+    @if (usuarioAdmin || usuariosComex)
+    {
+        <MudNavGroup Title="Comercio Exterior" Icon="@Icons.Material.Outlined.MonetizationOn">
+            <MudNavLink Href="/PrePacking">
+                <span>&#9679</span> Pre Packing
+            </MudNavLink>
+        </MudNavGroup>
+    }
+    <MudNavGroup Title="Evaluacion Cliente" Icon="@Icons.Material.Outlined.MonitorHeart">
+        <MudNavLink Href="/evaluacion">
+            <span>&#9679</span>  Buscar Cliente
+        </MudNavLink>
+    </MudNavGroup>
+
+
+    <MudNavGroup Title="Estados de Pedidos" Icon="@Icons.Material.Outlined.AccountTree">
+        <MudNavLink Href="/estadoPedidos">
+            <span>&#9679</span>  Estados Pedidos
+        </MudNavLink>
+        <MudNavLink Href="/Historicos">
+            <span>&#9679</span>  Pedidos Historicos
+        </MudNavLink>
+    </MudNavGroup>
+    @if (usuarioAutorizacion || usuarioAdmin || usuarioFormularios || usuarioConfirmacionPago || usuarioFormularios || usuarioVendedor || UsuarioOfertas)
+    {
+        <MudNavGroup Title="Ventas" Icon="@Icons.Material.Outlined.ShoppingCart">
+            @if (usuarioAutorizacion)
+            {
+                @* <MudNavGroup Title="Autorizacion"> *@
+                <MudNavLink Href="/autorizarpedidos">
+                    <span>&#9679</span>  Autorizar Pedidos
+                </MudNavLink>
+                @* </MudNavGroup> *@
+            }
+            @if (usuarioAdmin || usuarioFormularios || usuarioConfirmacionPago)
+            {
+                <MudNavGroup Title="Formularios">
+                    @if (usuarioFormularios || usuarioAdmin)
+                    {
+                        <MudNavLink Href="/FormularioGarantia">
+                            <span>&#9679</span>  Garantia
+                        </MudNavLink>
+                        <MudNavLink Href="/FormularioBuenEstado ">
+                            <span>&#9679</span>  En Buen Estado
+                        </MudNavLink>
+                    }
+                    @if (usuarioFormularios || usuarioConfirmacionPago || usuarioAdmin)
+                    {
+                        <MudNavLink Href="/FormularioDocumento">
+                            <span>&#9679</span>  Documento
+                        </MudNavLink>
+                    }
+                </MudNavGroup>
+            }
+            @if (usuarioVendedor || usuarioAdmin)
+            {
+                <MudNavGroup Title="Direcciones Clientes">
+                    <MudNavLink Href="/Direcciones">
+                        <span>&#9679</span>  Direcciones despacho
+                    </MudNavLink>
+                    <MudNavLink Href="/CambioDireccion">
+                        <span>&#9679</span> Cambio Direccion Despacho
+                    </MudNavLink>
+                </MudNavGroup>
+            }
+            @if (usuarioAdmin || UsuarioOfertas)
+            {
+                <MudNavGroup Title="Ofertas">
+                    <MudNavLink Href="/CargaOfertaasMasiva">
+                        <span>&#9679</span>  Carga Ofertas
+                    </MudNavLink>
+                    <MudNavLink Href="/ListadoOfertas">
+                        <span>&#9679</span>  Lista de Ofertas
+                    </MudNavLink>
+                </MudNavGroup>
+            }
+        </MudNavGroup>
+    }
+    @if (usuarioFacturacion || usuarioAdmin)
+    {
+        <MudNavGroup Title="Facturación" Icon="@Icons.Material.Outlined.AddChart">
+            <MudNavLink Href="/visualizadorFacturacion">
+                <span>&#9679</span> Visualizador Facturación
+            </MudNavLink>
+        </MudNavGroup>
+    }
+    @if (usuarioVendedor || usuarioEstado || usuarioContabilidad || usuarioJaula || usuarioTraspaso || UsuarioCheques || usuarioAdmin || usuarioPedidosSacados || usuarioNopickeado || usuariosrosario || usuariosRecepcion || usuariosLiberar || usuarioAvisoPago)
+    {
+        <MudNavGroup Title="Informes" Icon="@Icons.Material.Outlined.FilePresent">
+            @if (usuarioAdmin || usuarioIndormeFacturaDespacho)
+            {
+                <MudNavLink Href="/PedidosFacturadosDes">
+                    <span>&#9679</span>  Facturados/Despachado
+                </MudNavLink>
+            }
+            @if (usuarioVendedor || usuariosrosario || usuarioAdmin)
+            {
+                <MudNavLink Href="/SolicitudInformeDiferencias">
+                    <span>&#9679</span> Diferencias
+                </MudNavLink>
+            }
+            @if (usuarioTraspaso || usuariosrosario || usuariosRecepcion || usuarioAdmin)
+            {
+                <MudNavLink Href="/DisponibilidadUbicacion">
+                    <span>&#9679</span>  Disponibilidad Ubicaciones
+                </MudNavLink>
+                <MudNavLink Href="/DisponibilidadUbicacionAnterior">
+                    <span>&#9679</span>  Ubicaciones Anteriores
+                </MudNavLink>
+            }
+            @if (usuarioEstado || usuariosrosario || usuarioAdmin)
+            {
+                <MudNavLink Href="/SolicitudResumenPedido">
+                    <span>&#9679</span> Resumen Pedidos
+                </MudNavLink>
+            }
+            @if (usuarioJaula || usuariosrosario || usuarioAdmin)
+            {
+                <MudNavLink Href="/SolicitudInformePedidosEnJaulaModel">
+                    <span>&#9679</span>  Pedidos en Jaula
+                </MudNavLink>
+
+            }
+            @if (usuarioAdmin || UsuarioCheques)
+            {
+                <MudNavLink Href="/SolicitudChequesRescatados">
+                    <span>&#9679</span> Informe de Cheques
+                </MudNavLink>
+            }
+            @if (usuarioStock || usuariosrosario || usuarioAdmin)
+            {
+                <MudNavLink Href="/SolcitudInformeStock">
+                    <span>&#9679</span>  Stock BV
+                </MudNavLink>
+
+            }
+            @if (usuarioAdmin || UsuarioAuditoriaPedidos)
+            {
+                <MudNavLink Href="/AuditoriaPedidos">
+                    <span>&#9679</span>  Auditoria
+                </MudNavLink>
+            }
+            @if (usuarioContabilidad || usuariosrosario || usuarioAdmin)
+            {
+                <MudNavLink Href="/SolicitudNCPendientes">
+                    <span>&#9679</span>  NC Pendientes
+                </MudNavLink>
+                <MudNavLink Href="/SolicitudNCProcesadas">
+                    <span>&#9679</span>  NC Procesadas
+                </MudNavLink>
+            }
+            @if (usuarioAdmin || usuarioTraspaso || UsuarioLineas)
+            {
+                <MudNavLink Href="/Lineas">
+                    <span>&#9679</span>   Lineas
+                </MudNavLink>
+            }
+            @if (usuarioAdmin || usuarioPedidosSacados || usuariosrosario)
+            {
+                <MudNavLink Href="/SolicitudPedidosSacados">
+                    <span>&#9679</span>   Pedidos Sacados
+                </MudNavLink>
+            }
+            @if (usuarioNopickeado || usuariosrosario || usuarioAdmin)
+            {
+                <MudNavLink Href="/SolicitudNoPickeados">
+                    <span>&#9679</span>  No Pickeados
+                </MudNavLink>
+            }
+            @if (usuarioAdmin || usuariosLiberar)
+            {
+                <MudNavLink Href="/Liberados">
+                    <span>&#9679</span>   Liberados
+                </MudNavLink>
+            }
+            @if (usuarioAdmin || usuarioAvisoPago)
+            {
+                <MudNavLink Href="/SolicitudInformeFactura">
+                    <span>&#9679</span>   Informe de Factura
+                </MudNavLink>
+            }
+
+        </MudNavGroup>
+    }
+
+
+</MudNavMenu>
+
+@code {
+    private ClaimsPrincipal _authenticationStateProviderUser;
+
+    private bool _facturacion;
+    private bool _canViewDashboards;
+    private bool _canViewDocuments;
+    private bool _canViewDocumentTypes;
+    private bool _canViewAuditTrails;
+    private bool _canViewRoles;
+    private bool _canViewUsers;
+    private bool _canViewChat;
+    private bool _canViewProducts;
+    private bool _canViewBrands;
+    private bool _desactivar = true;
+    private bool _descativarConta = true;
+    private bool usuarioTraspaso = false;
+    private bool usuarioEstado = false;
+    private bool usuarioFacturacion = false;
+    private bool usuarioAutorizacion = false;
+    private bool usuarioAdmin = false;
+    private bool usuarioAvisoPago = false;
+    private bool usuarioVendedor = false;
+    private bool usuarioJaula = false;
+    private bool usuarioContabilidad = false;
+    private bool usuarioPedidosSacados = false;
+    private bool usuarioStock = false;
+    private bool usuarioNopickeado = false;
+    private bool usuariosCobranza = false;
+    private bool usuariosrosario = false;
+    private bool usuariosLiberar = false;
+    private bool usuariosRecepcion = false;
+    private bool usuarioHR = false;
+    private bool usuarioConfirmacionPago = false;
+    private bool usuarioFormularios = false;
+    private bool usuariosComex = false;
+    private bool usuarioFacturaxServicio = false;
+    private bool UsuarioLineas = false;
+    private bool UsuarioReposicionesPendientes = false;
+    private bool UsuarioAuditoriaPedidos = false;
+    private bool UsuarioAsientoContable = false;
+    private bool UsuarioCheques = false;
+    private bool usuarioPermisos = false;
+    private bool UsuarioDispositivos = false;
+    private bool Usuariofullbike = false;
+    private bool UsuarioOfertas = false;
+    private bool UsuarioImp = false;
+    private bool usuarioIndormeFacturaDespacho = false;
+
+
+
+    [CascadingParameter]
+    public AppState appSatate { get; set; }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        //_authenticationStateProviderUser = await _stateProvider.GetAuthenticationStateProviderUserAsync();
+        var usuarioData = appSatate?.IDUsuario;
+        var usuarioDataEstadoPedido = appSatate?.IDUsuario;
+        if (!String.IsNullOrEmpty(usuarioData))
+        {
+
+            if (usuarioData.Equals("crar") || usuarioData.Equals("sjara") || usuarioData.Equals("mtorres") || usuarioData.Equals("ralvarado") || usuarioData.Equals("janet")) usuarioFacturacion = true;
+            if (usuarioData.Equals("crar") || usuarioData.Equals("acaro") || usuarioData.Equals("svargas") || usuarioData.Equals("ti") || usuarioData.Equals("rcarrasco")) usuarioAdmin = true;
+            if (usuarioData.Equals("rosariog")) usuariosrosario = true;
+            if (usuarioData.Equals("recepcion") || usuarioData.Equals("gonzalob")) usuariosRecepcion = true;
+            if (usuarioData.Equals("jairo") || usuarioData.Equals("victorz") || usuarioData.Equals("gonzalob")) usuarioHR = true;
+            if (usuarioData.Equals("soledadv") || usuarioData.Equals("atorrealba")) usuarioConfirmacionPago = true;
+            if (usuarioData.Equals("crar") || usuarioData.Equals("dramirez") || usuarioData.Equals("fasencio") || usuarioData.Equals("cgomez") || usuarioData.Equals("fgamboa") || usuarioData.Equals("acaro") || usuarioData.Equals("victorz")) usuarioTraspaso = true;
+            if (usuarioData.Equals("crar") || usuarioData.Equals("RKorenblit") || usuarioData.Equals("MGelfenstein") || usuarioData.Equals("GFigueroa") || usuarioData.Equals("PKorenblit") || usuarioData.Equals("dramirez") || usuarioData.Equals("fasencio") || usuarioData.Equals("cgomez") || usuarioData.Equals("fgamboa") || usuarioData.Equals("jairo") || usuarioData.Equals("victorz") || usuarioData.Equals("acaro") || usuarioData.Equals("svargas") || usuarioData.Equals("janet") || usuarioData.Equals("ralvarado") || usuarioData.Equals("gonzalob")) usuarioEstado = true;
+            if (usuarioData.Equals("crar") || usuarioData.Equals("sjara") || usuarioData.Equals("mtorres") || usuarioData.Equals("ralvarado") || usuarioData.Equals("fasencio") || usuarioData.Equals("acaro") || usuarioData.Equals("ralvarado") || usuarioData.Equals("janet")) usuarioFacturacion = true;
+            if (usuarioData.Equals("crar") || usuarioData.Equals("mtorres") || usuarioData.Equals("PKorenblit") || usuarioData.Equals("acaro")) usuarioAutorizacion = true;
+            if (usuarioData.Equals("acaro") || usuarioData.Equals("crar") || usuarioData.Equals("sjara") || usuarioData.Equals("ralvarado")) usuarioAvisoPago = true;
+            if (usuarioData.Equals("acaro") || usuarioData.Equals("crar") || usuarioData.Equals("sjara")) usuarioFormularios = true;
+            if (usuarioData.Equals("cgomez") || usuarioData.Equals("crar") || usuarioData.Equals("fgamboa")) usuarioStock = true;
+            if (usuarioData.Equals("crar") || usuarioData.Equals("fasencio") || usuarioData.Equals("svargas") || usuarioData.Equals("dramirez") || usuarioData.Equals("jairo") || usuarioData.Equals("cgomez") || usuarioData.Equals("fgamboa")) usuarioPedidosSacados = true;
+            if (usuarioData.Equals("svargas") || usuarioData.Equals("fasencio") || usuarioData.Equals("cgomez") || usuarioData.Equals("fgamboa") || (usuarioData.Equals("crar") || usuarioData.Equals("janet") || usuarioData.Equals("ralvarado"))) usuarioJaula = true;
+            if (usuarioData.Equals("crar") || usuarioData.Equals("dramirez") || usuarioData.Equals("fasencio") || usuarioData.Equals("cgomez") || usuarioData.Equals("fgamboa") || usuarioData.Equals("svargas")) usuarioNopickeado = true;
+            if (usuarioData.Equals("crar") || usuarioData.Equals("vfuentes") || usuarioData.Equals("svargas")) usuariosCobranza = true;
+            if (usuarioData.Equals("janet") || usuarioData.Equals("cgomez") || usuarioData.Equals("fgamboa") || usuarioData.Equals("ralvarado") || (usuarioData.Equals("crar"))) usuarioContabilidad = true;
+            if (usuarioData.Equals("crar") || usuarioData.Equals("lrivano") || usuarioData.Equals("rmorales") || usuarioData.Equals("jdiaz") || usuarioData.Equals("smoran") || usuarioData.Equals("cmoreno") || usuarioData.Equals("mtorres") || usuarioData.Equals("pgonzale") || usuarioData.Equals("mlara") || usuarioData.Equals("rnachari")) usuarioVendedor = true;
+            if (usuarioData.Equals("ralvarado") || usuarioData.Equals("soledadv") || usuarioData.Equals("atorrealba") || usuarioData.Equals("ruribe")) usuariosLiberar = true;
+            if (usuarioData.Equals("mrondon") || usuarioData.Equals("rfischer") || usuarioData.Equals("ruribe")|| usuarioData.Equals("cgomez")) usuariosComex = true;
+            if (usuarioData.Equals("ralvarado") || usuarioData.Equals("janet") || usuarioData.Equals("kleen") || usuarioData.Equals("dpainecura") || usuarioData.Equals("ybracamonte") || usuarioData.Equals("dvillasmil") || usuarioData.Equals("jairo")) usuarioFacturaxServicio = true;
+            if (usuarioData.Equals("fasencio") || usuarioData.Equals("victorz") || usuarioData.Equals("jairo") || usuarioData.Equals("gonzalob")) UsuarioLineas = true;
+            if (usuarioData.Equals("fasencio") || usuarioData.Equals("victorz") || usuarioData.Equals("jairo") || usuarioData.Equals("cgomez") || usuarioData.Equals("fgamboa") || usuarioData.Equals("gonzalob")) UsuarioReposicionesPendientes = true;
+            if (usuarioData.Equals("cgomez")) UsuarioAuditoriaPedidos = true;
+            if (usuarioData.Equals("janet")) UsuarioAsientoContable = true;
+            if (usuarioData.Equals("mpantoja") || usuarioData.Equals("gonzalob")) Usuariofullbike = true;
+            if (usuarioData.Equals("janet") || usuarioData.Equals("rosariog") || usuarioData.Equals("ralvarado") || usuarioData.Equals("kleen") || usuarioData.Equals("dpainecura")) UsuarioCheques = true;
+            if (usuarioData.Equals("crar") || usuarioData.Equals("ti") || usuarioData.Equals("fcid")) usuarioPermisos = true;
+            if (usuarioData.Equals("crar") || usuarioData.Equals("acaro") || usuarioData.Equals("fcid")) UsuarioDispositivos = true;
+            if (usuarioData.Equals("rcarrasco") || usuarioData.Equals("mtorres")) UsuarioOfertas = true;
+            if (usuarioData.Equals("cgomez") || usuarioData.Equals("jairo") || usuarioData.Equals("victorz") || usuarioData.Equals("gonzalob")|| usuarioData.Equals("fgamboa")) UsuarioImp = true;
+            if (usuarioData.Equals("rcarrasco") || usuarioData.Equals("ralvarado") || usuarioData.Equals("janet") || usuarioData.Equals("kleen") || usuarioData.Equals("dpainecura") || usuarioData.Equals("ybracamonte")) usuarioIndormeFacturaDespacho = true;
+
+
+        }
+
+        _facturacion = true;
+        _canViewDashboards = true;
+        _canViewDocuments = true;
+        _canViewDocumentTypes = true;
+        _canViewAuditTrails = true;
+        _canViewRoles = true;
+        _canViewUsers = true;
+        _canViewChat = true;
+        _canViewProducts = true;
+        _canViewBrands = true;
+    }
+}

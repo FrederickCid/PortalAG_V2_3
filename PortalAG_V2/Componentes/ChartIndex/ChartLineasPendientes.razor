@@ -1,0 +1,38 @@
+﻿@using ApexCharts
+@using PortalAG_V2.Shared.Model.ChartsModel
+@if (ListaLineasPendientes.Count > 0)
+{
+    <MudItem xs="12" md="3" xxl="2">
+        <MudCard Style="background-color:rgb(0,0,0,.05); height:100%">
+            <CardContent>
+                <ApexChart TItem="LineasPendientesModelDTO"
+                           Title="@($"Lineas pendientes {nombre} ")"
+                           @ref="@chartLineasPendientes"
+                           Options=options
+                           
+                >
+                    <ApexPointSeries TItem="LineasPendientesModelDTO"
+                                     Items="@(ListaLineasPendientes.Where(e => e.label != "Total"))"
+                                     SeriesType="SeriesType.Donut"
+                                     Name="Lineas BV_BVN"
+                                     XValue="@(e => e.label == null ? "Desconocido": e.label)"
+                                     YValue="@(e => e.Cantidad)"
+                                     PointColor="e=> GetPointColor(e)"
+                                     ShowDataLabels />
+                </ApexChart>
+                <table style="margin-top:-110px; padding:10px" class="table-bordered table">
+                    @{
+                        foreach (var item in ListaLineasPendientes)
+                        {
+                            <tr>
+                                <th style="font-size:15px">@item.label</th>
+                                <td style="font-size:15px">@item.Cantidad</td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </CardContent>
+        </MudCard>
+    </MudItem>
+}
+@* {ListaLineasPendientes.Find(e => e.label == "Total").Cantidad}  *@

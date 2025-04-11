@@ -1,0 +1,132 @@
+﻿@page "/AsientoContable"
+@using System.Data;
+@using PortalAG_V2.Componentes
+@using static PortalAG_V2.Shared.Model.AsientoContable.AsientosContablesModel
+
+@inject IDialogService DialogService;
+
+<SurveyPrompt Title="Asientos Contables Excel" />
+
+<Loading Visibility=@visibility />
+
+@if (dataTable == null)
+{
+    <div class="card card-primary">
+        <div class="card-header bg-primary text-light">
+            Cargar asientos contables
+        </div>
+        <div class="card-body">
+            <div class="row  mt-2">
+                <div class="col-sm-12">
+                    <form role="form" id="asiento_form">
+                        <div class="form-group mt-2">
+                            <label>Seleccione archivo:</label>
+
+                            <InputFile id="fileInput" OnChange="UploadFiles" hidden single />
+
+                            <MudButton HtmlTag="label"
+                                       Variant="Variant.Outlined"
+                                       Size="Size.Small"
+                                       for="fileInput">
+                                Seleccionar archivo
+                            </MudButton>
+
+                            <label>@NameFile</label>
+                            
+                        </div>
+                        <div class="form-group mt-2">
+                            <MudButton HtmlTag="label" Variant="Variant.Outlined" Color="Color.Success" OnClick=ProcesarFiles Size="Size.Small">
+                                Procesar archivo
+                            </MudButton>
+                            <MudButton HtmlTag="label" Variant="Variant.Outlined" Color="Color.Secondary" OnClick=DownloadFile Size="Size.Small">
+                                Descargar esquema de carga de asientos
+                            </MudButton>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-2">
+                <div class="card-header bg-warning" style="--bs-bg-opacity: .5;">
+                    Importante:
+                </div>
+                <div class="card-body">
+                    <li>Esta carga no genera reconciliaciones, de ningun tipo</li>
+                    <li>El proceso es irreversible, solo puede ser anulado en SAP</li>
+                    <li>No cierre el navegador si el sistema no da el OK o ERROR</li>
+                </div>
+                <div class="card-footer">
+                    El usuario debe poseer permisos en SAP para la generación de asientos contables.
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+@* 
+
+
+
+<InputFile id="fileInput" OnChange="UploadFiles" hidden single />
+
+<MudButton HtmlTag="label"
+           Variant="Variant.Outlined"
+           Color="Color.Primary"
+           StartIcon="@Icons.Filled.CloudUpload"
+           for="fileInput">
+    Upload Files
+</MudButton>
+
+
+    <p><em>Please upload Excel File</em></p> *@
+}
+else
+{
+    <div class="card mt-2">
+        <div class="card-header bg-warning">
+            SAP B1 - ASIENTO CONTABLE #1
+        </div>
+        <div class="card-body">
+            <b>FECHA CONTABLE: </b> @dataTable.fechaContable<br>
+            <b>FECHA VENCIMIENTO: </b> @dataTable.fechaVencimiento<br>
+            <b>FECHA DOCUMENT: </b> @dataTable.fecha<br>
+            <b>TIPO TRANSACC: </b> @dataTable.Codigo<br>
+            <b>COMENTARIOS: </b> @dataTable.Comentario<br>
+            <b>REFERENCIA 1: </b> @dataTable.Referencia<br>
+            <b>REFERENCIA 2: </b>@dataTable.Referencia2 <br>
+            <b>REFERENCIA 3: </b>@dataTable.Referencia3 <br>
+        </div>
+
+
+        <div class="card-footer justify-content-end">
+            <MudButton HtmlTag="label" Variant="Variant.Outlined" Color="Color.Warning" OnClick=EnvioSAP Size="Size.Small">
+                Enviar este asiento a SAP
+            </MudButton>
+            <MudButton HtmlTag="label" Variant="Variant.Outlined" Color="Color.Error" OnClick=Clear Size="Size.Small">
+                Cancelar
+            </MudButton>
+        </div>
+    </div>
+    <br />
+    <MudGrid>
+        <MudItem xs="12">
+            <MudDataGrid T="DetalleAsientos" Items="@dataTable.Detalle" MultiSelection="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true" SortMode="SortMode.None" Hover>
+                <Columns>
+                    <PropertyColumn Property="x => x.Cuenta" Title="Cuenta contable" />
+                    <PropertyColumn Property="x => x.nombreCuenta" Title="Nombre cuenta" />
+                    <PropertyColumn Property="x => x.Debito" Title="Debito" />
+                    <PropertyColumn Property="x => x.Credito" Title="Credito" />
+                    <PropertyColumn Property="x => x.Referencia1" Title="Ref. 1" />
+                    <PropertyColumn Property="x => x.Referencia2" Title="Ref. 2" />
+                    <PropertyColumn Property="x => x.Comentario" Title="Comentario" />
+
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="DetalleAsientos" PageSizeOptions="new int[] {10,50}" />
+                </PagerContent>
+            </MudDataGrid>
+        </MudItem>
+    </MudGrid>
+}
+

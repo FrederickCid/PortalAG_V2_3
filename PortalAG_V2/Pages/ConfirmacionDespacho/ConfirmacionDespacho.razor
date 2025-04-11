@@ -1,0 +1,53 @@
+﻿@page "/confirmaciondespacho"
+@using PortalAG_V2.Shared.Model.AvisoDePago;
+@using PortalAG_V2.Componentes
+
+<style>
+    .selected {
+        background-color: #1E88E5 !important;
+    }
+
+        .selected > td {
+            color: white !important;
+        }
+
+            .selected > td .mud-input {
+                color: white !important;
+            }
+</style>
+@{
+    string? titulo = $"Confirmacion Despacho, se actualizará en: {Count} segundos.";
+}
+
+<SurveyPrompt Title="@titulo" />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-lg-10 col-md-8 col-sm-6 col-xs-4">
+            <div class="col-md-1">
+                <SfButton CssClass="e-btn e-outline e-primary" IconCss="e-icons e-refresh" @onclick=@Actualizar>Actualizar</SfButton>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+<br />
+<br />
+<MudGrid>
+    <MudItem xs="12">
+        <MudDataGrid T="ConfirmacionDespachoModel" Items="_listConfirmacion" MultiSelection="true" Breakpoint="Breakpoint.Sm" Bordered="true" Dense="true" SortMode="SortMode.None"
+                     RowClick="@ClickRow" RowClassFunc="@ColorSelect" @bind-SelectedItems="selectRow" Filterable="true">
+                <Columns>
+                    <PropertyColumn Property="x => x.IDCliente" />
+                    <PropertyColumn Property="x => x.RazonSocial" />
+                    <PropertyColumn Property="x => x.NroPedido" />
+                    <PropertyColumn Property="x => x.Fono" />
+                    <PropertyColumn Property="x => x.Bultos" />
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="ConfirmacionDespachoModel" PageSizeOptions="new int[] {10,50}" />
+                </PagerContent>
+        </MudDataGrid>
+    </MudItem>
+</MudGrid>
+
+<Loading @ref="@loading" />
